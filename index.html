@@ -1,0 +1,745 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Hawk Hunter</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: one screen. Top bar (name, run controls); hunting ground over trait readout and graph on the left; hawk status, goals, environment and hawk traits in a sidebar. Stacks on phones. */
+:root {
+  --bg: #EEF0F3;
+  --surface: #F9FAFB;
+  --surface-2: #E3E7EC;
+  --ink: #161D26;
+  --muted: #56606D;
+  --line: #C9D0D9;
+  --accent: #E7A32A;
+  --accent-ink: #1A1405;
+  --focus: #2A5BB8;
+  --good: #1D7A4B;
+  --bad: #B0303F;
+  --panel: rgba(249, 250, 251, 0.97);
+  --font-display: 'Bricolage Grotesque', 'Avenir Next', 'Segoe UI', sans-serif;
+  --font-body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-data: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0C1016; --surface: #141A22; --surface-2: #1D2530; --ink: #E5EAF0; --muted: #98A3B1;
+    --line: #2A3441; --accent: #EDB041; --accent-ink: #1A1405; --focus: #8DB3FF; --good: #5FD08D; --bad: #F58A98; --panel: rgba(20, 26, 34, 0.97);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0C1016; --surface: #141A22; --surface-2: #1D2530; --ink: #E5EAF0; --muted: #98A3B1;
+  --line: #2A3441; --accent: #EDB041; --accent-ink: #1A1405; --focus: #8DB3FF; --good: #5FD08D; --bad: #F58A98; --panel: rgba(20, 26, 34, 0.97);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 14px; line-height: 1.45; }
+.app { display: flex; flex-direction: column; gap: 10px; padding-block: 10px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+h1 { font-size: 21px; font-weight: 800; line-height: 1.1; white-space: nowrap; }
+h2 { font-size: 24px; font-weight: 800; line-height: 1.1; }
+h3 { font-size: 15px; font-weight: 700; }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.mono { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+
+.top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.top .sub { flex: 1 1 240px; min-width: 0; margin: 0; color: var(--muted); font-size: 13px; }
+.run { display: flex; gap: 6px; align-items: center; flex: 0 0 auto; }
+.btn { font: 600 13px var(--font-body); padding: 7px 14px; border-radius: 7px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; white-space: nowrap; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+.btn.big { font-size: 15px; padding: 10px 20px; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; }
+.seg button { font: 600 12px var(--font-body); padding: 6px 10px; border: 0; background: var(--surface); color: var(--ink); cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+
+.main { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.stage { position: relative; display: flex; flex-direction: column; gap: 8px; min-width: 0; min-height: 0; }
+.dishBox { position: relative; border-radius: 8px; overflow: hidden; background: #CDB98C; aspect-ratio: 1.6; max-width: 100%; display: flex; align-items: center; justify-content: center; transition: background .6s; }
+#arena { display: block; width: 100%; height: 100%; cursor: crosshair; touch-action: manipulation; }
+.hud { position: absolute; top: 8px; left: 8px; display: flex; align-items: center; gap: 10px; padding: 5px 10px; border-radius: 7px; background: rgba(12, 16, 22, 0.82); color: #E6EEF0; font: 500 13px var(--font-data); pointer-events: none; }
+.hud .bar { width: 120px; height: 10px; border-radius: 5px; background: rgba(255,255,255,0.18); overflow: hidden; }
+.hud .bar i { display: block; height: 100%; width: 80%; background: #5FD08D; transition: width .2s; }
+.hud .bar i.low { background: #F0905A; } .hud .bar i.crit { background: #F25C6A; }
+.goalTip { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); max-width: calc(100% - 20px); width: max-content; padding: 7px 12px; border-radius: 7px; background: rgba(12, 16, 22, 0.86); color: #E6EEF0; font-size: 13.5px; text-align: center; pointer-events: none; }
+.goalTip b { color: #FFD34D; }
+.chartPanel { display: flex; flex-direction: column; gap: 5px; min-height: 0; }
+.chartHead { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.chartHead .note { font-size: 12px; color: var(--muted); }
+.tabs { display: inline-flex; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; }
+.tabs button { font: 600 12px var(--font-body); padding: 5px 10px; border: 0; background: var(--surface); color: var(--ink); cursor: pointer; }
+.tabs button + button { border-left: 1px solid var(--line); }
+.tabs button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.readout { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { flex: 1 1 0; min-width: 110px; display: flex; align-items: center; gap: 10px; padding: 5px 12px; border-radius: 8px; background: var(--surface); border: 1px solid var(--line); border-left: 8px solid var(--c); }
+.chip .pc { font: 800 26px/1 var(--font-display); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; min-width: 2.6ch; text-align: right; }
+.chip .nm { display: flex; flex-direction: column; font-size: 12.5px; font-weight: 600; line-height: 1.2; min-width: 0; }
+.chip .nm span { font-weight: 400; color: var(--muted); font-size: 11.5px; }
+.chartBox { position: relative; height: 150px; border-radius: 8px; overflow: hidden; background: #E9EDF1; }
+#chart { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+.overlay { position: absolute; inset: 0; z-index: 5; display: flex; align-items: center; justify-content: center; padding: 12px; background: rgba(6, 10, 14, 0.55); border-radius: 8px; overflow-y: auto; }
+.card { width: min(660px, 100%); max-height: 100%; overflow-y: auto; background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 18px 40px rgba(0,0,0,0.35); }
+.card p { margin: 0; }
+.eyebrow { margin: 0; font: 500 12px var(--font-data); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.rules { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 5px; }
+.mut { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.mcard { text-align: left; font: inherit; color: var(--ink); background: var(--surface); cursor: pointer; border: 1.5px solid var(--line); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
+.mcard:hover { background: var(--surface-2); }
+.mcard .nm { font: 700 16px var(--font-display); }
+.mcard .tx { font-size: 13px; color: var(--muted); }
+.chipk { font: 600 11px var(--font-body); letter-spacing: .05em; text-transform: uppercase; padding: 2px 7px; border-radius: 999px; border: 1px solid currentColor; }
+.chipk.good { color: var(--good); } .chipk.bad { color: var(--bad); }
+.up { color: var(--good); font-weight: 600; } .down { color: var(--bad); font-weight: 600; }
+.actions { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+.verdict { font: 800 30px var(--font-display); letter-spacing: -0.02em; line-height: 1.05; }
+#panelTitle:focus { outline: none; }
+
+.side { display: flex; flex-direction: column; gap: 10px; min-width: 0; min-height: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+.secT { margin: 0 0 4px; font: 600 11px var(--font-body); letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.hawkStat { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.stat { border: 1px solid var(--line); border-radius: 8px; padding: 5px 8px; }
+.stat b { display: block; font: 800 20px/1.1 var(--font-display); font-variant-numeric: tabular-nums; }
+.stat span { font-size: 11.5px; color: var(--muted); }
+.goals { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.goals li { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 6px; font-size: 13px; color: var(--muted); align-items: start; }
+.goals li .mk { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--line); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; margin-top: 1px; }
+.goals li.done { color: var(--ink); }
+.goals li.done .mk { background: var(--good); border-color: var(--good); color: #fff; }
+.goals li.cur { color: var(--ink); background: var(--surface-2); border-radius: 7px; padding: 5px 6px; margin: 0 -6px; }
+.goals li.cur .mk { border-color: var(--accent); background: var(--accent); color: var(--accent-ink); }
+.goals li .gt { font-weight: 600; }
+.goals li .gd { display: block; font-size: 12px; font-weight: 400; color: var(--muted); }
+.goals li .gp { display: block; font: 500 11.5px var(--font-data); color: var(--ink); margin-top: 2px; }
+.ctl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 10px; align-items: center; font-size: 13px; }
+.ctl label, .ctl .lb { font-weight: 600; }
+.ctl input[type="range"] { width: 100%; accent-color: var(--accent); }
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+td { padding: 3px 4px; border-bottom: 1px solid var(--line); }
+td.num { text-align: right; font-family: var(--font-data); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.flash { animation: flash 2.4s ease-out 1; }
+@keyframes flash { 0% { background: color-mix(in srgb, var(--accent) 45%, transparent); } 100% { background: transparent; } }
+.ico { flex: 0 0 auto; }
+
+@media (min-width: 760px) and (min-height: 540px) {
+  .app { height: 100%; overflow: hidden; }
+  .main { flex: 1 1 auto; display: grid; grid-template-columns: minmax(0, 1fr) clamp(300px, 29vw, 360px); }
+  .dishBox { flex: 1 1 66%; aspect-ratio: auto; min-height: 0; }
+  .chartPanel { flex: 1 1 34%; min-height: 150px; max-height: 260px; }
+  .chartBox { flex: 1 1 auto; height: auto; min-height: 0; }
+  #arena { position: absolute; width: auto; height: auto; }
+  .side { overflow-y: auto; }
+}
+@media (max-width: 560px) {
+  .mut { grid-template-columns: 1fr; }
+  .chip { min-width: 0; padding: 5px 9px; flex-direction: column; align-items: flex-start; gap: 2px; }
+  .chip .pc { font-size: 22px; text-align: left; min-width: 0; }
+  .chip .nm span { display: none; }
+  .hud .bar { width: 70px; }
+}
+@media (prefers-reduced-motion: reduce) { .dishBox { transition: none; } .flash { animation: none; } }
+</style>
+
+<div class="app">
+  <header class="top">
+    <h1>Hawk Hunter</h1>
+    <p class="sub">You are the hawk. Click a gopher to dive for it. Eat enough to survive, but not so many that the gophers run out.</p>
+    <div class="run">
+      <button type="button" class="btn primary" id="play" disabled>Pause</button>
+      <button type="button" class="btn" id="restart">Restart</button>
+      <div class="seg" role="group" aria-label="Game speed" id="speed">
+        <button type="button" data-speed="1" aria-pressed="true">1×</button>
+        <button type="button" data-speed="2" aria-pressed="false">2×</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="stage">
+      <div class="dishBox" id="dishBox">
+        <canvas id="arena" role="img" aria-label="The hunting ground. Gophers with different coat colors, leg lengths and tail patterns look for seeds. Click a gopher to send your hawk diving for it."></canvas>
+        <div class="hud"><span id="hudGen">Gen 1</span><span>Energy</span><span class="bar"><i id="hudBar"></i></span><span id="hudE">80%</span></div>
+        <div class="goalTip" id="goalTip"></div>
+      </div>
+      <section class="chartPanel" aria-label="Gopher traits">
+        <div class="chartHead">
+          <div class="tabs" role="group" aria-label="Trait to show" id="tabs"></div>
+          <span class="note">Percent of gophers with each variant</span>
+        </div>
+        <div class="readout" id="readout" aria-live="polite"></div>
+        <div class="chartBox" id="chartBox"><canvas id="chart" role="img" aria-label="Stacked graph of the percent of gophers with each variant over the generations, with the gopher population as a dashed line."></canvas></div>
+      </section>
+      <div class="overlay" id="overlay"><div class="card" id="panel" role="dialog" aria-modal="false" aria-labelledby="panelTitle"></div></div>
+    </div>
+
+    <aside class="side" aria-label="Hawk, goals and environment">
+      <section>
+        <h3 class="secT">Your hawk</h3>
+        <div class="hawkStat">
+          <div class="stat"><b id="stCaught">0</b><span>Caught</span></div>
+          <div class="stat"><b id="stMissed">0</b><span>Escaped</span></div>
+          <div class="stat"><b id="stPop">0</b><span>Gophers left</span></div>
+        </div>
+      </section>
+      <section>
+        <h3 class="secT">Goals</h3>
+        <ol class="goals" id="goals"></ol>
+      </section>
+      <section>
+        <h3 class="secT">Environment</h3>
+        <div class="ctl">
+          <span class="lb" id="gLbl">Ground</span>
+          <div class="seg" role="group" aria-labelledby="gLbl" id="ground">
+            <button type="button" data-g="sand" aria-pressed="true">Light sand</button>
+            <button type="button" data-g="ash" aria-pressed="false">Volcanic ash</button>
+          </div>
+          <label for="food">Gopher food</label>
+          <input id="food" type="range" min="0" max="4" step="1" value="2">
+        </div>
+      </section>
+      <section>
+        <h3 class="secT">Hawk traits</h3>
+        <table><tbody id="htraits"></tbody></table>
+      </section>
+    </aside>
+  </main>
+</div>
+
+<script>
+(function () {
+'use strict';
+
+/* ============ HAWK HUNTER ENGINE (no DOM) ============ */
+var W = 960, H = 600, GEN = 20;
+var TRAITS = {
+  coat:   { label: 'Coat color',   variants: ['sandy', 'medium', 'dark'], names: { sandy: 'Sandy', medium: 'Medium brown', dark: 'Dark' } },
+  legs:   { label: 'Leg length',   variants: ['short', 'long'],           names: { short: 'Short legs', long: 'Long legs' } },
+  stripe: { label: 'Tail pattern', variants: ['plain', 'striped'],        names: { plain: 'Plain tail', striped: 'Striped tail' } }
+};
+var GROUND = { sand: { name: 'Light sand' }, ash: { name: 'Dark volcanic ash' } };
+var LEGS = { short: { speed: 42, cost: 0.9, escape: 0.2 }, long: { speed: 52, cost: 1.05, escape: 0.5 } };
+var SEED_E = 24, CELL = 64, CAP_FOOD = 50, CAP_GOPHERS = 200;
+var REPRO_RATE = 0.2, EAT_R = 11, REPRO_E = 75, REPRO_COST = 50, CHILD_E = 40, MAX_E = 120, MATURE = 8, WALL = 14, VISION = 80, HANDLE = 0.3;
+var FOOD_LEVELS = [1.5, 2.5, 3.5, 4.5, 6];   // seeds per second for the food slider
+
+/* Hawk traits and mutations. Names describe a body change, not what it does. */
+var HAWK_BASE = { speed: 270, grip: 0.92, alert: 100, hunger: 1.6, sight: 0 };
+var HAWK_LIMITS = { speed: [150, 330], grip: [0.5, 1], alert: [50, 200], hunger: [0.9, 3], sight: [-1, 2] };
+var HAWK_INFO = [
+  { k: 'speed',  label: 'Diving speed',     fmt: function (v) { return Math.round(v); }, better: 1 },
+  { k: 'grip',   label: 'Grip',             fmt: function (v) { return Math.round(v * 100) + '%'; }, better: 1 },
+  { k: 'alert',  label: 'Gophers notice at', fmt: function (v) { return Math.round(v); }, better: -1 },
+  { k: 'hunger', label: 'Energy use',       fmt: function (v) { return v.toFixed(1) + '/s'; }, better: -1 },
+  { k: 'sight',  label: 'Eyesight',         fmt: function (v) { return ['Blurry', 'Normal', 'Sharp', 'Very sharp'][Math.round(v) + 1]; }, better: 1 }
+];
+var HAWK_MUTATIONS = [
+  { id: 'eyes',     kind: 'helpful', fx: { sight: 1 },     names: ['Larger eyes', 'Even larger eyes'], texts: ['The eyes grow larger.', 'The eyes grow larger again.'] },
+  { id: 'wings',    kind: 'helpful', fx: { speed: 35 },    names: ['Longer wings', 'Even longer wings'], texts: ['The wing bones grow longer.', 'The wings lengthen again.'] },
+  { id: 'talons',   kind: 'helpful', fx: { grip: 0.07 },   names: ['Curved talons', 'Sharper talons'], texts: ['The claws curve more.', 'The claws grow sharper.'] },
+  { id: 'feathers', kind: 'helpful', fx: { alert: -25 },   names: ['Soft-edged feathers', 'Softer feathers'], texts: ['The edges of the flight feathers become soft.', 'The feathers grow softer still.'] },
+  { id: 'crop',     kind: 'helpful', fx: { hunger: -0.25 }, names: ['Larger crop', 'Even larger crop'], texts: ['The pouch in the throat that stores food grows.', 'The throat pouch grows again.'] },
+  { id: 'heavy',    kind: 'harmful', fx: { speed: -40 },   names: ['Heavier body', 'Even heavier body'], texts: ['The body grows heavier.', 'The body grows heavier again.'] },
+  { id: 'noisy',    kind: 'harmful', fx: { alert: 35 },    names: ['Stiff wing feathers', 'Stiffer wing feathers'], texts: ['The wing feathers become stiff.', 'The wing feathers stiffen further.'] },
+  { id: 'metab',    kind: 'harmful', fx: { hunger: 0.35 },  names: ['Faster heartbeat', 'Racing heartbeat'], texts: ['The heart beats faster.', 'The heart beats faster still.'] },
+  { id: 'blur',     kind: 'harmful', fx: { sight: -1 },    names: ['Cloudy eye lens', 'Cloudier eye lens'], texts: ['The lens of each eye becomes cloudy.', 'The lenses grow cloudier.'] }
+];
+function clampH(k, v) { var l = HAWK_LIMITS[k]; return Math.max(l[0], Math.min(l[1], v)); }
+function canChangeH(T, m) { for (var k in m.fx) if (Math.abs(clampH(k, T[k] + m.fx[k]) - T[k]) > 1e-9) return true; return false; }
+function applyHawkMutation(T, m) { var before = {}; for (var k in m.fx) { before[k] = T[k]; T[k] = clampH(k, T[k] + m.fx[k]); } return before; }
+/* Three cards: two helpful and one harmful, shuffled. */
+function dealHawkCards(rng, hawk) {
+  function pickFrom(kind, avoid) {
+    var pool = HAWK_MUTATIONS.filter(function (m) { return m.kind === kind && avoid.indexOf(m.id) < 0 && canChangeH(hawk.T, m); });
+    if (!pool.length) pool = HAWK_MUTATIONS.filter(function (m) { return m.kind === kind && avoid.indexOf(m.id) < 0; });
+    return pool[(rng() * pool.length) | 0];
+  }
+  var a = pickFrom('helpful', []), b = pickFrom('helpful', [a.id]), c = pickFrom('harmful', []);
+  var hand = [a, b, c].map(function (m) {
+    var n = 0; hawk.picks.forEach(function (p) { if (p.id === m.id) n++; });
+    n = Math.min(n, m.names.length - 1);
+    return { m: m, name: m.names[n], text: m.texts[n] };
+  });
+  for (var i = hand.length - 1; i > 0; i--) { var j = (rng() * (i + 1)) | 0, t = hand[i]; hand[i] = hand[j]; hand[j] = t; }
+  return hand;
+}
+function camoOf(coat, ground) {
+  return { sand: { sandy: 0.8, medium: 0.35, dark: 0 }, ash: { sandy: 0, medium: 0.35, dark: 0.8 } }[ground][coat];
+}
+function pickMix(rng, mix) { var u = rng(), acc = 0, k; for (k in mix) { acc += mix[k]; if (u < acc) return k; } return k; }
+
+function createWorld(rng) {
+  var w = { t: 0, ground: 'sand', foodLevel: 2, food: [], gophers: [], events: [], acc: 0, mutRate: 0.01, stats: {}, births: 0,
+            hawk: { x: W / 2, y: H / 2, a: 0, state: 'soar', tgt: null, energy: 80, maxE: 100, rest: 0, diveT: 0, caught: 0, misses: 0,
+                    alive: true, T: {}, picks: [], caughtBy: {} } };
+  for (var k in HAWK_BASE) w.hawk.T[k] = HAWK_BASE[k];
+  Object.keys(TRAITS).forEach(function (tr) { TRAITS[tr].variants.forEach(function (v) { w.stats[tr + ':' + v] = { born: 0, eaten: 0, starved: 0, old: 0 }; w.hawk.caughtBy[tr + ':' + v] = 0; }); });
+  var cols = Math.ceil(W / CELL), rows = Math.ceil(H / CELL), grid = [];
+  function growth() { return FOOD_LEVELS[w.foodLevel]; }
+  function spawnFood() { w.food.push({ x: 12 + rng() * (W - 24), y: 12 + rng() * (H - 24), rot: rng() * 3.14, dead: false }); }
+  function ev(kind, c, x, y) { if (w.events.length < 200) w.events.push({ kind: kind, x: c ? c.x : x, y: c ? c.y : y, genes: c ? c.genes : null }); }
+  function make(genes, x, y, e, age) { return { genes: genes, x: x, y: y, a: rng() * 6.283, e: e, age: age, life: 80 + rng() * 40, tgt: null, search: rng() * 0.3, handle: 0, flee: 0, dead: null, mutant: false }; }
+  function tally(c, key) { for (var tr in c.genes) w.stats[tr + ':' + c.genes[tr]][key]++; }
+  w.count = function () { return w.gophers.length; };
+  w.freq = function (tr) { var o = {}; TRAITS[tr].variants.forEach(function (v) { o[v] = 0; }); w.gophers.forEach(function (c) { o[c.genes[tr]]++; }); return o; };
+  w.camo = function (c) { return camoOf(c.genes.coat, w.ground); };
+
+  for (var i = 0; i < 60; i++) spawnFood();
+  for (i = 0; i < 28; i++) {
+    var genes = { coat: pickMix(rng, { sandy: 1 / 3, medium: 1 / 3, dark: 1 / 3 }), legs: pickMix(rng, { short: 0.5, long: 0.5 }), stripe: pickMix(rng, { plain: 0.5, striped: 0.5 }) };
+    w.gophers.push(make(genes, 40 + rng() * (W - 80), 40 + rng() * (H - 80), 55 + rng() * 20, rng() * 50));
+  }
+
+  /* The player picks a gopher; the hawk dives at it. Returns false if the hawk is busy. */
+  w.dive = function (c) {
+    var hk = w.hawk;
+    if (!hk.alive || hk.state !== 'soar' || !c || c.dead) return false;
+    hk.state = 'dive'; hk.tgt = c; hk.diveT = 0;
+    return true;
+  };
+  function buildGrid() {
+    grid = new Array(cols * rows); for (var i = 0; i < grid.length; i++) grid[i] = [];
+    for (i = 0; i < w.food.length; i++) { var f = w.food[i]; if (!f.dead) grid[Math.min(rows - 1, (f.y / CELL) | 0) * cols + Math.min(cols - 1, (f.x / CELL) | 0)].push(f); }
+  }
+  function bestFood(c) {
+    var best = null, bd = VISION * VISION, r = Math.ceil(VISION / CELL);
+    var cx = Math.min(cols - 1, Math.max(0, (c.x / CELL) | 0)), cy = Math.min(rows - 1, Math.max(0, (c.y / CELL) | 0));
+    for (var gy = Math.max(0, cy - r); gy <= Math.min(rows - 1, cy + r); gy++) for (var gx = Math.max(0, cx - r); gx <= Math.min(cols - 1, cx + r); gx++) {
+      var cell = grid[gy * cols + gx];
+      for (var i = 0; i < cell.length; i++) { var f = cell[i]; if (f.dead) continue; var dx = f.x - c.x, dy = f.y - c.y, d2 = dx * dx + dy * dy; if (d2 < bd) { bd = d2; best = f; } }
+    }
+    return best;
+  }
+  function turnToward(o, want, maxTurn) { var d = want - o.a; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; o.a += Math.max(-maxTurn, Math.min(maxTurn, d)); }
+  function bounce(o) {
+    if (o.x < WALL) { o.x = WALL; o.a = Math.PI - o.a; } if (o.x > W - WALL) { o.x = W - WALL; o.a = Math.PI - o.a; }
+    if (o.y < WALL) { o.y = WALL; o.a = -o.a; } if (o.y > H - WALL) { o.y = H - WALL; o.a = -o.a; }
+  }
+
+  w.step = function (dt) {
+    w.acc += growth() * dt;
+    while (w.acc >= 1) { w.acc -= 1; if (w.food.length < CAP_FOOD) spawnFood(); }
+    buildGrid();
+    var hk = w.hawk, T = hk.T;
+    // ---- hawk ----
+    if (hk.alive) {
+      hk.energy -= T.hunger * dt;
+      if (hk.energy <= 0) { hk.energy = 0; hk.alive = false; hk.state = 'dead'; ev('hawkdead', null, hk.x, hk.y); }
+    }
+    if (hk.state === 'dive') {
+      var tg = hk.tgt;
+      if (!tg || tg.dead) { hk.state = 'soar'; hk.tgt = null; }
+      else {
+        var dx = tg.x - hk.x, dy = tg.y - hk.y, d = Math.sqrt(dx * dx + dy * dy);
+        hk.a = Math.atan2(dy, dx); hk.diveT += dt;
+        var stepD = T.speed * dt;
+        if (d <= Math.max(12, stepD)) {
+          hk.x = tg.x; hk.y = tg.y;
+          var p = T.grip * (tg.flee > 0 ? 1 - LEGS[tg.genes.legs].escape : 1);
+          if (rng() < p) {
+            tg.dead = 'eaten'; hk.energy = Math.min(hk.maxE, hk.energy + 25); hk.caught++;
+            for (var tr in tg.genes) hk.caughtBy[tr + ':' + tg.genes[tr]]++;
+          } else { hk.misses++; tg.flee = 1.5; ev('escape', tg); }
+          hk.state = 'rest'; hk.rest = 0.4; hk.tgt = null;
+        } else {
+          hk.x += dx / d * stepD; hk.y += dy / d * stepD;
+          if (hk.diveT > 3) { hk.state = 'rest'; hk.rest = 0.7; hk.tgt = null; hk.misses++; ev('escape', tg); }
+        }
+      }
+    } else if (hk.state === 'rest' || hk.state === 'soar') {
+      if (hk.state === 'rest') { hk.rest -= dt; if (hk.rest <= 0) hk.state = 'soar'; }
+      hk.a += 0.6 * dt; hk.x += Math.cos(hk.a) * 40 * dt; hk.y += Math.sin(hk.a) * 40 * dt; bounce(hk);
+    }
+    // ---- gophers ----
+    var list = w.gophers, n = list.length, born = [];
+    var start = n ? (rng() * n) | 0 : 0;
+    for (var k = 0; k < n; k++) {
+      var c = list[(start + k) % n]; if (c.dead) continue;
+      var L = LEGS[c.genes.legs];
+      c.age += dt; c.e -= (1.6 + 0.0006 * L.speed * L.speed) * L.cost * dt;
+      if (c.e <= 0) { c.dead = 'starved'; continue; }
+      if (c.age > c.life) { c.dead = 'old'; continue; }
+      if (hk.state === 'dive') {
+        var px = c.x - hk.x, py = c.y - hk.y;
+        if (px * px + py * py < T.alert * T.alert) { c.flee = Math.max(c.flee, 0.6); turnToward(c, Math.atan2(py, px), 9 * dt); }
+      }
+      if (c.flee > 0) {
+        c.flee -= dt; c.handle = 0; c.tgt = null; c.e -= 0.5 * dt;
+        c.x += Math.cos(c.a) * L.speed * 1.4 * dt; c.y += Math.sin(c.a) * L.speed * 1.4 * dt; bounce(c);
+      } else if (c.handle > 0) c.handle -= dt;
+      else {
+        if (c.tgt && c.tgt.dead) c.tgt = null;
+        c.search -= dt;
+        if (!c.tgt && c.search <= 0) { c.tgt = bestFood(c); c.search = 0.15 + rng() * 0.15; }
+        if (c.tgt) {
+          var dx2 = c.tgt.x - c.x, dy2 = c.tgt.y - c.y;
+          if (dx2 * dx2 + dy2 * dy2 < EAT_R * EAT_R) { c.e = Math.min(MAX_E, c.e + SEED_E); c.tgt.dead = true; c.tgt = null; c.handle = HANDLE; }
+          else turnToward(c, Math.atan2(dy2, dx2), 7 * dt);
+        } else c.a += (rng() - 0.5) * 10 * dt;
+        if (c.handle <= 0) { c.x += Math.cos(c.a) * L.speed * dt; c.y += Math.sin(c.a) * L.speed * dt; bounce(c); }
+      }
+      if (c.e >= REPRO_E && c.age >= MATURE && list.length + born.length < CAP_GOPHERS && rng() < REPRO_RATE * dt) {
+        c.e -= REPRO_COST;
+        var genes = {}, mutated = false;
+        for (var tr2 in c.genes) {
+          genes[tr2] = c.genes[tr2];
+          if (rng() < w.mutRate) { var opts = TRAITS[tr2].variants.filter(function (v) { return v !== c.genes[tr2]; }); genes[tr2] = opts[(rng() * opts.length) | 0]; mutated = true; }
+        }
+        var child = make(genes, c.x + (rng() - 0.5) * 16, c.y + (rng() - 0.5) * 16, CHILD_E, 0);
+        if (mutated) { child.mutant = true; ev('mutant', child); }
+        born.push(child); tally(child, 'born'); w.births++; ev('birth', child);
+      }
+    }
+    var alive = [];
+    for (var i2 = 0; i2 < list.length; i2++) { var cc = list[i2]; if (cc.dead) { tally(cc, cc.dead); ev(cc.dead, cc); } else alive.push(cc); }
+    w.gophers = alive.concat(born);
+    w.food = w.food.filter(function (f) { return !f.dead; });
+    w.t += dt;
+  };
+  return w;
+}
+/* ============ END ENGINE ============ */
+
+
+var DT = 1 / 30, MUT_EVERY = 3;
+function $(id) { return document.getElementById(id); }
+var reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+var GROUND_COL = { sand: '#CDB98C', ash: '#3B3734' };
+var VCOL = { coat: { sandy: '#D8C08C', medium: '#9A6B43', dark: '#3F3530' }, legs: { short: '#9E7BD6', long: '#2FA37A' }, stripe: { plain: '#A3ADB5', striped: '#E2B93B' } };
+var SEED_COL = '#4E9F3D', HAWK_COL = '#C8372D';
+var TRAIT_KEYS = Object.keys(TRAITS);
+
+/* ---------- gopher sprites ---------- */
+var SPR = { w: 60, h: 44, cx: 26, cy: 22, res: 3 }, K = 1.0, cache = {};
+function spriteFor(g) {
+  var key = g.coat + g.legs + g.stripe; if (cache[key]) return cache[key];
+  var cv = document.createElement('canvas'); cv.width = SPR.w * SPR.res; cv.height = SPR.h * SPR.res;
+  var x = cv.getContext('2d'); x.setTransform(SPR.res, 0, 0, SPR.res, SPR.cx * SPR.res, SPR.cy * SPR.res);
+  var body = VCOL.coat[g.coat], len = 9.5, wid = 6.8, outline = 'rgba(20,16,12,0.45)', legL = g.legs === 'long' ? 9 : 4.5;
+  x.lineCap = 'round'; x.lineJoin = 'round';
+  x.strokeStyle = 'rgba(30,24,18,0.85)'; x.lineWidth = 1.7;
+  [len * 0.45, -len * 0.4].forEach(function (lx) { [-1, 1].forEach(function (s) { x.beginPath(); x.moveTo(lx, s * wid * 0.7); x.lineTo(lx + legL * 0.3, s * (wid * 0.7 + legL)); x.stroke(); }); });
+  x.lineWidth = 3; x.strokeStyle = body; x.beginPath(); x.moveTo(-len * 0.85, 0); x.quadraticCurveTo(-len - 5, 3, -len - 9, 0); x.stroke();
+  if (g.stripe === 'striped') { x.strokeStyle = '#1C1C1C'; x.lineWidth = 3.2; [0.35, 0.65, 0.9].forEach(function (f) { var tx = -len * 0.85 - 9 * f; x.beginPath(); x.moveTo(tx, -1.3 + 2 * f); x.lineTo(tx - 0.9, 1.2 + 1.4 * f); x.stroke(); }); }
+  x.beginPath(); x.ellipse(0, 0, len, wid, 0, 0, 6.283); x.fillStyle = body; x.fill(); x.strokeStyle = outline; x.lineWidth = 0.9; x.stroke();
+  var hx = len + 2.3, hr = 4.8;
+  x.beginPath(); x.arc(hx, 0, hr, 0, 6.283); x.fillStyle = body; x.fill(); x.stroke();
+  [-1, 1].forEach(function (s) { x.beginPath(); x.arc(hx - 2.2, s * 3.6, 1.6, 0, 6.283); x.fillStyle = body; x.fill(); x.stroke(); });   // small round ears
+  x.fillStyle = '#F2EDE4'; x.fillRect(hx + hr - 1.4, -1.1, 1.6, 2.2);   // front teeth
+  x.fillStyle = '#1A140F'; x.beginPath(); x.arc(hx + hr * 0.8, 0, 0.8, 0, 6.283); x.fill();
+  [-1, 1].forEach(function (s) { x.fillStyle = '#FFFFFF'; x.beginPath(); x.arc(hx + 1, s * 2, 1.2, 0, 6.283); x.fill(); x.fillStyle = '#1A140F'; x.beginPath(); x.arc(hx + 1.4, s * 2, 0.7, 0, 6.283); x.fill(); });
+  cache[key] = cv; return cv;
+}
+
+/* ---------- goals ---------- */
+var GOALS = [
+  { title: 'First catch', text: 'Click a gopher to send your hawk diving. Catch 3 gophers.',
+    check: function () { return game.hawk.caught >= 3; }, progress: function () { return 'Caught ' + Math.min(3, game.hawk.caught) + ' of 3'; } },
+  { title: 'Don’t overhunt', text: 'Finish 3 generations in a row with at least 15 gophers alive and your hawk still alive.',
+    check: function () { return goalState.streak >= 3; }, progress: function () { return goalState.streak + ' of 3 generations in a row (now ' + game.count() + ' gophers)'; } },
+  { title: 'Hard to see', text: 'Keep hunting until one coat color makes up less than 15% of the gophers. Which colors were you catching most?',
+    check: function () { var f = game.freq('coat'), n = game.count(); return n > 0 && TRAITS.coat.variants.some(function (v) { return f[v] / n < 0.15; }); },
+    progress: function () { var f = game.freq('coat'), n = Math.max(1, game.count()); return TRAITS.coat.variants.map(function (v) { return TRAITS.coat.names[v].split(' ')[0] + ' ' + Math.round(100 * f[v] / n) + '%'; }).join(' \u00b7 '); } },
+  { title: 'Ash fall', text: 'Use the Ground control to cover the land with volcanic ash. Then keep hunting until sandy coats make up less than 25% of the gophers.',
+    check: function () { var n = game.count(); return game.ground === 'ash' && n > 0 && game.freq('coat').sandy / n < 0.25; },
+    progress: function () { var n = Math.max(1, game.count()); return game.ground !== 'ash' ? 'The ground is still sand' : 'Sandy coats: ' + Math.round(100 * game.freq('coat').sandy / n) + '% (goal: under 25%)'; } },
+  { title: 'Evolve your hawk', text: 'Every ' + MUT_EVERY + ' generations you choose a mutation. Pass on 2 helpful mutations.',
+    check: function () { return helpfulPicks() >= 2; }, progress: function () { return helpfulPicks() + ' of 2 helpful mutations'; } }
+];
+var goalIdx = 0, goalState = { streak: 0 }, goalsDone = false;
+function genNow() { return Math.floor(game.t / GEN + 1e-9); }
+function helpfulPicks() { return game.hawk.picks.filter(function (m) { return m.kind === 'helpful'; }).length; }
+function renderGoals() {
+  $('goals').innerHTML = GOALS.map(function (g, i) {
+    var cls = i < goalIdx ? 'done' : (i === goalIdx && !goalsDone ? 'cur' : '');
+    return '<li class="' + cls + '"><span class="mk">' + (i < goalIdx ? '✓' : (i + 1)) + '</span><span><span class="gt">' + g.title + '</span>' +
+      (i === goalIdx && !goalsDone ? '<span class="gd">' + g.text + '</span><span class="gp">' + g.progress() + '</span>' : '') + '</span></li>';
+  }).join('') + (goalsDone ? '<li class="done"><span class="mk">★</span><span><span class="gt">Free hunt</span><span class="gd">Every goal is complete. Keep experimenting with the ground and food controls.</span></span></li>' : '');
+  var tip = $('goalTip');
+  if (phase !== 'running' || goalsDone) { tip.hidden = true; return; }
+  tip.hidden = false; tip.innerHTML = '<b>Goal ' + (goalIdx + 1) + ':</b> ' + GOALS[goalIdx].text;
+}
+function checkGoals() {
+  if (goalsDone) return;
+  if (GOALS[goalIdx].check()) {
+    goalIdx++; flashMsg(goalIdx === 3 ? 'Goal complete! Now try the ash.' : 'Goal complete: ' + GOALS[goalIdx - 1].title);
+    if (goalIdx >= GOALS.length) { goalsDone = true; phase = 'panel'; showGoalsDone(); }
+  }
+  renderGoals();
+}
+var msg = null;
+function flashMsg(t) { msg = { t: t, age: 0 }; }
+
+/* ---------- state ---------- */
+var game, phase = 'intro', speed = 1, history = [], fx = [], pools = [], view = 'coat', lastRec = -1, lastGenDone = 0, lastChange = {};
+function newGame() {
+  game = createWorld(Math.random);
+  phase = 'intro'; history = []; fx = []; pools = []; lastRec = -1; lastGenDone = 0; lastChange = {};
+  goalIdx = 0; goalState = { streak: 0 }; goalsDone = false;
+  $('food').value = 2; setGround('sand', true);
+  record(); renderTabs(); renderTraits(); renderGoals(); updateUI(); drawChart();
+  showIntro();
+}
+function record() { var f = {}; TRAIT_KEYS.forEach(function (tr) { f[tr] = game.freq(tr); }); history.push({ gen: game.t / GEN, n: game.count(), f: f }); }
+
+/* ---------- panels ---------- */
+var overlay = $('overlay'), panel = $('panel'), playBtn = $('play');
+function openPanel(html) { panel.innerHTML = html; overlay.hidden = false; var b = panel.querySelector('[data-focus]'); if (b) b.focus({ preventScroll: true }); playBtn.disabled = true; }
+function closePanel() { overlay.hidden = true; playBtn.disabled = false; }
+function showIntro() {
+  openPanel('<p class="eyebrow">How to play</p><h2 id="panelTitle">You are the hawk</h2><ul class="rules">' +
+    '<li><b>Click a gopher</b> and your hawk dives for it. A gopher that sees you coming tries to run. Long legs help it escape.</li>' +
+    '<li>Your hawk uses energy all the time. Each gopher you catch refills some. <b>If your energy reaches zero, your hawk starves.</b></li>' +
+    '<li>Gophers eat seeds and have babies. Babies inherit their parent’s coat color, leg length and tail pattern. If you catch gophers faster than they can reproduce, <b>they run out, and so does your food</b>.</li>' +
+    '<li>Every ' + MUT_EVERY + ' generations, your hawk’s chicks show new mutations. You choose one to pass on. One of each set is harmful.</li>' +
+    '<li>Follow the <b>Goals</b> list on the right. The graph and the big percentages show how the gopher population changes because of what you hunt.</li>' +
+    '</ul><div class="actions"><button type="button" class="btn primary big" data-act="start" data-focus>Start hunting</button></div>');
+}
+var hand = [];
+function showMutation() {
+  phase = 'panel';
+  hand = dealHawkCards(Math.random, game.hawk);
+  var h = '<p class="eyebrow">Generation ' + genNow() + ' complete</p><h2 id="panelTitle" tabindex="-1" data-focus>Your hawk’s chicks have new mutations</h2>' +
+    '<p>Choose the one that spreads to the next generation of hawks. One of them is harmful.</p><div class="mut">';
+  hand.forEach(function (c, i) { h += '<button type="button" class="mcard" data-pick="' + i + '"><span class="nm">' + c.name + '</span><span class="tx">' + c.text + '</span></button>'; });
+  openPanel(h + '</div>');
+}
+function pick(i) {
+  var c = hand[i], before = applyHawkMutation(game.hawk.T, c.m), harm = c.m.kind === 'harmful';
+  game.hawk.picks.push(c.m); lastChange = before; renderTraits(true);
+  var parts = Object.keys(before).map(function (k) {
+    var info = HAWK_INFO.filter(function (t) { return t.k === k; })[0], a = before[k], b = game.hawk.T[k];
+    if (Math.abs(a - b) < 1e-9) return info.label + ' ' + info.fmt(a) + ' (already at its limit)';
+    var good = (b - a) * info.better > 0;
+    return info.label + ' ' + info.fmt(a) + ' → <span class="' + (good ? 'up' : 'down') + '">' + info.fmt(b) + (good ? ' ▲' : ' ▼') + '</span>';
+  });
+  openPanel('<p class="eyebrow">Mutation passed on</p><h2 id="panelTitle">' + c.name + ' <span class="chipk ' + (harm ? 'bad' : 'good') + '">' + (harm ? 'Harmful' : 'Helpful') + '</span></h2>' +
+    '<p>' + parts.join('; ') + '</p><div class="actions"><button type="button" class="btn primary big" data-act="resume" data-focus>Keep hunting</button></div>');
+  renderGoals();
+}
+function showDeath() {
+  phase = 'dead';
+  var n = game.count(), why = n < 8 ? 'Only ' + n + ' gophers were left. Overhunting wiped out your food supply, so your hawk had nothing left to eat.'
+    : 'There were still ' + n + ' gophers, but your hawk did not catch them fast enough to keep its energy up.';
+  openPanel('<p class="eyebrow">Generation ' + (genNow() + 1) + '</p><div class="verdict" id="panelTitle">Your hawk starved</div><p>' + why + '</p>' +
+    '<p>You caught ' + game.hawk.caught + ' gophers, and ' + game.hawk.misses + ' escaped. You completed ' + goalIdx + ' of ' + GOALS.length + ' goals.</p>' +
+    '<div class="actions"><button type="button" class="btn primary big" data-act="again" data-focus>Try again</button></div>');
+}
+function showGoalsDone() {
+  openPanel('<p class="eyebrow">All goals complete</p><div class="verdict" id="panelTitle">You kept the balance</div>' +
+    '<p>Your hawk survived ' + genNow() + ' generations and caught ' + game.hawk.caught + ' gophers. Look at the graph. On sand, the coat colors you could see best became rare. On ash, sandy coats became easy to see, so they became rare instead. You were the <b>selection pressure</b>.</p>' +
+    '<p>The game keeps going as a free hunt. Try changing the ground or the food supply and see how the gophers respond.</p>' +
+    '<div class="actions"><button type="button" class="btn primary big" data-act="resume" data-focus>Keep hunting</button></div>');
+}
+panel.addEventListener('click', function (e) {
+  var b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.pick !== undefined) { pick(parseInt(b.dataset.pick, 10)); return; }
+  var act = b.dataset.act;
+  if (act === 'start' || act === 'resume') { closePanel(); phase = 'running'; playBtn.textContent = 'Pause'; renderGoals(); }
+  else if (act === 'again') newGame();
+});
+playBtn.addEventListener('click', function () {
+  if (phase === 'running') { phase = 'paused'; playBtn.textContent = 'Resume'; }
+  else if (phase === 'paused') { phase = 'running'; playBtn.textContent = 'Pause'; }
+  renderGoals();
+});
+$('restart').addEventListener('click', newGame);
+$('speed').addEventListener('click', function (e) {
+  var b = e.target.closest('button'); if (!b) return;
+  speed = parseInt(b.dataset.speed, 10);
+  [].forEach.call($('speed').children, function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+});
+
+/* ---------- environment controls ---------- */
+function setGround(g, quiet) {
+  game.ground = g;
+  [].forEach.call($('ground').children, function (x) { x.setAttribute('aria-pressed', String(x.dataset.g === g)); });
+  $('dishBox').style.background = GROUND_COL[g];
+  renderGoals();
+}
+$('ground').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setGround(b.dataset.g); });
+$('food').addEventListener('input', function (e) { game.foodLevel = parseInt(e.target.value, 10); });
+function foodLabel() { return ['Very scarce', 'Scarce', 'Normal', 'Plentiful', 'Very plentiful'][game.foodLevel]; }
+$('food').setAttribute('aria-valuetext', 'Normal');
+
+/* ---------- clicking to hunt ---------- */
+var arenaCv = $('arena');
+arenaCv.addEventListener('click', function (e) {
+  if (phase !== 'running') return;
+  var r = arenaCv.getBoundingClientRect(), gx = (e.clientX - r.left) / r.width * W, gy = (e.clientY - r.top) / r.height * H;
+  var best = null, bd = 26 * 26;
+  game.gophers.forEach(function (c) { var dx = c.x - gx, dy = c.y - gy, d = dx * dx + dy * dy; if (d < bd) { bd = d; best = c; } });
+  if (!best) { fx.push({ kind: 'click', x: gx, y: gy, age: 0 }); return; }
+  if (!game.dive(best)) fx.push({ kind: 'busy', x: gx, y: gy, age: 0 });
+});
+
+/* ---------- sidebar ---------- */
+function renderTraits(flash) {
+  $('htraits').innerHTML = HAWK_INFO.map(function (t) {
+    var v = game.hawk.T[t.k], ch = lastChange[t.k], cell;
+    if (ch !== undefined && Math.abs(ch - v) > 1e-9) { var good = (v - ch) * t.better > 0; cell = '<td class="num' + (flash ? ' flash' : '') + '"><span class="' + (good ? 'up' : 'down') + '">' + t.fmt(v) + (good ? ' ▲' : ' ▼') + '</span></td>'; }
+    else cell = '<td class="num">' + t.fmt(v) + '</td>';
+    return '<tr><td>' + t.label + '</td>' + cell + '</tr>';
+  }).join('');
+}
+function renderTabs() {
+  $('tabs').innerHTML = TRAIT_KEYS.map(function (tr) { return '<button type="button" data-tr="' + tr + '" aria-pressed="' + (tr === view) + '">' + TRAITS[tr].label + '</button>'; }).join('');
+}
+$('tabs').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; view = b.dataset.tr; renderTabs(); updateUI(); drawChart(); });
+function updateUI() {
+  var hk = game.hawk, e = Math.round(100 * hk.energy / hk.maxE), bar = $('hudBar');
+  bar.style.width = e + '%'; bar.className = e < 20 ? 'crit' : (e < 40 ? 'low' : '');
+  $('hudE').textContent = e + '%'; $('hudGen').textContent = 'Gen ' + (genNow() + 1);
+  $('stCaught').textContent = hk.caught; $('stMissed').textContent = hk.misses; $('stPop').textContent = game.count();
+  $('food').setAttribute('aria-valuetext', foodLabel());
+  var n = game.count(), f = game.freq(view);
+  $('readout').innerHTML = TRAITS[view].variants.map(function (v) {
+    return '<div class="chip" style="--c:' + VCOL[view][v] + '"><span class="pc">' + (n ? Math.round(100 * f[v] / n) : 0) + '%</span><span class="nm">' + TRAITS[view].names[v] + '<span>' + f[v] + ' of ' + n + ' gophers</span></span></div>';
+  }).join('');
+}
+
+/* ---------- drawing ---------- */
+var dishBox = $('dishBox'), actx = arenaCv.getContext('2d'), chartBox = $('chartBox'), chartCv = $('chart'), cctx = chartCv.getContext('2d');
+var chartW = 600, chartH = 150, oneScreen = window.matchMedia('(min-width: 760px) and (min-height: 540px)');
+function fitCanvases() {
+  var dpr = Math.min(2, window.devicePixelRatio || 1), r = dishBox.getBoundingClientRect(), w, h;
+  if (oneScreen.matches) { w = Math.min(r.width, r.height * 1.6); h = w / 1.6; arenaCv.style.width = w + 'px'; arenaCv.style.height = h + 'px'; }
+  else { arenaCv.style.width = ''; arenaCv.style.height = ''; w = r.width; h = w / 1.6; }
+  arenaCv.width = Math.max(1, Math.round(w * dpr)); arenaCv.height = Math.max(1, Math.round(h * dpr));
+  var c = chartBox.getBoundingClientRect(); chartW = Math.max(1, c.width); chartH = Math.max(1, c.height);
+  chartCv.width = Math.round(chartW * dpr); chartCv.height = Math.round(chartH * dpr); cctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+function drawHawk(x, y, a, scale, alpha) {
+  actx.save(); actx.translate(x, y); actx.rotate(a); actx.scale(scale, scale); actx.globalAlpha = alpha;
+  actx.fillStyle = HAWK_COL; actx.strokeStyle = 'rgba(255,255,255,0.9)'; actx.lineWidth = 1.6;
+  actx.beginPath(); actx.moveTo(16, 0); actx.lineTo(5, -4); actx.lineTo(-4, -22); actx.lineTo(-8, -4); actx.lineTo(-16, -7); actx.lineTo(-12, 0);
+  actx.lineTo(-16, 7); actx.lineTo(-8, 4); actx.lineTo(-4, 22); actx.lineTo(5, 4); actx.closePath(); actx.fill(); actx.stroke();
+  actx.fillStyle = '#FFD34D'; actx.beginPath(); actx.arc(11, 0, 1.6, 0, 6.283); actx.fill();
+  actx.restore();
+}
+function drawArena() {
+  var s = arenaCv.width / W, i, c, hk = game.hawk;
+  actx.setTransform(s, 0, 0, s, 0, 0); actx.globalAlpha = 1;
+  actx.fillStyle = GROUND_COL[game.ground]; actx.fillRect(0, 0, W, H);
+  actx.fillStyle = game.ground === 'sand' ? 'rgba(120,95,55,0.10)' : 'rgba(200,200,200,0.06)';
+  for (i = 0; i < 260; i++) actx.fillRect((i * 137.5) % W, (i * 89.3 + (i % 7) * 31) % H, 2, 2);
+  for (i = 0; i < pools.length; i++) {
+    var pl = pools[i], fade = 1 - (game.t - pl.t) / 14; if (fade <= 0) continue;
+    actx.globalAlpha = 0.5 * fade; actx.fillStyle = pl.col; actx.beginPath();
+    pl.b.forEach(function (b) { actx.moveTo(pl.x + b[0] + b[2], pl.y + b[1]); actx.arc(pl.x + b[0], pl.y + b[1], b[2], 0, 6.283); }); actx.fill();
+  }
+  actx.globalAlpha = 1; actx.fillStyle = SEED_COL; actx.beginPath();
+  game.food.forEach(function (f) { actx.moveTo(f.x + 3.6, f.y); actx.ellipse(f.x, f.y, 3.6, 2.2, f.rot, 0, 6.283); }); actx.fill();
+  var sight = hk.T.sight, baseA = sight < 0 ? 0.6 : 1;
+  var sw = SPR.w * K, sh = SPR.h * K, ox = -SPR.cx * K, oy = -SPR.cy * K;
+  for (i = 0; i < game.gophers.length; i++) {
+    c = game.gophers[i]; var co = Math.cos(c.a), si = Math.sin(c.a);
+    actx.globalAlpha = baseA * (0.6 + 0.4 * Math.min(1, c.e / 70));
+    actx.setTransform(s * co, s * si, -s * si, s * co, s * c.x, s * c.y);
+    actx.drawImage(spriteFor(c.genes), ox, oy, sw, sh);
+  }
+  actx.setTransform(s, 0, 0, s, 0, 0); actx.globalAlpha = 1;
+  if (sight > 0) {   // sharp eyesight outlines every gopher
+    actx.strokeStyle = 'rgba(255,255,255,' + (sight > 1 ? 0.75 : 0.4) + ')'; actx.lineWidth = 1.2; actx.beginPath();
+    game.gophers.forEach(function (g) { actx.moveTo(g.x + 15, g.y); actx.arc(g.x, g.y, 15, 0, 6.283); }); actx.stroke();
+  }
+  if (hk.state === 'dive' && hk.tgt) {
+    actx.strokeStyle = 'rgba(255,211,77,0.9)'; actx.lineWidth = 2; actx.beginPath(); actx.arc(hk.tgt.x, hk.tgt.y, 16, 0, 6.283); actx.stroke();
+    actx.globalAlpha = 0.25; actx.fillStyle = '#000'; actx.beginPath(); actx.ellipse(hk.x + 8, hk.y + 10, 14, 6, 0, 0, 6.283); actx.fill(); actx.globalAlpha = 1;
+  }
+  if (hk.state !== 'dead') drawHawk(hk.x, hk.y, hk.a, hk.state === 'dive' ? 1.1 : 1.35, hk.state === 'rest' ? 0.75 : 1);
+  for (i = 0; i < fx.length; i++) {
+    var e = fx[i];
+    if (e.kind === 'escape') { actx.globalAlpha = 1 - e.age / 0.9; actx.strokeStyle = '#FFFFFF'; actx.lineWidth = 2; actx.beginPath(); actx.arc(e.x, e.y, 12 + (reduceMotion ? 0 : e.age * 10), 0, 6.283); actx.stroke(); }
+    else if (e.kind === 'click' || e.kind === 'busy') { actx.globalAlpha = 1 - e.age / 0.6; actx.strokeStyle = e.kind === 'busy' ? '#F0905A' : 'rgba(255,255,255,0.8)'; actx.lineWidth = 1.5; actx.beginPath(); actx.arc(e.x, e.y, 8, 0, 6.283); actx.stroke(); }
+    else if (e.kind === 'mutant') { actx.globalAlpha = Math.max(0, 1 - e.age / 2); actx.strokeStyle = '#FFD34D'; actx.lineWidth = 2; actx.beginPath(); actx.arc(e.x, e.y, 13, 0, 6.283); actx.stroke(); }
+  }
+  actx.globalAlpha = 1;
+  if (msg && msg.age < 2.5) {
+    actx.globalAlpha = Math.min(1, (2.5 - msg.age) * 2); actx.font = '700 26px "Bricolage Grotesque", sans-serif'; actx.textAlign = 'center';
+    actx.fillStyle = 'rgba(12,16,22,0.8)'; var tw = actx.measureText(msg.t).width;
+    actx.fillRect(W / 2 - tw / 2 - 16, 40, tw + 32, 44); actx.fillStyle = '#FFD34D'; actx.fillText(msg.t, W / 2, 70); actx.globalAlpha = 1;
+  }
+}
+function stepFx(dtReal) {
+  game.events.forEach(function (e) {
+    if (e.kind === 'eaten') {
+      var bl = []; for (var q = 0; q < 6; q++) { var an = Math.random() * 6.283, d = Math.random() * 7; bl.push([Math.cos(an) * d, Math.sin(an) * d, 4 + Math.random() * 6]); }
+      pools.push({ x: e.x, y: e.y, col: VCOL.coat[e.genes.coat], t: game.t, b: bl });
+    } else if (e.kind === 'escape' || e.kind === 'mutant') fx.push({ kind: e.kind, x: e.x, y: e.y, age: 0 });
+  });
+  game.events.length = 0;
+  pools = pools.filter(function (p) { return game.t - p.t <= 14; }).slice(-120);
+  fx = fx.filter(function (f) { f.age += dtReal; return f.age < (f.kind === 'mutant' ? 2 : 0.9); });
+  if (msg) msg.age += dtReal;
+}
+var MONO = '11px "IBM Plex Mono", ui-monospace, Menlo, monospace';
+function drawChart() {
+  var VW = chartW, VH = chartH, vars = TRAITS[view].variants;
+  cctx.clearRect(0, 0, VW, VH); cctx.fillStyle = '#E9EDF1'; cctx.fillRect(0, 0, VW, VH);
+  var L = 42, R = 40, T = 10, B = 20, pw = VW - L - R, ph = VH - T - B; if (pw < 20 || ph < 20) return;
+  var gMax = Math.max(10, Math.ceil(game.t / GEN));
+  cctx.font = MONO; cctx.textBaseline = 'middle';
+  function X(g) { return L + g / gMax * pw; } function Y(p) { return T + ph - p / 100 * ph; }
+  if (history.length > 1) {
+    var base = history.map(function () { return 0; });
+    vars.forEach(function (v) {
+      var top = history.map(function (h, i) { return base[i] + (h.n ? 100 * h.f[view][v] / h.n : 0); });
+      cctx.beginPath(); history.forEach(function (h, i) { if (i === 0) cctx.moveTo(X(h.gen), Y(top[i])); else cctx.lineTo(X(h.gen), Y(top[i])); });
+      for (var i = history.length - 1; i >= 0; i--) cctx.lineTo(X(history[i].gen), Y(base[i]));
+      cctx.closePath(); cctx.fillStyle = VCOL[view][v]; cctx.fill(); cctx.strokeStyle = 'rgba(255,255,255,0.8)'; cctx.lineWidth = 1; cctx.stroke(); base = top;
+    });
+  }
+  cctx.strokeStyle = 'rgba(22,29,38,0.18)'; cctx.lineWidth = 1; cctx.fillStyle = '#3A4450'; cctx.textAlign = 'right';
+  [0, 50, 100].forEach(function (p) { cctx.beginPath(); cctx.moveTo(L, Math.round(Y(p)) + 0.5); cctx.lineTo(L + pw, Math.round(Y(p)) + 0.5); cctx.stroke(); cctx.fillText(p + '%', L - 6, Y(p)); });
+  cctx.textAlign = 'center'; var stepG = gMax <= 15 ? 1 : (gMax <= 40 ? 5 : 10);
+  for (var g = 0; g <= gMax; g += stepG) if (pw / gMax * stepG > 18) cctx.fillText(String(g), X(g), VH - 9);
+  var maxN = 20; history.forEach(function (h) { maxN = Math.max(maxN, h.n); }); maxN = Math.ceil(maxN / 20) * 20;
+  cctx.save(); cctx.setLineDash([5, 4]); cctx.strokeStyle = '#161D26'; cctx.lineWidth = 1.6; cctx.beginPath();
+  history.forEach(function (h, i) { var x = X(h.gen), y = T + ph - h.n / maxN * ph; if (i === 0) cctx.moveTo(x, y); else cctx.lineTo(x, y); });
+  cctx.stroke(); cctx.restore();
+  cctx.fillStyle = '#161D26'; cctx.textAlign = 'left'; cctx.fillText(String(maxN), L + pw + 6, T + 4); cctx.fillText('0', L + pw + 6, T + ph);
+  cctx.save(); cctx.translate(VW - 7, T + ph / 2); cctx.rotate(-Math.PI / 2); cctx.textAlign = 'center'; cctx.fillText('- - gophers', 0, 0); cctx.restore();
+}
+
+/* ---------- loop ---------- */
+var lastTs = 0, acc = 0, uiAcc = 0, chAcc = 0;
+function frame(ts) {
+  var dtReal = Math.min(0.1, (ts - lastTs) / 1000); lastTs = ts;
+  if (phase === 'running') {
+    acc += dtReal * speed; var steps = 0;
+    while (acc >= DT && steps < 12 && phase === 'running') {
+      game.step(DT); acc -= DT; steps++;
+      if (Math.floor(game.t * 2 + 1e-9) > lastRec) { lastRec = Math.floor(game.t * 2 + 1e-9); record(); }
+      if (!game.hawk.alive) { stepFx(0); updateUI(); showDeath(); break; }
+      var g = genNow();
+      if (g > lastGenDone) {
+        lastGenDone = g;
+        if (goalIdx === 1) goalState.streak = game.count() >= 15 ? goalState.streak + 1 : 0;
+        checkGoals();
+        if (phase === 'running' && g % MUT_EVERY === 0) { showMutation(); break; }
+      }
+    }
+    if (steps >= 12) acc = 0;
+    if (phase === 'running') { uiAcc += dtReal; if (uiAcc > 0.4) { uiAcc = 0; checkGoals(); } }
+  }
+  stepFx(dtReal); drawArena();
+  chAcc += dtReal; if (chAcc > 0.25) { chAcc = 0; drawChart(); updateUI(); }
+  requestAnimationFrame(frame);
+}
+function onResize() { fitCanvases(); drawArena(); drawChart(); }
+if (window.ResizeObserver) { new ResizeObserver(onResize).observe(dishBox); new ResizeObserver(onResize).observe(chartBox); } else window.addEventListener('resize', onResize);
+fitCanvases(); newGame();
+window.__hh = function () { return { phase: phase, gen: genNow(), goal: goalIdx, caught: game.hawk.caught, e: game.hawk.energy, n: game.count() }; };
+window.__hhDive = function () {   // test hook: dive at the most visible gopher
+  var best = null, bv = -1; game.gophers.forEach(function (c) { var v = 1 - game.camo(c); if (v > bv) { bv = v; best = c; } }); return game.dive(best);
+};
+requestAnimationFrame(function (t) { lastTs = t; requestAnimationFrame(frame); });
+})();
+</script>
+
+</body></html>
