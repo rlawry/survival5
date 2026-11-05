@@ -198,7 +198,7 @@ td.fgt.chg { color: var(--ink); font-weight: 600; }
 <div class="app">
   <header class="top">
     <h1>Hawk Hunter</h1>
-    <p class="sub">You are the hawk. Click a rodent to dive for it. Survive volcanoes, growing trees and invading eagles, and don’t eat your food supply away.</p>
+    <p class="sub">You are the hawk. Click the ground to hover there, or click a rodent to dive for it. Survive volcanoes, growing trees and invading eagles, and don’t eat your food supply away.</p>
     <div class="run">
       <button type="button" class="btn primary" id="play" disabled>Pause</button>
       <button type="button" class="btn" id="restart">Restart</button>
@@ -339,7 +339,7 @@ function pickMix(rng, mix) { var u = rng(), acc = 0, k; for (k in mix) { acc += 
 function createWorld(rng) {
   var w = { t: 0, ash: 0, ashStart: null, food: [], gophers: [], trees: [], events: [], acc: 0, stats: {}, births: 0, nextTree: TREE.first * GEN,
             hawk: { x: W / 2, y: H / 2, a: 0, state: 'soar', tgt: null, energy: 80, maxE: 100, rest: 0, diveT: 0, caught: 0, misses: 0,
-                    alive: true, wounded: false, T: {}, picks: [], missiles: false },
+                    alive: true, wounded: false, T: {}, picks: [], missiles: false, hover: null },
             inv: null };
   for (var k in HAWK_BASE) w.hawk.T[k] = HAWK_BASE[k];
   Object.keys(TRAITS).forEach(function (tr) { TRAITS[tr].variants.forEach(function (v) { w.stats[tr + ':' + v] = { born: 0, eaten: 0, starved: 0, old: 0 }; }); });
@@ -421,6 +421,11 @@ function createWorld(rng) {
       bird.x += dx / d * stepD; bird.y += dy / d * stepD;
       if (bird.diveT > 3) { bird.state = 'rest'; bird.rest = 0.7; if (isPlayer) bird.misses++; if (tg.genes) ev('escape', tg); bird.tgt = null; }
     }
+  }
+  function hoverAt(bird, hv, dt) {   // fly to the chosen spot, then circle tightly over it
+    var dx = hv.x - bird.x, dy = hv.y - bird.y, d = Math.sqrt(dx * dx + dy * dy);
+    if (d > 18) { bird.a = Math.atan2(dy, dx); var mv = Math.min(d, 230 * dt); bird.x += dx / d * mv; bird.y += dy / d * mv; }
+    else { bird.a += 2.5 * dt; bird.x += Math.cos(bird.a) * 35 * dt; bird.y += Math.sin(bird.a) * 35 * dt; }
   }
   function glide(bird, dt, spd) {
     if (bird.state === 'rest') { bird.rest -= dt; if (bird.rest <= 0) bird.state = 'soar'; }
@@ -528,8 +533,12 @@ function createWorld(rng) {
     }
     if (hk.state === 'dive') {
       if (hk.tgt === w.inv && (w.inv.wounded || hk.wounded || w.inv.state === 'gone')) { hk.state = 'soar'; hk.tgt = null; }
-      else moveDive(hk, T.speed, T.grip, dt, true);
-    } else if (hk.state === 'rest' || hk.state === 'soar') glide(hk, dt, 40);
+      else {
+        moveDive(hk, T.speed, T.grip, dt, true);
+        if (hk.state !== 'dive') hk.hover = { x: Math.max(20, Math.min(W - 20, hk.x)), y: Math.max(20, Math.min(H - 20, hk.y)) };   // stay where the dive ended
+      }
+    } else if (hk.state === 'soar' && hk.hover) hoverAt(hk, hk.hover, dt);
+    else if (hk.state === 'rest' || hk.state === 'soar') glide(hk, dt, 40);
     stepInvader(dt);
     // rodents
     var threats = [];
@@ -559,6 +568,7 @@ function createWorld(rng) {
       if (c.hide > 0) continue;
       if (c.flee > 0) {
         c.flee -= dt; c.handle = 0; c.tgt = null; c.e -= 0.5 * dt;
+        if (c.tree && w.trees.indexOf(c.tree) < 0) c.tree = null;   // that tree burned down
         if (c.tree) {   // climbers run for the nearest tree
           var tx = c.tree.x - c.x, ty = c.tree.y - c.y, td = Math.sqrt(tx * tx + ty * ty);
           c.a = Math.atan2(ty, tx); c.flee = Math.max(c.flee, 0.2);
@@ -681,7 +691,7 @@ function spriteFor(g) {
 /* ---------- goals ---------- */
 var stats = { wins: 0, missileHit: false };
 var GOALS = [
-  { title: 'First catch', text: 'Click a rodent to send your hawk diving. Catch 3 rodents.',
+  { title: 'First catch', text: 'Click empty ground to hover there. Click a rodent to send your hawk diving. Catch 3 rodents.',
     check: function () { return game.hawk.caught >= 3; }, progress: function () { return 'Caught ' + Math.min(3, game.hawk.caught) + ' of 3'; } },
   { title: 'Don’t overhunt', text: 'Finish 3 generations in a row with at least 15 rodents alive and your hawk still alive.',
     check: function () { return goalState.streak >= 3; }, progress: function () { return goalState.streak + ' of 3 generations in a row (now ' + game.count() + ' rodents)'; } },
@@ -760,6 +770,7 @@ function openPanel(html) { panel.innerHTML = html; overlay.hidden = false; var b
 function closePanel() { overlay.hidden = true; playBtn.disabled = false; }
 function showIntro() {
   openPanel('<p class="eyebrow">How to play</p><h2 id="panelTitle">You are the hawk</h2><ul class="rules">' +
+    '<li><b>Click empty ground</b> and your hawk flies there and hovers, so you can wait close to your prey.</li>' +
     '<li><b>Click a rodent</b> and your hawk dives for it. A rodent that sees you coming tries to run. Long legs help it escape.</li>' +
     '<li>Your hawk uses energy all the time, and each rodent you catch refills some. <b>If your energy reaches zero, your hawk dies.</b></li>' +
     '<li>Rodents eat seeds and have babies that inherit their parent’s traits, including how smart they are. Catch them faster than they can reproduce and <b>your food runs out</b>.</li>' +
@@ -827,7 +838,7 @@ function migrateHawk() {
   hawkNum++;
   var hk = game.hawk, T = {};
   for (var k in HAWK_BASE) T[k] = HAWK_BASE[k];
-  var fresh = { x: -30, y: H / 2, a: 0, state: 'soar', tgt: null, energy: 80, rest: 0, diveT: 0, caught: 0, misses: 0, alive: true, wounded: false, T: T, picks: [], missiles: false, fire: false, decoy: false, mReady: 0, fReady: 0 };
+  var fresh = { x: -30, y: H / 2, a: 0, state: 'soar', tgt: null, energy: 80, rest: 0, diveT: 0, caught: 0, misses: 0, alive: true, wounded: false, T: T, picks: [], missiles: false, fire: false, decoy: false, mReady: 0, fReady: 0, hover: null };
   for (k in fresh) hk[k] = fresh[k];
   missiles = []; decoy = null; lastChange = {}; renderTraits();
   if (game.count() === 0) { game.immigrate(2); wipe = { count: 0, at: null }; }
@@ -884,8 +895,11 @@ arenaCv.addEventListener('click', function (e) {
     var tr = null; game.trees.forEach(function (t) { var dx = t.x - gx, dy = t.y - gy; if (dx * dx + dy * dy < (t.r + 6) * (t.r + 6)) tr = t; });
     if (tr) { burnTree(tr); return; }
   }
-  if (!best) { fx.push({ kind: 'click', x: gx, y: gy, age: 0 }); return; }
-  if (game.hidden(best)) { fx.push({ kind: 'hid', x: best.x, y: best.y, age: 0 }); return; }
+  if (!best || game.hidden(best)) {   // empty ground (or a rodent out of reach in a tree): fly there and hover
+    if (best) fx.push({ kind: 'hid', x: best.x, y: best.y, age: 0 });
+    game.hawk.hover = { x: clamp(gx, 20, W - 20), y: clamp(gy, 20, H - 20) };
+    fx.push({ kind: 'click', x: gx, y: gy, age: 0 }); return;
+  }
   if (!game.dive(best)) fx.push({ kind: 'busy', x: gx, y: gy, age: 0 });
 });
 
@@ -987,7 +1001,13 @@ function burnTree(t) {
   game.nextTree = Math.max(game.nextTree, game.t + TREE.every * GEN);   // a new sapling takes a while to sprout
   burning.push({ x: t.x, y: t.y, r: t.r, t: 0, fromX: hk.x, fromY: hk.y });
   var fell = 0;
-  game.gophers.forEach(function (c) { if (c.tree === t) { c.hide = 0; c.tree = null; c.flee = 1; fell++; } });
+  game.gophers.forEach(function (c) {
+    if (c.tree !== t) return;
+    if (c.hide > 0) {   // hiding in this tree: drop to the ground and scatter outward from it
+      var out = Math.atan2(c.y - t.y, c.x - t.x) + (Math.random() - 0.5) * 0.6;
+      c.hide = 0; c.tree = null; c.a = out; c.flee = 1.2; fell++;
+    } else c.tree = null;   // was running toward this tree: it has to find another
+  });
   flashMsg(fell ? 'The tree burns! ' + fell + ' rodent' + (fell > 1 ? 's' : '') + ' fell out' : 'The tree burns!');
 }
 function stepBurning(dt) {
@@ -1155,6 +1175,11 @@ function drawArena() {
   if (sight > 0) {
     actx.strokeStyle = 'rgba(255,255,255,' + (sight > 1 ? 0.75 : 0.4) + ')'; actx.lineWidth = 1.2; actx.beginPath();
     game.gophers.forEach(function (g) { if (!game.hidden(g)) { actx.moveTo(g.x + 15, g.y); actx.arc(g.x, g.y, 15, 0, 6.283); } }); actx.stroke();
+  }
+  if (hk.hover && hk.alive) {
+    var hv = hk.hover; actx.save(); actx.strokeStyle = 'rgba(255,255,255,0.75)'; actx.lineWidth = 1.5; actx.setLineDash([3, 4]);
+    actx.beginPath(); actx.arc(hv.x, hv.y, 16, 0, 6.283); actx.stroke(); actx.setLineDash([]);
+    actx.beginPath(); actx.moveTo(hv.x - 5, hv.y); actx.lineTo(hv.x + 5, hv.y); actx.moveTo(hv.x, hv.y - 5); actx.lineTo(hv.x, hv.y + 5); actx.stroke(); actx.restore();
   }
   if (hk.state === 'dive' && hk.tgt) {
     actx.strokeStyle = hk.tgt === game.inv ? 'rgba(255,90,80,0.95)' : 'rgba(255,211,77,0.9)'; actx.lineWidth = 2; actx.beginPath(); actx.arc(hk.tgt.x, hk.tgt.y, 18, 0, 6.283); actx.stroke();
@@ -1510,6 +1535,9 @@ window.__hhKill = function () { game.hawk.energy = 0.01; };
 window.__hhMut = function (k, v) { game.hawk.T[k] = v; renderTraits(); };
 window.__hhWipe = function () { game.gophers.length = 0; };
 window.__hhGiveDecoy = function () { game.hawk.decoy = true; renderTraits(); };
+window.__hhTreeInfo = function () { return game.trees.map(function (t) { var r = arenaCv.getBoundingClientRect(); return { px: r.left + t.x / W * r.width, py: r.top + t.y / H * r.height, x: t.x, y: t.y, r: t.r, hid: game.gophers.filter(function (c) { return c.tree === t && c.hide > 0; }).length }; }); };
+window.__hhHover = function () { return game.hawk.hover && { x: game.hawk.hover.x, y: game.hawk.hover.y, hx: game.hawk.x, hy: game.hawk.y }; };
+window.__hhRodents = function () { return game.gophers.map(function (c) { return { x: c.x, y: c.y, hide: c.hide }; }); };
 window.__hhSetSpeed = function (v) { speed = v; };
 window.__hhFight = function (k) { if (F) doMove(F.p, k); };
 requestAnimationFrame(function (t) { lastTs = t; requestAnimationFrame(frame); });
