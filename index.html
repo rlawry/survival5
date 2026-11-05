@@ -49,69 +49,69 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--focus); out
 .top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
 .top .sub { flex: 1 1 240px; min-width: 0; margin: 0; color: var(--muted); font-size: 13px; }
 .run { display: flex; gap: 6px; align-items: center; flex: 0 0 auto; }
-.btn { font: 600 13px var(--font-body); padding: 7px 14px; border-radius: 7px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; white-space: nowrap; }
+.btn { font: 600 13px var(--font-body); padding: 7px 14px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; white-space: nowrap; }
 .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
 .btn.big { font-size: 15px; padding: 10px 20px; }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
-.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; }
+.seg { display: inline-flex; border: 1px solid var(--line); overflow: hidden; }
 .seg button { font: 600 12px var(--font-body); padding: 6px 10px; border: 0; background: var(--surface); color: var(--ink); cursor: pointer; }
 .seg button + button { border-left: 1px solid var(--line); }
 .seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
 
 .main { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
 .stage { position: relative; display: flex; flex-direction: column; gap: 8px; min-width: 0; min-height: 0; }
-.dishBox { position: relative; border-radius: 8px; overflow: hidden; background: #CDB98C; aspect-ratio: 1.6; max-width: 100%; display: flex; align-items: center; justify-content: center; transition: background .6s; }
+.dishBox { position: relative; overflow: hidden; background: #CDB98C; aspect-ratio: 1.6; max-width: 100%; display: flex; align-items: center; justify-content: center; transition: background .6s; }
 #arena { display: block; width: 100%; height: 100%; cursor: crosshair; touch-action: manipulation; }
-.hud { position: absolute; top: 8px; left: 8px; display: flex; align-items: center; gap: 10px; padding: 5px 10px; border-radius: 7px; background: rgba(12, 16, 22, 0.82); color: #E6EEF0; font: 500 13px var(--font-data); pointer-events: none; }
-.hud .bar { width: 120px; height: 10px; border-radius: 5px; background: rgba(255,255,255,0.18); overflow: hidden; }
+.hud { position: absolute; top: 8px; left: 8px; display: flex; align-items: center; gap: 10px; padding: 5px 10px; background: rgba(12, 16, 22, 0.82); color: #E6EEF0; font: 500 13px var(--font-data); pointer-events: none; }
+.hud .bar { width: 120px; height: 10px; background: rgba(255,255,255,0.18); overflow: hidden; }
 .hud .bar i { display: block; height: 100%; width: 80%; background: #5FD08D; transition: width .2s; }
 .hud .bar i.low { background: #F0905A; } .hud .bar i.crit { background: #F25C6A; }
-.goalTip { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); max-width: calc(100% - 20px); width: max-content; padding: 7px 12px; border-radius: 7px; background: rgba(12, 16, 22, 0.86); color: #E6EEF0; font-size: 13.5px; text-align: center; pointer-events: none; }
+.goalTip { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); max-width: calc(100% - 20px); width: max-content; padding: 7px 12px; background: rgba(12, 16, 22, 0.86); color: #E6EEF0; font-size: 13.5px; text-align: center; pointer-events: none; }
 .goalTip b { color: #FFD34D; }
 .chartPanel { display: flex; flex-direction: column; gap: 5px; min-height: 0; }
 .chartHead { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
 .chartHead .note { font-size: 12px; color: var(--muted); }
-.tabs { display: inline-flex; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; }
+.tabs { display: inline-flex; border: 1px solid var(--line); overflow: hidden; }
 .tabs button { font: 600 12px var(--font-body); padding: 5px 10px; border: 0; background: var(--surface); color: var(--ink); cursor: pointer; }
 .tabs button + button { border-left: 1px solid var(--line); }
 .tabs button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
 .readout { display: flex; flex-wrap: wrap; gap: 6px; }
-.chip { flex: 1 1 0; min-width: 110px; display: flex; align-items: center; gap: 10px; padding: 5px 12px; border-radius: 8px; background: var(--surface); border: 1px solid var(--line); border-left: 8px solid var(--c); }
+.chip { flex: 1 1 0; min-width: 110px; display: flex; align-items: center; gap: 10px; padding: 5px 12px; background: var(--surface); border: 1px solid var(--line); border-left: 8px solid var(--c); }
 .chip .pc { font: 800 26px/1 var(--font-display); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; min-width: 2.6ch; text-align: right; }
 .chip .nm { display: flex; flex-direction: column; font-size: 12.5px; font-weight: 600; line-height: 1.2; min-width: 0; }
 .chip .nm span { font-weight: 400; color: var(--muted); font-size: 11.5px; }
-.chartBox { position: relative; height: 150px; border-radius: 8px; overflow: hidden; background: #E9EDF1; }
+.chartBox { position: relative; height: 150px; overflow: hidden; background: #E9EDF1; }
 #chart { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
-.overlay { position: absolute; inset: 0; z-index: 5; display: flex; align-items: center; justify-content: center; padding: 12px; background: rgba(6, 10, 14, 0.55); border-radius: 8px; overflow-y: auto; }
-.card { width: min(660px, 100%); max-height: 100%; overflow-y: auto; background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 18px 40px rgba(0,0,0,0.35); }
+.overlay { position: absolute; inset: 0; z-index: 5; display: flex; align-items: center; justify-content: center; padding: 12px; background: rgba(6, 10, 14, 0.55); overflow-y: auto; }
+.card { width: min(660px, 100%); max-height: 100%; overflow-y: auto; background: var(--panel); color: var(--ink); border: 1px solid var(--line); padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 18px 40px rgba(0,0,0,0.35); }
 .card p { margin: 0; }
 .eyebrow { margin: 0; font: 500 12px var(--font-data); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .rules { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 5px; }
 .mut { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-.mcard { text-align: left; font: inherit; color: var(--ink); background: var(--surface); cursor: pointer; border: 1.5px solid var(--line); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
+.mcard { text-align: left; font: inherit; color: var(--ink); background: var(--surface); cursor: pointer; border: 1.5px solid var(--line); padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
 .mcard:hover { background: var(--surface-2); }
 .mcard .nm { font: 700 16px var(--font-display); }
 .mcard .tx { font-size: 13px; color: var(--muted); }
-.chipk { font: 600 11px var(--font-body); letter-spacing: .05em; text-transform: uppercase; padding: 2px 7px; border-radius: 999px; border: 1px solid currentColor; }
+.chipk { font: 600 11px var(--font-body); letter-spacing: .05em; text-transform: uppercase; padding: 2px 7px; border: 1px solid currentColor; }
 .chipk.good { color: var(--good); } .chipk.bad { color: var(--bad); }
 .up { color: var(--good); font-weight: 600; } .down { color: var(--bad); font-weight: 600; }
 .actions { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
 .verdict { font: 800 30px var(--font-display); letter-spacing: -0.02em; line-height: 1.05; }
 #panelTitle:focus { outline: none; }
 
-.side { display: flex; flex-direction: column; gap: 10px; min-width: 0; min-height: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+.side { display: flex; flex-direction: column; gap: 10px; min-width: 0; min-height: 0; background: var(--surface); border: 1px solid var(--line); padding: 12px 14px; }
 .secT { margin: 0 0 4px; font: 600 11px var(--font-body); letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
 .hawkStat { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
-.stat { border: 1px solid var(--line); border-radius: 8px; padding: 5px 8px; }
+.stat { border: 1px solid var(--line); padding: 5px 8px; }
 .stat b { display: block; font: 800 20px/1.1 var(--font-display); font-variant-numeric: tabular-nums; }
 .stat span { font-size: 11.5px; color: var(--muted); }
 .goals { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
 .goals li { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 6px; font-size: 13px; color: var(--muted); align-items: start; }
-.goals li .mk { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--line); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; margin-top: 1px; }
+.goals li .mk { width: 18px; height: 18px; border: 1.5px solid var(--line); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; margin-top: 1px; }
 .goals li.done { color: var(--ink); }
 .goals li.done .mk { background: var(--good); border-color: var(--good); color: #fff; }
-.goals li.cur { color: var(--ink); background: var(--surface-2); border-radius: 7px; padding: 5px 6px; margin: 0 -6px; }
+.goals li.cur { color: var(--ink); background: var(--surface-2); padding: 5px 6px; margin: 0 -6px; }
 .goals li.cur .mk { border-color: var(--accent); background: var(--accent); color: var(--accent-ink); }
 .goals li .gt { font-weight: 600; }
 .goals li .gd { display: block; font-size: 12px; font-weight: 400; color: var(--muted); }
@@ -150,25 +150,46 @@ td.num { text-align: right; font-family: var(--font-data); font-variant-numeric:
 .mut.one { grid-template-columns: 1fr; }
 .mut.four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .mcard.rare { border: 2px solid var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--surface)); }
-.mcard .rk { align-self: flex-start; font: 600 10.5px var(--font-body); letter-spacing: .07em; text-transform: uppercase; padding: 1px 7px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); }
+.mcard .rk { align-self: flex-start; font: 600 10.5px var(--font-body); letter-spacing: .07em; text-transform: uppercase; padding: 1px 7px; background: var(--accent); color: var(--accent-ink); }
 .hud .ok { color: #9FE3B4; } .hud .wait { color: #9AA4AE; } .hud .hot { color: #FFD34D; font-weight: 700; }
 .hud { flex-wrap: wrap; max-width: calc(100% - 16px); }
 .mut.one .mcard { border-color: var(--accent); border-width: 2px; }
-.fight { position: absolute; inset: 0; z-index: 8; display: flex; flex-direction: column; background: #140C10; border-radius: 8px; overflow: hidden; }
+.fight { position: absolute; inset: 0; z-index: 8; display: flex; flex-direction: column; background: #140C10; overflow: hidden; }
 .fight[hidden] { display: none; }
 #fightCv { flex: 1 1 auto; min-height: 0; width: 100%; display: block; }
 .fbar { display: flex; gap: 8px; padding: 8px; background: #22141E; align-items: stretch; flex-wrap: wrap; }
 .fmsg { flex: 1 1 100%; margin: 0; color: #F4D9C0; font: 600 13px var(--font-body); }
 .fbtns { display: flex; gap: 8px; flex: 1 1 auto; flex-wrap: wrap; }
-.fbtn { position: relative; overflow: hidden; flex: 1 1 120px; display: flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 7px 10px 7px 12px; border-radius: 8px; border: 2px solid #F2C230; background: #3A1F2E; color: #FFF; cursor: pointer; font: inherit; text-align: left; }
+.fbtn { position: relative; overflow: hidden; flex: 1 1 120px; display: flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 7px 10px 7px 12px; border: 2px solid #F2C230; background: #3A1F2E; color: #FFF; cursor: pointer; font: inherit; text-align: left; }
 .fbtn b { font: 800 15px var(--font-display); letter-spacing: .01em; }
 .fbtn span { font-size: 11.5px; color: #F4D9C0; }
-.fbtn kbd { position: absolute; top: 6px; right: 8px; font: 600 11px var(--font-data); color: #F2C230; }
+.fbtn { flex-direction: row !important; align-items: center !important; gap: 10px !important; }
+.fbtn kbd { flex: 0 0 auto; min-width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; background: #FFFFFF; color: #140C10; font: 800 20px var(--font-display); box-shadow: 0 3px 0 #9A8A70; }
+.fbtn .ft { display: flex; flex-direction: column; min-width: 0; }
+.fhint { display: block; font-weight: 400; color: #D9C3D2; font-size: 12.5px; }
+.sw { display: inline-block; width: 11px; height: 11px; vertical-align: -1px; margin-left: 4px; border: 1px solid rgba(0,0,0,.3); }
+td.fgt { font-size: 11.5px; color: var(--muted); text-align: right; white-space: nowrap; }
+td.fgt.chg { color: var(--ink); font-weight: 600; }
+.fireBtn { position: absolute; top: 8px; right: 8px; z-index: 3; display: flex; align-items: center; gap: 10px; padding: 7px 12px; border: 2px solid #FFD34D; background: rgba(12,16,22,0.88); color: #FFF; font: inherit; cursor: pointer; text-align: left; max-width: 300px; }
+.fireBtn[hidden] { display: none; }
+.warnBar { position: absolute; left: 50%; bottom: 52px; transform: translateX(-50%); max-width: calc(100% - 20px); width: max-content; padding: 7px 14px; background: #8A5A00; color: #FFF6DC; font-size: 13.5px; text-align: center; pointer-events: none; border: 2px solid #FFD34D; }
+.warnBar.bad { background: #9E2230; border-color: #FFB3B3; }
+.warnBar[hidden] { display: none; }
+.mcard.golden { border: 2px solid #C9A227; background: linear-gradient(135deg, #FFF3C4, #F5D66B); color: #2A2005; }
+.mcard.golden .tx { color: #4A3A10; }
+.mcard.golden .rk { background: #8A6A00; color: #FFF6DC; }
+.fireBtn kbd { font: 800 15px var(--font-display); background: #FFFFFF; color: #140C10; padding: 5px 10px; box-shadow: 0 3px 0 #9A8A70; letter-spacing: .04em; }
+.fireBtn span { display: flex; flex-direction: column; line-height: 1.2; }
+.fireBtn small { font-size: 11.5px; color: #C9D1D9; }
+.fireBtn.wait { border-color: #6A737D; opacity: .8; }
+.fireBtn.hot { background: #C8372D; border-color: #FFE58A; font-size: 16px; animation: firePulse .7s ease-in-out infinite alternate; }
+@keyframes firePulse { from { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,211,77,.7); } to { transform: scale(1.06); box-shadow: 0 0 0 8px rgba(255,211,77,0); } }
+@media (prefers-reduced-motion: reduce) { .fireBtn.hot { animation: none; } }
 .fbtn i { position: absolute; left: 0; bottom: 0; height: 4px; background: #F2C230; width: 0; }
 .fbtn[data-move="missile"] { border-color: #FF6B5E; }
 .fbtn:disabled { opacity: .45; cursor: not-allowed; }
 .fbtn:not(:disabled):hover { background: #52293F; }
-.fend { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(440px, calc(100% - 24px)); background: var(--panel); color: var(--ink); border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 18px 40px rgba(0,0,0,0.5); }
+.fend { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(440px, calc(100% - 24px)); background: var(--panel); color: var(--ink); padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 18px 40px rgba(0,0,0,0.5); }
 .fend[hidden] { display: none; }
 .fend p { margin: 0; }
 @media (max-width: 560px) { .fbtn { flex-basis: 40%; } .fbtn span { display: none; } }
@@ -177,7 +198,7 @@ td.num { text-align: right; font-family: var(--font-data); font-variant-numeric:
 <div class="app">
   <header class="top">
     <h1>Hawk Hunter</h1>
-    <p class="sub">You are the hawk. Click a gopher to dive for it. Survive volcanoes, growing trees and invading eagles, and don’t eat your food supply away.</p>
+    <p class="sub">You are the hawk. Click a rodent to dive for it. Survive volcanoes, growing trees and invading eagles, and don’t eat your food supply away.</p>
     <div class="run">
       <button type="button" class="btn primary" id="play" disabled>Pause</button>
       <button type="button" class="btn" id="restart">Restart</button>
@@ -191,17 +212,19 @@ td.num { text-align: right; font-family: var(--font-data); font-variant-numeric:
   <main class="main">
     <div class="stage">
       <div class="dishBox" id="dishBox">
-        <canvas id="arena" role="img" aria-label="The hunting ground. Gophers with different coat colors, leg lengths, tail patterns and climbing claws look for seeds. Trees grow over time. Click a gopher to send your hawk diving for it, or click an invading eagle to fight it."></canvas>
+        <canvas id="arena" role="img" aria-label="The hunting ground. rodents with different coat colors, leg lengths, tail patterns and climbing claws look for seeds. Trees grow over time. Click a rodent to send your hawk diving for it, or click an invading eagle to fight it."></canvas>
         <div class="hud"><span id="hudGen">Gen 1</span><span>Energy</span><span class="bar"><i id="hudBar"></i></span><span id="hudE">80%</span><span class="wnd" id="hudW" hidden>WOUNDED: eat to 75%</span><span id="hudM" hidden></span><span id="hudF" hidden></span></div>
         <div class="goalTip" id="goalTip"></div>
+        <div class="warnBar" id="warnBar" role="status" hidden></div>
+        <button type="button" class="fireBtn" id="fireBtn" hidden></button>
       </div>
-      <section class="chartPanel" aria-label="Gopher traits">
+      <section class="chartPanel" aria-label="rodent traits">
         <div class="chartHead">
           <div class="tabs" role="group" aria-label="Trait to show" id="tabs"></div>
-          <span class="note">Percent of gophers with each variant</span>
+          <span class="note">Percent of rodents with each variant</span>
         </div>
         <div class="readout" id="readout" aria-live="polite"></div>
-        <div class="chartBox" id="chartBox"><canvas id="chart" role="img" aria-label="Stacked graph of the percent of gophers with each variant over the generations, with the gopher population as a dashed line."></canvas></div>
+        <div class="chartBox" id="chartBox"><canvas id="chart" role="img" aria-label="Stacked graph of the percent of rodents with each variant over the generations, with the rodent population as a dashed line."></canvas></div>
       </section>
       <div class="overlay" id="overlay"><div class="card" id="panel" role="dialog" aria-modal="false" aria-labelledby="panelTitle"></div></div>
       <div class="fight" id="fight" role="dialog" aria-label="Fight with the invading eagle" hidden>
@@ -219,11 +242,11 @@ td.num { text-align: right; font-family: var(--font-data); font-variant-numeric:
 
     <aside class="side" aria-label="Hawk, goals and environment">
       <section>
-        <h3 class="secT">Your hawk</h3>
+        <h3 class="secT" id="hawkTitle">Your hawk</h3>
         <div class="hawkStat">
           <div class="stat"><b id="stCaught">0</b><span>Caught</span></div>
           <div class="stat"><b id="stWins">0</b><span>Fights won</span></div>
-          <div class="stat"><b id="stPop">0</b><span>Gophers left</span></div>
+          <div class="stat"><b id="stPop">0</b><span>rodents left</span></div>
         </div>
       </section>
       <section>
@@ -259,8 +282,8 @@ var TRAITS = {
   climb:  { label: 'Climbing',     variants: ['ground', 'climber'],       names: { ground: 'Can’t climb', climber: 'Climbing claws' } },
   mind:   { label: 'Mind',         variants: ['simple', 'smart', 'wise'], names: { simple: 'Simple mind', smart: 'Smart', wise: 'Very smart' } }
 };
-/* Mind: the chance a climber decides to stay near a tree on each food trip. Hungry gophers take more risks. */
-var MIND = { simple: 0, smart: 0.5, wise: 0.8 }, MIND_UP = 0.035, MIND_DOWN = 0.015, SAFE_R = 3, TRIP = [4, 8];
+/* Mind: the chance a climber decides to stay near a tree on each food trip. Hungry rodents take more risks. */
+var MIND = { simple: 0, smart: 0.5, wise: 0.8 }, MIND_UP = 0.035, MIND_DOWN = 0.015, SAFE_R = 2, TRIP = [4, 8];
 var TONE = { sandy: 0, medium: 0.5, dark: 1 };
 var LEGS = { short: { speed: 42, cost: 0.9, escape: 0.2 }, long: { speed: 52, cost: 1.05, escape: 0.5 } };
 var SEED_E = 24, CELL = 64, CAP_FOOD = 50, CAP_GOPHERS = 200, SEED_RATE = 3.5;
@@ -276,7 +299,7 @@ var HAWK_LIMITS = { speed: [150, 360], grip: [0.5, 1], alert: [50, 200], hunger:
 var HAWK_INFO = [
   { k: 'speed',  label: 'Diving speed',      fmt: function (v) { return Math.round(v); }, better: 1 },
   { k: 'grip',   label: 'Grip',              fmt: function (v) { return Math.round(v * 100) + '%'; }, better: 1 },
-  { k: 'alert',  label: 'Gophers notice at', fmt: function (v) { return Math.round(v); }, better: -1 },
+  { k: 'alert',  label: 'Rodents notice at', fmt: function (v) { return Math.round(v); }, better: -1 },
   { k: 'hunger', label: 'Energy use',        fmt: function (v) { return v.toFixed(1) + '/s'; }, better: -1 },
   { k: 'sight',  label: 'Eyesight',          fmt: function (v) { return ['Blurry', 'Normal', 'Sharp', 'Very sharp'][Math.round(v) + 1]; }, better: 1 }
 ];
@@ -336,6 +359,15 @@ function createWorld(rng) {
   w.freq = function (tr) { var o = {}; TRAITS[tr].variants.forEach(function (v) { o[v] = 0; }); w.gophers.forEach(function (c) { o[c.genes[tr]]++; }); return o; };
   w.camo = function (c) { return camoAt(c.genes.coat, w.ash); };
   w.hidden = function (c) { return c.hide > 0; };
+  w.immigrate = function (n) {   // a few rodents wander in from outside the valley
+    var side = rng() < 0.5 ? 30 : W - 30, y0 = 80 + rng() * (H - 160), out = [];
+    for (var q = 0; q < n; q++) {
+      var genes = { coat: pickMix(rng, { sandy: 1 / 3, medium: 1 / 3, dark: 1 / 3 }), legs: pickMix(rng, { short: 0.5, long: 0.5 }),
+                    stripe: pickMix(rng, { plain: 0.5, striped: 0.5 }), climb: rng() < 0.5 ? 'climber' : 'ground', mind: 'simple' };
+      var c = make(genes, side + (rng() - 0.5) * 20, y0 + (rng() - 0.5) * 30, 95, MATURE + 1); w.gophers.push(c); tally(c, 'born'); out.push(c);
+    }
+    return out;
+  };
   w.startAsh = function () { w.ashStart = w.t; w.ash = 1; ev('ash', null, W / 2, H / 2); };
 
   for (var i = 0; i < 60; i++) spawnFood();
@@ -499,7 +531,7 @@ function createWorld(rng) {
       else moveDive(hk, T.speed, T.grip, dt, true);
     } else if (hk.state === 'rest' || hk.state === 'soar') glide(hk, dt, 40);
     stepInvader(dt);
-    // gophers
+    // rodents
     var threats = [];
     if (hk.state === 'dive' && hk.tgt && hk.tgt.genes) threats.push({ x: hk.x, y: hk.y, r: T.alert });
     if (w.inv && w.inv.state === 'dive') threats.push({ x: w.inv.x, y: w.inv.y, r: w.inv.T.alert });
@@ -516,8 +548,9 @@ function createWorld(rng) {
         var th = threats[q], px = c.x - th.x, py = c.y - th.y;
         if (px * px + py * py < th.r * th.r) {
           if (c.flee <= 0 && c.genes.climb === 'climber' && !c.tree) {
-            c.tree = nearTree(c);
-            if (c.tree) { var ux = c.tree.x - c.x, uy = c.tree.y - c.y; if (ux * ux + uy * uy < c.tree.r * c.tree.r * 9) { ev('climb', c); intoTree(c); c.hide = 4; c.flee = 0; break; } }
+            c.tree = nearTree(c);   // only a tree it can reach: inside the tree's safe zone
+            if (c.tree && !inZone(c.tree, c.x, c.y)) c.tree = null;
+            if (c.tree) { var ux = c.tree.x - c.x, uy = c.tree.y - c.y; if (ux * ux + uy * uy < c.tree.r * c.tree.r) { ev('climb', c); intoTree(c); c.hide = 4; c.flee = 0; break; } }   // already touching it
           }
           c.flee = Math.max(c.flee, 0.6);
           if (!c.tree) turnToward(c, Math.atan2(py, px), 9 * dt);
@@ -529,7 +562,7 @@ function createWorld(rng) {
         if (c.tree) {   // climbers run for the nearest tree
           var tx = c.tree.x - c.x, ty = c.tree.y - c.y, td = Math.sqrt(tx * tx + ty * ty);
           c.a = Math.atan2(ty, tx); c.flee = Math.max(c.flee, 0.2);
-          if (td < c.tree.r * 0.55) { intoTree(c); c.hide = 4; c.flee = 0; ev('climb', c); continue; }
+          if (td < c.tree.r) { intoTree(c); c.hide = 4; c.flee = 0; ev('climb', c); continue; }
         }
         c.x += Math.cos(c.a) * L.speed * 1.4 * dt; c.y += Math.sin(c.a) * L.speed * 1.4 * dt; bounce(c);
       } else if (c.handle > 0) c.handle -= dt;
@@ -591,10 +624,26 @@ function groundCol(a) { return 'rgb(' + SAND.map(function (v, i) { return Math.r
 var VCOL = { coat: { sandy: '#D8C08C', medium: '#9A6B43', dark: '#3F3530' }, legs: { short: '#9E7BD6', long: '#2FA37A' },
              stripe: { plain: '#A3ADB5', striped: '#E2B93B' }, climb: { ground: '#B7BEC6', climber: '#3E7CC8' },
              mind: { simple: '#C9CFD6', smart: '#E39A4C', wise: '#B5487C' } };
-var SEED_COL = '#4E9F3D', HAWK_COL = '#C8372D', EAGLE_COL = '#4B3A78';
+var SEED_COL = '#4E9F3D', EAGLE_COL = '#4B3A78';
+var HAWK_COLORS = [{ name: 'red', body: '#C8372D', wing: '#8E241D' }, { name: 'blue', body: '#2F6FD0', wing: '#1D4A92' }, { name: 'green', body: '#2E9A5A', wing: '#1E6A3D' },
+                   { name: 'orange', body: '#E07B1E', wing: '#9C5212' }, { name: 'teal', body: '#1E9AA6', wing: '#136A73' }, { name: 'pink', body: '#D64C8E', wing: '#962E61' }];
+var hawkNum = 1;
+function hawkCol() { return HAWK_COLORS[(hawkNum - 1) % HAWK_COLORS.length]; }
+/* What each hawk trait does in a fight with an eagle */
+function fightPowers(T) {
+  return { strike: Math.max(2, 10 + 40 * (T.grip - 0.92)), dive: T.speed / 12, dodge: clamp((130 - T.alert) / 200, 0, 0.4),
+           crit: clamp(0.05 + 0.12 * T.sight, 0, 0.35), acc: T.sight < 0 ? 0.8 : 1, recharge: clamp(1.6 / T.hunger, 0.6, 1.8), missiles: 0 };
+}
+function fightText(k, P) {
+  if (k === 'speed') return 'Power dive ' + Math.round(P.dive);
+  if (k === 'grip') return 'Talon strike ' + Math.round(P.strike);
+  if (k === 'alert') return 'Dodge ' + Math.round(P.dodge * 100) + '%';
+  if (k === 'hunger') return 'Recharge ' + Math.round(P.recharge * 100) + '%';
+  return 'Critical hits ' + Math.round(P.crit * 100) + '%' + (P.acc < 1 ? ', misses ' + Math.round((1 - P.acc) * 100) + '%' : '');
+}
 var TRAIT_KEYS = Object.keys(TRAITS);
 
-/* ---------- gopher sprites ---------- */
+/* ---------- rodent sprites ---------- */
 var SPR = { w: 60, h: 44, cx: 26, cy: 22, res: 3 }, cache = {};
 function spriteFor(g) {
   var key = g.coat + g.legs + g.stripe + g.climb + g.mind; if (cache[key]) return cache[key];
@@ -632,21 +681,21 @@ function spriteFor(g) {
 /* ---------- goals ---------- */
 var stats = { wins: 0, missileHit: false };
 var GOALS = [
-  { title: 'First catch', text: 'Click a gopher to send your hawk diving. Catch 3 gophers.',
+  { title: 'First catch', text: 'Click a rodent to send your hawk diving. Catch 3 rodents.',
     check: function () { return game.hawk.caught >= 3; }, progress: function () { return 'Caught ' + Math.min(3, game.hawk.caught) + ' of 3'; } },
-  { title: 'Don’t overhunt', text: 'Finish 3 generations in a row with at least 15 gophers alive and your hawk still alive.',
-    check: function () { return goalState.streak >= 3; }, progress: function () { return goalState.streak + ' of 3 generations in a row (now ' + game.count() + ' gophers)'; } },
-  { title: 'Hard to see', text: 'Keep hunting until one coat color makes up less than 15% of the gophers. Which colors were you catching most?',
+  { title: 'Don’t overhunt', text: 'Finish 3 generations in a row with at least 15 rodents alive and your hawk still alive.',
+    check: function () { return goalState.streak >= 3; }, progress: function () { return goalState.streak + ' of 3 generations in a row (now ' + game.count() + ' rodents)'; } },
+  { title: 'Hard to see', text: 'Keep hunting until one coat color makes up less than 15% of the rodents. Which colors were you catching most?',
     check: function () { var f = game.freq('coat'), n = game.count(); return n > 0 && genNow() > goalState.goalGen && TRAITS.coat.variants.some(function (v) { return f[v] / n < 0.15; }); },
     progress: coatText },
   { title: 'Ash fall', text: 'A volcano has covered the ground in dark ash. The ash will wash away over the next few generations. Keep hunting until the ground is back to normal, and watch the coat colors.',
     start: function () { game.startAsh(); flashMsg('A volcano erupted!'); },
     check: function () { return goalState.ashDone; },
     progress: function () { return 'Ash: ' + Math.round(game.ash * 100) + '% · ' + coatText(); } },
-  { title: 'Hiding in trees', text: 'Trees have grown. Gophers with climbing claws can hide in them, where you can’t catch them. Climbers inside a tree\u2019s dashed circle are close enough to reach it in time. Keep hunting until at least 30% of gophers are climbers.',
+  { title: 'Hiding in trees', text: 'Trees have grown. Rodents with climbing claws can hide in them, where you can’t catch them. Climbers inside a tree\u2019s dashed circle are close enough to reach it in time. Keep hunting until at least 30% of rodents are climbers.',
     check: function () { var n = game.count(); return n > 0 && genNow() > goalState.goalGen && game.freq('climb').climber / n >= 0.3; },
     progress: function () { var n = Math.max(1, game.count()); return 'Climbers: ' + Math.round(100 * game.freq('climb').climber / n) + '% (goal: 30%)'; } },
-  { title: 'Invader', text: 'An invading eagle is hunting your gophers. Click it to attack, or it will come after you. Defeat it twice.',
+  { title: 'Invader', text: 'An invading eagle is hunting your rodents. Click it to attack, or it will come after you. Defeat it twice.',
     start: function () { game.spawnInvader(1); flashMsg('An eagle invades!'); },
     check: function () { return stats.wins >= 2; }, progress: function () { return 'Wins: ' + Math.min(2, stats.wins) + ' of 2' + invText(); } },
   { title: 'Missile strike', text: 'You beat the eagle twice! A rare mutation, air-to-air missiles, will now show up in your mutation choices until you pick it. Then a golden eagle invades: hit it with a missile by pressing the Space bar while it attacks you or while you dive at it.',
@@ -655,7 +704,7 @@ var GOALS = [
       if (!game.hawk.missiles) return 'Watch for the missile mutation (next choice after generation ' + ((Math.floor(genNow() / MUT_EVERY) + 1) * MUT_EVERY) + ')';
       return game.inv && game.inv.level === 2 && game.inv.state !== 'gone' ? 'Golden eagle is here' + invText() + ' \u00b7 press Space when it attacks or you dive at it' : 'The golden eagle is on its way';
     } },
-  { title: 'Smarter gophers', text: 'Climbing claws only help a gopher that is close to a tree (inside the dashed circle). Each trip for food, a gopher decides whether to stay near a tree or wander off. Smarter minds stay close more often, but hungry gophers still take chances. Keep hunting until at least 40% of the gophers are Smart or Very smart.',
+  { title: 'Smarter rodents', text: 'Climbing claws only help a rodent that is close to a tree (inside the dashed circle). Each trip for food, a rodent decides whether to stay near a tree or wander off. Smarter minds stay close more often, but hungry rodents still take chances. Keep hunting until at least 40% of the rodents are Smart or Very smart.',
     check: function () { var n = game.count(), m = game.freq('mind'); return n > 0 && genNow() > goalState.goalGen && (m.smart + m.wise) / n >= 0.4; },
     progress: function () { var n = Math.max(1, game.count()), m = game.freq('mind'); return 'Smart or very smart: ' + Math.round(100 * (m.smart + m.wise) / n) + '% (goal: 40%) \u00b7 open the Mind tab'; } }
 ];
@@ -696,9 +745,9 @@ function checkGoals() {
 /* ---------- state ---------- */
 var game, phase = 'intro', speed = 1, history = [], fx = [], pools = [], view = 'coat', lastRec = -1, lastGenDone = 0, lastChange = {}, deathCause = null;
 function newGame() {
-  game = createWorld(Math.random);
+  game = createWorld(Math.random); hawkNum = 1;
   phase = 'intro'; history = []; fx = []; pools = []; lastRec = -1; lastGenDone = 0; lastChange = {}; deathCause = null;
-  goalIdx = 0; goalState = { goalGen: 0, streak: 0, ashDone: false, spawnAt: null, nextInv: null }; goalsDone = false; stats = { wins: 0, missileHit: false }; missiles = []; burning = []; scorches = [];
+  goalIdx = 0; goalState = { goalGen: 0, streak: 0, ashDone: false, spawnAt: null, nextInv: null, peaceUntil: 0 }; wipe = { count: 0, at: null }; skeletons = []; decoy = null; goalsDone = false; stats = { wins: 0, missileHit: false }; missiles = []; burning = []; scorches = [];
   $('fight').hidden = true;
   record(); renderTabs(); renderTraits(); renderGoals(); updateUI(); drawChart();
   showIntro();
@@ -711,11 +760,11 @@ function openPanel(html) { panel.innerHTML = html; overlay.hidden = false; var b
 function closePanel() { overlay.hidden = true; playBtn.disabled = false; }
 function showIntro() {
   openPanel('<p class="eyebrow">How to play</p><h2 id="panelTitle">You are the hawk</h2><ul class="rules">' +
-    '<li><b>Click a gopher</b> and your hawk dives for it. A gopher that sees you coming tries to run. Long legs help it escape.</li>' +
-    '<li>Your hawk uses energy all the time, and each gopher you catch refills some. <b>If your energy reaches zero, your hawk dies.</b></li>' +
-    '<li>Gophers eat seeds and have babies that inherit their parent’s traits, including how smart they are. Catch them faster than they can reproduce and <b>your food runs out</b>.</li>' +
+    '<li><b>Click a rodent</b> and your hawk dives for it. A rodent that sees you coming tries to run. Long legs help it escape.</li>' +
+    '<li>Your hawk uses energy all the time, and each rodent you catch refills some. <b>If your energy reaches zero, your hawk dies.</b></li>' +
+    '<li>Rodents eat seeds and have babies that inherit their parent’s traits, including how smart they are. Catch them faster than they can reproduce and <b>your food runs out</b>.</li>' +
     '<li>The land will change on its own: volcanoes, growing trees, and invaders. Every ' + MUT_EVERY + ' generations you choose a mutation for your hawk. One in each set is harmful.</li>' +
-    '<li>Follow the <b>Goals</b> list on the right. The big percentages and the graph show how the gopher population changes.</li>' +
+    '<li>Follow the <b>Goals</b> list on the right. The big percentages and the graph show how the rodent population changes.</li>' +
     '</ul><div class="actions"><button type="button" class="btn primary big" data-act="start" data-focus>Start hunting</button></div>');
 }
 var hand = [];
@@ -724,14 +773,16 @@ function showMutation() {
   hand = dealHawkCards(Math.random, game.hawk);
   if (stats.wins >= 2 && !game.hawk.missiles) hand.push(SPECIAL.missile);
   if (genNow() >= 40 && !game.hawk.fire) hand.push(SPECIAL.fire);
+  if (stats.wins >= 3 && !game.hawk.decoy) hand.push(SPECIAL.decoy);
   var h = '<p class="eyebrow">Generation ' + genNow() + ' complete</p><h2 id="panelTitle" tabindex="-1" data-focus>Your hawk’s chicks have new mutations</h2>' +
     '<p>Choose the one that spreads to the next generation of hawks. One of them is harmful.' + (hand.length > 3 ? ' A rare mutation is also on offer. It will keep showing up until you choose it.' : '') + '</p><div class="mut' + (hand.length > 3 ? ' four' : '') + '">';
-  hand.forEach(function (c, i) { h += '<button type="button" class="mcard' + (c.special ? ' rare' : '') + '" data-pick="' + i + '">' + (c.special ? '<span class="rk">Rare</span>' : '') + '<span class="nm">' + c.name + '</span><span class="tx">' + c.text + '</span></button>'; });
+  hand.forEach(function (c, i) { h += '<button type="button" class="mcard' + (c.special ? ' rare' : '') + (c.golden ? ' golden' : '') + '" data-pick="' + i + '">' + (c.special ? '<span class="rk">' + (c.golden ? 'Golden bonus' : 'Rare') + '</span>' : '') + '<span class="nm">' + c.name + '</span><span class="tx">' + c.text + '</span></button>'; });
   openPanel(h + '</div>');
 }
 var SPECIAL = {
   missile: { special: 'missile', name: 'Air-to-air missiles', text: 'Fire a missile at an invading eagle with the Space bar while it attacks you or while you dive at it. Reloads in 8 seconds.' },
-  fire: { special: 'fire', name: 'Fire breath', text: 'Click a tree to burn it down. Gophers hiding in it fall out. Recharges in 12 seconds.' }
+  decoy: { special: 'decoy', golden: true, name: 'Golden decoy', text: 'A golden look-alike hawk follows you. When an eagle comes to attack, the decoy lures it away. Costs a little extra energy all the time.' },
+  fire: { special: 'fire', name: 'Fire breath', text: 'Click a tree to burn it down. Rodents hiding in it fall out. Recharges in 12 seconds.' }
 };
 function pickSpecial(c) {
   var hk = game.hawk, how;
@@ -739,7 +790,10 @@ function pickSpecial(c) {
     hk.missiles = true; hk.mReady = game.t;
     if (!goalsDone && GOALS[goalIdx] && GOALS[goalIdx].title === 'Missile strike' && (!game.inv || game.inv.state === 'gone')) goalState.spawnAt = game.t + GEN * 0.3;
     how = 'Press the <b>Space bar</b> to fire a missile at an eagle that is attacking you (red dashed line) or that you are diving at. A hit wounds the eagle; two hits drive it away.';
-  } else { hk.fire = true; hk.fReady = game.t; how = 'Click a tree to burn it down. Gophers hiding in it fall to the ground where you can catch them. New trees will still grow.'; }
+  } else if (c.special === 'decoy') {
+    hk.decoy = true;
+    how = 'A golden decoy hawk now follows yours. When an eagle comes to attack you, the decoy flies at it and lures it away, then needs ' + DECOY_RELOAD + ' seconds to come back. Keeping it costs ' + DECOY_DRAIN + ' extra energy per second. You can still click an eagle to fight it yourself.';
+  } else { hk.fire = true; hk.fReady = game.t; how = 'Click a tree to burn it down. Rodents hiding in it fall to the ground where you can catch them. New trees will still grow.'; }
   renderTraits(true);
   openPanel('<p class="eyebrow">Rare mutation passed on</p><h2 id="panelTitle">' + c.name + ' <span class="chipk good">Rare</span></h2>' +
     '<p>' + how + '</p><p class="dim">(Real hawks can\u2019t do this. It\u2019s a game reward.)</p><div class="actions"><button type="button" class="btn primary big" data-act="resume" data-focus>Keep hunting</button></div>');
@@ -752,24 +806,39 @@ function pick(i) {
     var info = HAWK_INFO.filter(function (t) { return t.k === k; })[0], a = before[k], b = game.hawk.T[k];
     if (Math.abs(a - b) < 1e-9) return info.label + ' ' + info.fmt(a) + ' (already at its limit)';
     var good = (b - a) * info.better > 0;
-    return info.label + ' ' + info.fmt(a) + ' → <span class="' + (good ? 'up' : 'down') + '">' + info.fmt(b) + (good ? ' ▲' : ' ▼') + '</span>';
+    var Tb = {}; for (var q in game.hawk.T) Tb[q] = game.hawk.T[q]; Tb[k] = a;
+    return info.label + ' ' + info.fmt(a) + ' → <span class="' + (good ? 'up' : 'down') + '">' + info.fmt(b) + (good ? ' ▲' : ' ▼') + '</span>' +
+      '<br><span class="dim">In a fight with an eagle: ' + fightText(k, fightPowers(Tb)) + ' → <span class="' + (good ? 'up' : 'down') + '">' + fightText(k, fightPowers(game.hawk.T)) + '</span></span>';
   });
   openPanel('<p class="eyebrow">Mutation passed on</p><h2 id="panelTitle">' + c.name + ' <span class="chipk ' + (harm ? 'bad' : 'good') + '">' + (harm ? 'Harmful' : 'Helpful') + '</span></h2>' +
     '<p>' + parts.join('; ') + '</p><div class="actions"><button type="button" class="btn primary big" data-act="resume" data-focus>Keep hunting</button></div>');
 }
 function showDeath() {
   phase = 'dead';
-  var n = game.count(), why = deathCause === 'fight' ? 'Your hawk lost a fight while its energy was too low to survive the final blow.'
-    : (n < 8 ? 'Only ' + n + ' gophers were left. Overhunting wiped out your food supply, so your hawk had nothing left to eat.'
-      : 'There were still ' + n + ' gophers, but your hawk did not catch them fast enough to keep its energy up.');
+  var n = game.count(), why = deathCause === 'extinct' ? 'You wiped out the rodents ' + wipe.count + ' times. After ' + MAX_MIGRATIONS + ' pairs had migrated in, no more rodents came to a valley with a hawk that ate them all, and your hawk had no food left.' : deathCause === 'fight' ? 'Your hawk lost a fight while its energy was too low to survive the final blow.'
+    : (n < 8 ? 'Only ' + n + ' rodents were left. Overhunting wiped out your food supply, so your hawk had nothing left to eat.'
+      : 'There were still ' + n + ' rodents, but your hawk did not catch them fast enough to keep its energy up.');
   openPanel('<p class="eyebrow">Generation ' + (genNow() + 1) + '</p><div class="verdict" id="panelTitle">Your hawk died</div><p>' + why + '</p>' +
-    '<p>You caught ' + game.hawk.caught + ' gophers, won ' + stats.wins + ' fights, and completed ' + Math.min(goalIdx, MAIN_GOALS) + ' of ' + MAIN_GOALS + ' goals' + (goalIdx > MAIN_GOALS ? ', and found ' + (goalIdx - MAIN_GOALS) + ' secret goal' + (goalIdx - MAIN_GOALS > 1 ? 's' : '') : '') + '.</p>' +
-    '<div class="actions"><button type="button" class="btn primary big" data-act="again" data-focus>Try again</button></div>');
+    '<p>This hawk caught ' + game.hawk.caught + ' rodents. You have won ' + stats.wins + ' fight' + (stats.wins === 1 ? '' : 's') + ', and completed ' + Math.min(goalIdx, MAIN_GOALS) + ' of ' + MAIN_GOALS + ' goals' + (goalIdx > MAIN_GOALS ? ', and found ' + (goalIdx - MAIN_GOALS) + ' secret goal' + (goalIdx - MAIN_GOALS > 1 ? 's' : '') : '') + '.</p>' +
+    '<p>A new hawk can migrate into the valley. It arrives in a new color with <b>no mutations</b>: the base traits every hawk starts with. The rodents, trees and goals stay just as they are.' + (n < 6 ? (n === 0 ? ' A pair of rodents will migrate in with it.' : ' <b>Warning:</b> only ' + n + ' rodents are left, so food will be scarce.') : '') + '</p>' +
+    '<div class="actions"><button type="button" class="btn big" data-act="again">Start over</button><button type="button" class="btn primary big" data-act="migrate" data-focus>Migrate a new ' + HAWK_COLORS[hawkNum % HAWK_COLORS.length].name + ' hawk</button></div>');
+}
+function migrateHawk() {
+  hawkNum++;
+  var hk = game.hawk, T = {};
+  for (var k in HAWK_BASE) T[k] = HAWK_BASE[k];
+  var fresh = { x: -30, y: H / 2, a: 0, state: 'soar', tgt: null, energy: 80, rest: 0, diveT: 0, caught: 0, misses: 0, alive: true, wounded: false, T: T, picks: [], missiles: false, fire: false, decoy: false, mReady: 0, fReady: 0 };
+  for (k in fresh) hk[k] = fresh[k];
+  missiles = []; decoy = null; lastChange = {}; renderTraits();
+  if (game.count() === 0) { game.immigrate(2); wipe = { count: 0, at: null }; }
+  deathCause = null; updateUI();
+  closePanel(); phase = 'running'; playBtn.textContent = 'Pause';
+  flashMsg('A new ' + hawkCol().name + ' hawk migrates into the valley'); renderGoals();
 }
 function showGoalsDone() {
   phase = 'panel';
   openPanel('<p class="eyebrow">All goals complete</p><div class="verdict" id="panelTitle">Ruler of the valley</div>' +
-    '<p>Your hawk survived ' + genNow() + ' generations, caught ' + game.hawk.caught + ' gophers, and won ' + stats.wins + ' fights. Look back at the graph: the gophers you could see best became rare, the ash favored darker coats for a while, climbing claws spread once there were trees to hide in, and smarter minds spread because gophers that stayed near trees survived more often. You were the <b>selection pressure</b>.</p>' +
+    '<p>Your hawk survived ' + genNow() + ' generations, caught ' + game.hawk.caught + ' rodents, and won ' + stats.wins + ' fights. Look back at the graph: the rodents you could see best became rare, the ash favored darker coats for a while, climbing claws spread once there were trees to hide in, and smarter minds spread because rodents that stayed near trees survived more often. You were the <b>selection pressure</b>.</p>' +
     '<p>The hunt continues. New invaders will keep arriving.</p>' +
     '<div class="actions"><button type="button" class="btn primary big" data-act="resume" data-focus>Keep hunting</button></div>');
 }
@@ -779,6 +848,7 @@ panel.addEventListener('click', function (e) {
   var act = b.dataset.act;
   if (act === 'start' || act === 'resume') { closePanel(); phase = 'running'; playBtn.textContent = 'Pause'; renderGoals(); }
   else if (act === 'again') newGame();
+  else if (act === 'migrate') migrateHawk();
 });
 playBtn.addEventListener('click', function () {
   if (phase === 'running') { phase = 'paused'; playBtn.textContent = 'Resume'; }
@@ -794,6 +864,7 @@ $('speed').addEventListener('click', function (e) {
 
 /* ---------- clicking to hunt ---------- */
 var arenaCv = $('arena');
+$('fireBtn').addEventListener('click', function () { fireMissile(); });
 arenaCv.addEventListener('click', function (e) {
   if (phase !== 'running') return;
   var r = arenaCv.getBoundingClientRect(), gx = (e.clientX - r.left) / r.width * W, gy = (e.clientY - r.top) / r.height * H;
@@ -820,6 +891,55 @@ arenaCv.addEventListener('click', function (e) {
 
 /* ---------- missiles and fire breath ---------- */
 var missiles = [], burning = [], scorches = [], MISSILE_RELOAD = 8, FIRE_RELOAD = 12;
+var PEACE_GENS = 4, SKELETON_GENS = 2, MAX_MIGRATIONS = 2, DECOY_DRAIN = 0.15, DECOY_RELOAD = 15;
+var wipe = { count: 0, at: null }, skeletons = [], decoy = null;
+/* Victory: once an invader is driven out, the valley stays eagle-free for a while */
+function declareVictory() {
+  goalState.peaceUntil = game.t + PEACE_GENS * GEN;
+  flashMsg('Victory! The valley is yours for ' + PEACE_GENS + ' generations');
+}
+function peaceful() { return game.t < goalState.peaceUntil; }
+/* Rodent wipe-outs: a pair migrates in, but only a limited number of times */
+function checkWipeout() {
+  if (game.count() > 0) { wipe.at = null; return; }
+  if (wipe.at === null) {
+    wipe.count++; wipe.at = game.t;
+    if (wipe.count > MAX_MIGRATIONS) flashMsg('No rodents are left, and none will come');
+    else flashMsg('No food exists, be careful!');
+  }
+  if (wipe.count <= MAX_MIGRATIONS && game.t - wipe.at > 3) {
+    game.immigrate(2); wipe.at = null; flashMsg('A pair of rodents migrates in');
+  } else if (wipe.count > MAX_MIGRATIONS && game.t - wipe.at > 4) {
+    game.hawk.energy = 0; game.hawk.alive = false; game.hawk.state = 'dead'; deathCause = 'extinct';
+  }
+}
+/* Golden decoy: follows the hawk and lures attacking eagles away */
+function stepDecoy(dt) {
+  var hk = game.hawk;
+  if (!hk.decoy || !hk.alive) { decoy = null; return; }
+  if (!decoy) decoy = { x: hk.x - 40, y: hk.y, a: 0, ready: 0, lure: null };
+  hk.energy -= DECOY_DRAIN * dt;
+  var iv = game.inv, tx, ty, sp;
+  if (decoy.lure) {   // leading the eagle away
+    decoy.lure.t -= dt;
+    tx = decoy.lure.x; ty = decoy.lure.y; sp = 220;
+    if (iv && iv.state !== 'gone') { var lx = decoy.x - iv.x, ly = decoy.y - iv.y, ld = Math.sqrt(lx * lx + ly * ly) || 1; iv.a = Math.atan2(ly, lx); iv.x += lx / ld * 150 * dt; iv.y += ly / ld * 150 * dt; iv.x = clamp(iv.x, 20, W - 20); iv.y = clamp(iv.y, 20, H - 20); }
+    if (decoy.lure.t <= 0) { decoy.lure = null; decoy.ready = game.t + DECOY_RELOAD; }
+  } else if (iv && iv.state === 'seek' && game.t >= decoy.ready) {
+    tx = iv.x; ty = iv.y; sp = 520;
+    var dx = iv.x - decoy.x, dy = iv.y - decoy.y;
+    var hx = iv.x - hk.x, hy = iv.y - hk.y;
+    if (dx * dx + dy * dy < 34 * 34 || hx * hx + hy * hy < 90 * 90) {   // caught it, or the eagle is about to reach the hawk
+      iv.state = 'rest'; iv.rest = 3.5; iv.tgt = null; iv.challenge = 12;
+      game.events = game.events.filter(function (e) { return e.kind !== 'fight'; }); pendingFight = null;
+      var away = Math.atan2(iv.y - hk.y, iv.x - hk.x);
+      decoy.lure = { t: 3.5, x: clamp(hk.x + Math.cos(away) * 400, 30, W - 30), y: clamp(hk.y + Math.sin(away) * 300, 30, H - 30) };
+      flashMsg('Your golden decoy lures the eagle away!');
+    }
+  } else { tx = hk.x - Math.cos(hk.a) * 46; ty = hk.y - Math.sin(hk.a) * 46 + 14; sp = 300; }
+  var ex = tx - decoy.x, ey = ty - decoy.y, ed = Math.sqrt(ex * ex + ey * ey);
+  if (ed > 1) { var mv = Math.min(ed, sp * dt); decoy.x += ex / ed * mv; decoy.y += ey / ed * mv; decoy.a = Math.atan2(ey, ex); }
+}
 function missileTarget() {
   var hk = game.hawk, iv = game.inv;
   if (!iv || iv.state === 'gone') return null;
@@ -852,7 +972,7 @@ function stepMissiles(dt) {
       if (iv.level > 1) stats.missileHit = true;
       if (hk.tgt === iv) { hk.state = 'soar'; hk.tgt = null; }
       game.events = game.events.filter(function (e) { return e.kind !== 'fight'; }); pendingFight = null;
-      if (iv.energy <= 0 || iv.losses >= 2) { iv.energy = Math.max(0, iv.energy); iv.state = 'gone'; flashMsg('Direct hit! The eagle flees the valley'); }
+      if (iv.energy <= 0 || iv.losses >= 2) { iv.energy = Math.max(0, iv.energy); iv.state = 'gone'; declareVictory(); }
       else { iv.state = 'rest'; iv.rest = 1.2; flashMsg('Direct hit! The eagle is wounded'); }
       return false;
     }
@@ -864,10 +984,11 @@ function burnTree(t) {
   if (game.t < hk.fReady) { flashMsg('Fire breath is recharging'); return; }
   hk.fReady = game.t + FIRE_RELOAD;
   game.trees.splice(game.trees.indexOf(t), 1);
+  game.nextTree = Math.max(game.nextTree, game.t + TREE.every * GEN);   // a new sapling takes a while to sprout
   burning.push({ x: t.x, y: t.y, r: t.r, t: 0, fromX: hk.x, fromY: hk.y });
   var fell = 0;
   game.gophers.forEach(function (c) { if (c.tree === t) { c.hide = 0; c.tree = null; c.flee = 1; fell++; } });
-  flashMsg(fell ? 'The tree burns! ' + fell + ' gopher' + (fell > 1 ? 's' : '') + ' fell out' : 'The tree burns!');
+  flashMsg(fell ? 'The tree burns! ' + fell + ' rodent' + (fell > 1 ? 's' : '') + ' fell out' : 'The tree burns!');
 }
 function stepBurning(dt) {
   burning = burning.filter(function (b) { b.t += dt; if (b.t >= 2) { scorches.push({ x: b.x, y: b.y, r: b.r, t: game.t }); return false; } return true; });
@@ -888,9 +1009,11 @@ function renderTraits(flash) {
     var v = game.hawk.T[t.k], ch = lastChange[t.k], cell;
     if (ch !== undefined && Math.abs(ch - v) > 1e-9) { var good = (v - ch) * t.better > 0; cell = '<td class="num' + (flash ? ' flash' : '') + '"><span class="' + (good ? 'up' : 'down') + '">' + t.fmt(v) + (good ? ' ▲' : ' ▼') + '</span></td>'; }
     else cell = '<td class="num">' + t.fmt(v) + '</td>';
-    return '<tr><td>' + t.label + '</td>' + cell + '</tr>';
-  }).join('') + (game.hawk.missiles ? '<tr><td>Air-to-air missiles</td><td class="num"><span class="up">Yes</span></td></tr>' : '') +
-    (game.hawk.fire ? '<tr><td>Fire breath</td><td class="num"><span class="up">Yes</span></td></tr>' : '');
+    var P = fightPowers(game.hawk.T), B = fightPowers(HAWK_BASE), ft = fightText(t.k, P), fb = fightText(t.k, B);
+    return '<tr><td>' + t.label + '</td>' + cell + '<td class="fgt' + (ft !== fb ? ' chg' : '') + '">' + ft + '</td></tr>';
+  }).join('') + (game.hawk.missiles ? '<tr><td>Air-to-air missiles</td><td class="num"><span class="up">Yes</span></td><td class="fgt">Missile ' + MISSILE_DMG + '</td></tr>' : '') +
+    (game.hawk.decoy ? '<tr><td>Golden decoy</td><td class="num"><span class="up">Yes</span></td><td class="fgt">+' + DECOY_DRAIN + '/s energy</td></tr>' : '') +
+    (game.hawk.fire ? '<tr><td>Fire breath</td><td class="num"><span class="up">Yes</span></td><td class="fgt">Burns trees</td></tr>' : '');
 }
 function renderTabs() { $('tabs').innerHTML = TRAIT_KEYS.map(function (tr) { return '<button type="button" data-tr="' + tr + '" aria-pressed="' + (tr === view) + '">' + TRAITS[tr].label + '</button>'; }).join(''); }
 $('tabs').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; view = b.dataset.tr; renderTabs(); updateUI(); drawChart(); });
@@ -899,21 +1022,32 @@ function updateUI() {
   bar.style.width = e + '%'; bar.className = e < 20 ? 'crit' : (e < 40 ? 'low' : '');
   $('hudE').textContent = e + '%'; $('hudGen').textContent = 'Gen ' + (genNow() + 1);
   $('hudW').hidden = !hk.wounded;
-  var hm = $('hudM'); hm.hidden = !hk.missiles;
+  var hm = $('hudM'); hm.hidden = true;
   if (hk.missiles) { var mr = game.t >= hk.mReady; hm.textContent = mr ? (missileTarget() ? 'MISSILE: press Space!' : 'Missile ready') : 'Missile reloading'; hm.className = mr ? (missileTarget() ? 'hot' : 'ok') : 'wait'; }
   var hf = $('hudF'); hf.hidden = !hk.fire;
   if (hk.fire) { var fr = game.t >= hk.fReady; hf.textContent = fr ? 'Fire breath ready: click a tree' : 'Fire recharging'; hf.className = fr ? 'ok' : 'wait'; }
+  $('hawkTitle').innerHTML = 'Your hawk' + (hawkNum > 1 ? ' #' + hawkNum : '') + ' <i class="sw" style="background:' + hawkCol().body + '"></i>';
+  var fb = $('fireBtn'), tgt = hk.missiles ? missileTarget() : null, rdy = hk.missiles && game.t >= hk.mReady;
+  fb.hidden = !hk.missiles || phase === 'fight';
+  if (hk.missiles) {
+    fb.className = 'fireBtn' + (rdy && tgt ? ' hot' : rdy ? '' : ' wait');
+    fb.innerHTML = '<kbd>SPACE</kbd><span>' + (rdy && tgt ? '<b>FIRE MISSILE NOW!</b>' : rdy ? '<b>Missile ready</b><small>Fire when an eagle attacks you or you dive at it</small>' : '<b>Missile reloading</b><small>' + Math.ceil(hk.mReady - game.t) + ' s</small>') + '</span>';
+  }
+  var wb = $('warnBar'), nn = game.count();
+  if (phase !== 'fight' && nn === 0) { wb.hidden = false; wb.className = 'warnBar bad'; wb.innerHTML = '<b>No food exists, be careful!</b> ' + (wipe.count > MAX_MIGRATIONS ? 'No more rodents will come. Your hawk will die.' : 'A pair of rodents is migrating in. Wipe-outs: ' + wipe.count + ' of ' + MAX_MIGRATIONS + ' allowed. Wipe them out again and none will come.'); }
+  else if (phase !== 'fight' && nn <= 4) { wb.hidden = false; wb.className = 'warnBar'; wb.innerHTML = '<b>Only ' + nn + ' rodent' + (nn > 1 ? 's' : '') + ' left!</b> Let them breed before you hunt.' + (wipe.count ? ' Wipe-outs so far: ' + wipe.count + ' of ' + MAX_MIGRATIONS + '.' : ''); }
+  else wb.hidden = true;
   $('stCaught').textContent = hk.caught; $('stWins').textContent = stats.wins; $('stPop').textContent = game.count();
   var big = game.trees.filter(function (t) { return t.r >= TREE.hideMin; }).length, iv = game.inv, invS;
   if (!iv) invS = 'None';
-  else if (iv.state === 'gone') invS = 'Left the valley';
+  else if (iv.state === 'gone') invS = peaceful() ? 'Victory! No eagles for ' + Math.max(1, Math.ceil((goalState.peaceUntil - game.t) / GEN)) + ' more gen' + (Math.ceil((goalState.peaceUntil - game.t) / GEN) > 1 ? 's' : '') : 'Left the valley';
   else invS = (iv.level > 1 ? 'Golden eagle' : 'Eagle') + ': ' + (iv.wounded ? 'wounded, ' : '') + Math.round(iv.energy) + '% energy';
   $('envGround').textContent = game.ash > 0.02 ? 'Volcanic ash, ' + Math.round(game.ash * 100) + '% covered' : 'Light sand';
   $('envTrees').textContent = game.trees.length ? game.trees.length + (big < game.trees.length ? ' (' + (game.trees.length - big) + ' still growing)' : '') : 'None yet';
   $('envInv').textContent = invS;
   var n = game.count(), f = game.freq(view);
   $('readout').innerHTML = TRAITS[view].variants.map(function (v) {
-    return '<div class="chip" style="--c:' + VCOL[view][v] + '"><span class="pc">' + (n ? Math.round(100 * f[v] / n) : 0) + '%</span><span class="nm">' + TRAITS[view].names[v] + '<span>' + f[v] + ' of ' + n + ' gophers</span></span></div>';
+    return '<div class="chip" style="--c:' + VCOL[view][v] + '"><span class="pc">' + (n ? Math.round(100 * f[v] / n) : 0) + '%</span><span class="nm">' + TRAITS[view].names[v] + '<span>' + f[v] + ' of ' + n + ' rodents</span></span></div>';
   }).join('');
 }
 
@@ -937,7 +1071,7 @@ function birdPath(ctx, eagle) {
 }
 function drawBird(x, y, a, scale, alpha, eagle, wounded) {
   actx.save(); actx.translate(x, y); actx.rotate(a); actx.scale(scale, scale); actx.globalAlpha = alpha;
-  actx.fillStyle = eagle ? EAGLE_COL : HAWK_COL; actx.strokeStyle = eagle ? '#E8D8FF' : 'rgba(255,255,255,0.9)'; actx.lineWidth = 1.6;
+  actx.fillStyle = eagle ? EAGLE_COL : hawkCol().body; actx.strokeStyle = eagle ? '#E8D8FF' : 'rgba(255,255,255,0.9)'; actx.lineWidth = 1.6;
   birdPath(actx, eagle); actx.fill(); actx.stroke();
   actx.fillStyle = eagle ? '#F2F2F2' : '#FFD34D'; actx.beginPath(); actx.arc(eagle ? 13 : 11, 0, eagle ? 3 : 1.6, 0, 6.283); actx.fill();
   if (wounded) { actx.fillStyle = '#FFFFFF'; actx.fillRect(-6, -2, 12, 4); actx.fillRect(-2, -6, 4, 12); actx.fillStyle = '#E0483A'; actx.fillRect(-4, -1, 8, 2); actx.fillRect(-1, -4, 2, 8); }
@@ -958,6 +1092,20 @@ function drawArena() {
   actx.restore();
   // tree trunks and shade
   game.trees.forEach(function (t) { actx.fillStyle = 'rgba(0,0,0,0.12)'; actx.beginPath(); actx.arc(t.x + 6, t.y + 8, t.r, 0, 6.283); actx.fill(); });
+  skeletons = skeletons.filter(function (sk) { return game.t - sk.t < SKELETON_GENS * GEN; });
+  skeletons.forEach(function (sk) {
+    var age = (game.t - sk.t) / (SKELETON_GENS * GEN), al = age < 0.75 ? 0.9 : 0.9 * (1 - age) / 0.25;
+    actx.save(); actx.translate(sk.x, sk.y); actx.rotate(sk.a); actx.scale(1.5, 1.5); actx.globalAlpha = al;
+    actx.shadowColor = 'rgba(20,14,8,0.9)'; actx.shadowBlur = 2;
+    actx.strokeStyle = '#F4F0E6'; actx.fillStyle = '#F4F0E6'; actx.lineWidth = 1.4; actx.lineCap = 'round';
+    actx.beginPath(); actx.moveTo(-9, 0); actx.lineTo(6, 0); actx.stroke();   // spine
+    for (var rb = -6; rb <= 3; rb += 3) { actx.beginPath(); actx.moveTo(rb, -3.6); actx.quadraticCurveTo(rb + 1.5, 0, rb, 3.6); actx.stroke(); }   // ribs
+    actx.beginPath(); actx.moveTo(-9, 0); actx.quadraticCurveTo(-13, 2, -16, 0); actx.stroke();   // tail
+    actx.beginPath(); actx.ellipse(9.5, 0, 3.6, 3, 0, 0, 6.283); actx.fill();   // skull
+    actx.fillStyle = 'rgba(30,24,18,0.85)'; actx.beginPath(); actx.arc(10.5, -1.2, 0.8, 0, 6.283); actx.arc(10.5, 1.2, 0.8, 0, 6.283); actx.fill();
+    actx.restore();
+  });
+  actx.globalAlpha = 1;
   for (i = 0; i < pools.length; i++) {
     var pl = pools[i], fade = 1 - (game.t - pl.t) / 14; if (fade <= 0) continue;
     actx.globalAlpha = 0.5 * fade; actx.fillStyle = pl.col; actx.beginPath();
@@ -974,7 +1122,7 @@ function drawArena() {
     actx.drawImage(spriteFor(c.genes), ox, oy, sw, sh);
   }
   actx.setTransform(s, 0, 0, s, 0, 0); actx.globalAlpha = 1;
-  // tree canopies, with hidden gophers peeking through
+  // tree canopies, with hidden rodents peeking through
   game.trees.forEach(function (t) {
     var g = actx.createRadialGradient(t.x - t.r * 0.3, t.y - t.r * 0.3, t.r * 0.1, t.x, t.y, t.r);
     g.addColorStop(0, '#5FA05A'); g.addColorStop(1, '#2F6B3A');
@@ -1025,7 +1173,15 @@ function drawArena() {
     actx.fillStyle = '#FFB347'; actx.beginPath(); actx.moveTo(-9, -2); actx.lineTo(-15, 0); actx.lineTo(-9, 2); actx.fill(); actx.restore();
   });
   var mt = game.hawk.missiles && game.t >= hk.mReady ? missileTarget() : null;
-  if (mt) { actx.strokeStyle = '#FF5A50'; actx.lineWidth = 2; var rr2 = 26 + (reduceMotion ? 0 : Math.sin(game.t * 10) * 3); actx.beginPath(); actx.arc(mt.x, mt.y, rr2, 0, 6.283); actx.moveTo(mt.x - rr2 - 6, mt.y); actx.lineTo(mt.x - rr2 + 6, mt.y); actx.moveTo(mt.x + rr2 - 6, mt.y); actx.lineTo(mt.x + rr2 + 6, mt.y); actx.stroke(); }
+  if (mt) { actx.strokeStyle = '#FF5A50'; actx.lineWidth = 2; var rr2 = 26 + (reduceMotion ? 0 : Math.sin(game.t * 10) * 3); actx.beginPath(); actx.arc(mt.x, mt.y, rr2, 0, 6.283); actx.moveTo(mt.x - rr2 - 6, mt.y); actx.lineTo(mt.x - rr2 + 6, mt.y); actx.moveTo(mt.x + rr2 - 6, mt.y); actx.lineTo(mt.x + rr2 + 6, mt.y); actx.stroke();
+    actx.font = '800 16px "Bricolage Grotesque", sans-serif'; actx.textAlign = 'center'; var lbl = 'PRESS SPACE!', lw = actx.measureText(lbl).width;
+    actx.fillStyle = 'rgba(12,16,22,0.85)'; actx.fillRect(mt.x - lw / 2 - 8, mt.y - rr2 - 30, lw + 16, 22); actx.fillStyle = '#FFD34D'; actx.fillText(lbl, mt.x, mt.y - rr2 - 13); }
+  if (decoy) {
+    var dg = decoy.lure ? 1 : (game.t >= decoy.ready ? 0.95 : 0.5);
+    actx.save(); actx.globalAlpha = 0.35 * dg; actx.fillStyle = '#FFD34D'; actx.beginPath(); actx.arc(decoy.x, decoy.y, 20, 0, 6.283); actx.fill(); actx.restore();
+    actx.save(); actx.translate(decoy.x, decoy.y); actx.rotate(decoy.a); actx.globalAlpha = dg;
+    actx.fillStyle = '#E8B923'; actx.strokeStyle = '#FFF6C8'; actx.lineWidth = 1.5; birdPath(actx, false); actx.fill(); actx.stroke(); actx.restore();
+  }
   if (hk.state !== 'dead') drawBird(hk.x, hk.y, hk.a, hk.state === 'dive' ? 1.1 : 1.35, hk.state === 'rest' || hk.wounded ? 0.75 : 1, false, hk.wounded);
   for (i = 0; i < fx.length; i++) {
     var e = fx[i];
@@ -1048,6 +1204,7 @@ function stepFx(dtReal) {
     if (e.kind === 'eaten') {
       var bl = []; for (var q = 0; q < 6; q++) { var an = Math.random() * 6.283, d = Math.random() * 7; bl.push([Math.cos(an) * d, Math.sin(an) * d, 4 + Math.random() * 6]); }
       pools.push({ x: e.x, y: e.y, col: VCOL.coat[e.genes.coat], t: game.t, b: bl });
+      skeletons.push({ x: e.x, y: e.y, a: Math.random() * 6.283, t: game.t }); if (skeletons.length > 80) skeletons.shift();
     } else if (e.kind === 'fight') pendingFight = e.extra === 'invader' ? 'invader' : 'player';
     else if (e.kind === 'ashgone') goalState.ashDone = true;
     else if (e.kind === 'healed') flashMsg('Your hawk has recovered');
@@ -1085,17 +1242,18 @@ function drawChart() {
   history.forEach(function (h, i) { var x = X(h.gen), y = T + ph - h.n / maxN * ph; if (i === 0) cctx.moveTo(x, y); else cctx.lineTo(x, y); });
   cctx.stroke(); cctx.restore();
   cctx.fillStyle = '#161D26'; cctx.textAlign = 'left'; cctx.fillText(String(maxN), L + pw + 6, T + 4); cctx.fillText('0', L + pw + 6, T + ph);
-  cctx.save(); cctx.translate(VW - 7, T + ph / 2); cctx.rotate(-Math.PI / 2); cctx.textAlign = 'center'; cctx.fillText('- - gophers', 0, 0); cctx.restore();
+  cctx.save(); cctx.translate(VW - 7, T + ph / 2); cctx.rotate(-Math.PI / 2); cctx.textAlign = 'center'; cctx.fillText('- - rodents', 0, 0); cctx.restore();
 }
 
 /* ================= FIGHT ================= */
 var fightEl = $('fight'), fcv = $('fightCv'), fctx = fcv.getContext('2d'), FW = 900, FH = 420, F = null;
 var MOVES = {
-  strike:  { label: 'Talon strike', key: 'J', wind: 0.18, total: 0.5,  cd: 0.65 },
-  dive:    { label: 'Power dive',   key: 'K', wind: 0.6,  total: 1.0,  cd: 2.6 },
-  guard:   { label: 'Wing guard',   key: 'L', wind: 0,    total: 0.8,  cd: 0.4 },
-  missile: { label: 'Missile',      key: 'M', wind: 0.3,  total: 0.8,  cd: 99 }
+  strike:  { label: 'Talon strike', key: 'J', wind: 0.35, total: 0.9, cd: 1.3 },
+  dive:    { label: 'Power dive',   key: 'K', wind: 0.9,  total: 1.5, cd: 3.6 },
+  guard:   { label: 'Wing guard',   key: 'L', wind: 0,    total: 1.3, cd: 1.4 },
+  missile: { label: 'Missile',      key: 'M', wind: 0.4,  total: 1.0, cd: 99 }
 };
+var MISSILE_DMG = 38;
 function fitFight() {
   var r = fcv.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1);
   if (r.width < 2) return;
@@ -1104,42 +1262,46 @@ function fitFight() {
 function fighter(name, hp, side, st) {
   return { name: name, hp: hp, side: side, act: null, actT: 0, hitDone: false, cd: { strike: 0, dive: 0, guard: 0, missile: 0 }, flash: 0, shake: 0, used: {}, st: st };
 }
+function eagleStats(lvl) { return { strike: 8 + 3 * lvl, dive: 16 + 6 * lvl, dodge: 0.08 + 0.06 * lvl, crit: 0.08, acc: 1, recharge: 1, missiles: 0 }; }
 function startFight(who) {
-  var hk = game.hawk, iv = game.inv, T = hk.T, lvl = iv.level;
+  var hk = game.hawk, iv = game.inv, lvl = iv.level, st = fightPowers(hk.T);
+  st.missiles = hk.missiles && game.t >= hk.mReady ? 1 : 0;
   phase = 'fight';
   F = { t: 0, over: null, overT: 0, floats: [], shots: [], who: who, lvl: lvl,
-    p: fighter('YOUR HAWK', hk.energy, -1, { strike: 4 + 9 * T.grip, dive: 6 + T.speed / 18, dodge: clamp((150 - T.alert) / 250, 0.04, 0.4),
-                                            crit: Math.max(0.03, 0.08 + 0.1 * T.sight), acc: T.sight < 0 ? 0.85 : 1, missiles: 0 }),
-    e: fighter(lvl > 1 ? 'GOLDEN EAGLE' : 'INVADING EAGLE', iv.energy, 1, { strike: 10 + 3 * lvl, dive: 18 + 6 * lvl, dodge: 0.1 + 0.05 * lvl, crit: 0.08, acc: 1, missiles: 0 }),
-    think: 1.6 };
+    p: fighter('YOUR HAWK', hk.energy, -1, st),
+    e: fighter(lvl > 1 ? 'GOLDEN EAGLE' : 'INVADING EAGLE', iv.energy, 1, eagleStats(lvl)),
+    think: 2.6 };
   fightEl.hidden = false; fitFight(); renderFightButtons();
-  $('fightMsg').textContent = who === 'invader' ? 'The eagle attacked you!' : 'You attacked the eagle!';
+  $('fightMsg').innerHTML = (who === 'invader' ? 'The eagle attacked you!' : 'You attacked the eagle!') +
+    ' <span class="fhint">Your hawk’s traits set its powers (left). Evolve better traits to hit harder, dodge more and recharge faster.</span>';
   $('fightEnd').hidden = true;
 }
 function renderFightButtons() {
-  var order = ['strike', 'dive', 'guard'].concat(F.p.st.missiles ? ['missile'] : []);
+  var st = F.p.st, order = ['strike', 'dive', 'guard'].concat(game.hawk.missiles ? ['missile'] : []);
   $('fightBtns').innerHTML = order.map(function (k) {
-    var m = MOVES[k], extra = k === 'strike' ? Math.round(F.p.st.strike) + ' damage' : k === 'dive' ? Math.round(F.p.st.dive) + ' damage, slow' : k === 'guard' ? 'blocks 75%' : '38 damage, can’t be blocked';
-    return '<button type="button" class="fbtn" data-move="' + k + '"><b>' + m.label + '</b><span>' + extra + '</span><kbd>' + m.key + '</kbd><i></i></button>';
+    var m = MOVES[k], extra = k === 'strike' ? Math.round(st.strike) + ' damage' : k === 'dive' ? Math.round(st.dive) + ' damage, slow' : k === 'guard' ? 'blocks 75%' : (st.missiles ? MISSILE_DMG + ' damage, can’t be blocked' : 'still reloading');
+    return '<button type="button" class="fbtn" data-move="' + k + '"><kbd>' + m.key + '</kbd><span class="ft"><b>' + m.label + '</b><span>' + extra + '</span></span><i></i></button>';
   }).join('');
 }
-function canAct(f) { return !F.over && F.t > 1.4 && !f.act; }
+function canAct(f) { return !F.over && F.t > 2.2 && !f.act; }
 function doMove(f, k) {
   if (!canAct(f) || f.cd[k] > 0) return false;
   if (k === 'missile' && (f.st.missiles <= 0 || f.used.missile)) return false;
-  f.act = k; f.actT = 0; f.hitDone = false; f.cd[k] = MOVES[k].cd; if (k === 'missile') f.used.missile = true;
+  f.act = k; f.actT = 0; f.hitDone = false; f.cd[k] = MOVES[k].cd / (f.st.recharge || 1);
+  if (k === 'missile') { f.used.missile = true; if (f === F.p) game.hawk.mReady = game.t + MISSILE_RELOAD; }
   return true;
 }
-function floatTxt(f, txt, col) { F.floats.push({ x: f.side < 0 ? 0.28 : 0.72, y: 0.42, t: 0, txt: txt, col: col }); }
+function floatTxt(f, txt, col) { F.floats.push({ x: f.side < 0 ? 0.28 : 0.72, y: 0.46, t: 0, txt: txt, col: col }); }
 function resolveHit(att, def, k) {
   var st = att.st;
   if (k !== 'missile' && Math.random() < def.st.dodge) { floatTxt(def, 'DODGE', '#9FE3FF'); return; }
   if (k !== 'missile' && Math.random() > st.acc) { floatTxt(def, 'MISS', '#CCCCCC'); return; }
-  var dmg = k === 'missile' ? 38 : st[k], crit = k !== 'missile' && Math.random() < st.crit;
-  if (crit) dmg *= 1.5;
+  var dmg = k === 'missile' ? MISSILE_DMG : st[k], crit = k !== 'missile' && Math.random() < st.crit;
+  if (crit) dmg *= 1.75;
   if (k !== 'missile' && def.act === 'guard') { dmg *= 0.25; floatTxt(def, 'BLOCK', '#FFE58A'); }
-  dmg = Math.round(dmg); def.hp -= dmg; def.flash = 0.25; def.shake = 0.3;
-  floatTxt(def, (crit ? 'CRIT ' : '') + '-' + dmg, crit ? '#FFD34D' : '#FF6B5E');
+  if (k === 'missile' && att === F.p && F.lvl > 1) stats.missileHit = true;
+  dmg = Math.round(dmg); def.hp -= dmg; def.flash = 0.3; def.shake = 0.35;
+  floatTxt(def, (k === 'missile' ? 'MISSILE ' : crit ? 'CRITICAL ' : '') + '-' + dmg, crit || k === 'missile' ? '#FFD34D' : '#FF6B5E');
   if (def.hp <= 15 && !F.over) { F.over = att === F.p ? 'player' : 'invader'; F.overT = 0; F.killed = def.hp <= 0; }
 }
 function stepFighter(f, o, dt) {
@@ -1161,29 +1323,29 @@ function enemyThink() {
   if (p.act === 'dive' && p.actT < MOVES.dive.wind && r < 0.6) k = 'guard';
   else if (r < 0.55) k = 'strike'; else if (r < 0.8 && e.cd.dive <= 0) k = 'dive'; else k = 'guard';
   doMove(e, k);
-  F.think = F.t + 0.55 + Math.random() * 0.6 - 0.06 * F.lvl;
+  F.think = F.t + 1.0 + Math.random() * 0.9 - 0.1 * F.lvl;
 }
 function stepFight(dt) {
   if (!F) return;
   F.t += dt;
   if (!F.over) {
     enemyThink(); stepFighter(F.p, F.e, dt); stepFighter(F.e, F.p, dt);
-    F.shots = F.shots.filter(function (s) { s.t += dt; if (s.t >= 0.5) { resolveHit(s.from, s.to, 'missile'); return false; } return true; });
+    F.shots = F.shots.filter(function (s) { s.t += dt; if (s.t >= 0.8) { resolveHit(s.from, s.to, 'missile'); return false; } return true; });
   } else {
     F.overT += dt;
-    if (F.overT > 1.4 && $('fightEnd').hidden) showFightEnd();
+    if (F.overT > 2 && $('fightEnd').hidden) showFightEnd();
   }
-  F.floats = F.floats.filter(function (fl) { fl.t += dt; return fl.t < 1; });
-  // cooldown display on buttons
+  F.floats = F.floats.filter(function (fl) { fl.t += dt; return fl.t < 1.4; });
   [].forEach.call(document.querySelectorAll('.fbtn'), function (b) {
-    var k = b.dataset.move, cdv = F.p.cd[k], m = MOVES[k], dis = !canAct(F.p) || cdv > 0 || (k === 'missile' && F.p.used.missile);
-    b.disabled = dis; b.querySelector('i').style.width = (cdv > 0 && m.cd < 50 ? Math.min(100, 100 * cdv / m.cd) : 0) + '%';
+    var k = b.dataset.move, cdv = F.p.cd[k], m = MOVES[k], cdMax = m.cd / (F.p.st.recharge || 1),
+        dis = !canAct(F.p) || cdv > 0 || (k === 'missile' && (F.p.used.missile || !F.p.st.missiles));
+    b.disabled = dis; b.querySelector('i').style.width = (cdv > 0 && m.cd < 50 ? Math.min(100, 100 * cdv / cdMax) : 0) + '%';
   });
 }
 function showFightEnd() {
   var win = F.over === 'player', killed = F.killed, txt;
   if (win) txt = killed ? 'The eagle was badly hurt and fled the valley for good.' : 'You won! The eagle is wounded and can’t fight until it eats and recovers to 75% energy.';
-  else txt = killed ? 'Your hawk had too little energy to survive the fight.' : 'You lost. Your hawk is wounded: eat gophers until your energy is back to 75% before you can fight again.';
+  else txt = killed ? 'Your hawk had too little energy to survive the fight.' : 'You lost. Your hawk is wounded: eat rodents until your energy is back to 75% before you can fight again. Better traits from mutations will make your next fight easier.';
   $('fightEndTxt').textContent = txt;
   $('fightEnd').hidden = false; $('fightGo').focus({ preventScroll: true });
 }
@@ -1191,6 +1353,7 @@ $('fightGo').addEventListener('click', function () {
   var win = F.over === 'player';
   game.fightOutcome(win ? 'player' : 'invader', Math.round(win ? Math.max(30, F.p.hp) : (!F.killed ? Math.max(20, F.p.hp) : F.p.hp)), Math.round(F.e.hp));
   if (win) stats.wins++;
+  if (win && game.inv && game.inv.state === 'gone') declareVictory();
   fightEl.hidden = true; F = null;
   if (!game.hawk.alive) { deathCause = 'fight'; updateUI(); showDeath(); return; }
   phase = 'running'; renderTraits(); updateUI(); checkGoals(); renderGoals();
@@ -1198,34 +1361,43 @@ $('fightGo').addEventListener('click', function () {
 $('fightBtns').addEventListener('click', function (e) { var b = e.target.closest('.fbtn'); if (b && F) doMove(F.p, b.dataset.move); });
 document.addEventListener('keydown', function (e) {
   if (!F || F.over) return;
-  var map = { j: 'strike', k: 'dive', l: 'guard', '1': 'strike', '2': 'dive', '3': 'guard' }, k = map[e.key.toLowerCase()];
+  var map = { j: 'strike', k: 'dive', l: 'guard', m: 'missile', ' ': 'missile', '1': 'strike', '2': 'dive', '3': 'guard', '4': 'missile' }, k = map[e.key.toLowerCase()];
   if (k) { e.preventDefault(); doMove(F.p, k); }
 });
 function drawFightBird(x, y, flip, eagle, f, scale) {
   fctx.save(); fctx.translate(x, y); fctx.scale(flip * scale, scale);
-  var bob = reduceMotion ? 0 : Math.sin(F.t * 6 + (eagle ? 1 : 0)) * 4;
+  var bob = reduceMotion ? 0 : Math.sin(F.t * 4 + (eagle ? 1 : 0)) * 4;
   fctx.translate(0, bob);
   if (f.shake > 0 && !reduceMotion) fctx.translate((Math.random() - 0.5) * 10, 0);
-  var col = f.flash > 0 ? '#FFFFFF' : (eagle ? (F.lvl > 1 ? '#C9A227' : '#5B4796') : HAWK_COL);
-  // body (side view)
+  var col = f.flash > 0 ? '#FFFFFF' : (eagle ? (F.lvl > 1 ? '#C9A227' : '#5B4796') : hawkCol().body);
   fctx.fillStyle = col; fctx.strokeStyle = '#140C10'; fctx.lineWidth = 3;
   fctx.beginPath(); fctx.ellipse(0, 0, 46, 26, -0.15, 0, 6.283); fctx.fill(); fctx.stroke();
-  // wing
-  var wingUp = f.act === 'guard' ? -1 : (reduceMotion ? 0.2 : Math.sin(F.t * 10) * 0.5);
+  var wingUp = f.act === 'guard' ? -1 : (reduceMotion ? 0.2 : Math.sin(F.t * 7) * 0.5);
   fctx.beginPath(); fctx.moveTo(-10, -8); fctx.quadraticCurveTo(-30, -60 * (0.6 + wingUp * 0.5), -70, -40 * (0.6 + wingUp * 0.5)); fctx.quadraticCurveTo(-40, -10, -10, 4);
-  fctx.closePath(); fctx.fillStyle = f.flash > 0 ? '#FFFFFF' : (eagle ? '#2E2350' : '#8E241D'); fctx.fill(); fctx.stroke();
-  // tail
+  fctx.closePath(); fctx.fillStyle = f.flash > 0 ? '#FFFFFF' : (eagle ? '#2E2350' : hawkCol().wing); fctx.fill(); fctx.stroke();
   fctx.beginPath(); fctx.moveTo(-40, 0); fctx.lineTo(-72, -10); fctx.lineTo(-72, 14); fctx.closePath(); fctx.fillStyle = col; fctx.fill(); fctx.stroke();
-  // head
   fctx.beginPath(); fctx.arc(42, -16, 20, 0, 6.283); fctx.fillStyle = eagle ? '#F2F2F2' : col; fctx.fill(); fctx.stroke();
   fctx.beginPath(); fctx.moveTo(58, -20); fctx.quadraticCurveTo(76, -16, 66, -4); fctx.lineTo(56, -8); fctx.closePath(); fctx.fillStyle = '#F2B233'; fctx.fill(); fctx.stroke();
   fctx.fillStyle = '#140C10'; fctx.beginPath(); fctx.arc(48, -20, 4, 0, 6.283); fctx.fill();
-  fctx.strokeStyle = '#140C10'; fctx.lineWidth = 4; fctx.beginPath(); fctx.moveTo(38, -30); fctx.lineTo(56, -26); fctx.stroke();   // angry brow
-  // talons
+  fctx.strokeStyle = '#140C10'; fctx.lineWidth = 4; fctx.beginPath(); fctx.moveTo(38, -30); fctx.lineTo(56, -26); fctx.stroke();
   fctx.strokeStyle = '#F2B233'; fctx.lineWidth = 4;
   [-8, 10].forEach(function (lx) { fctx.beginPath(); fctx.moveTo(lx, 22); fctx.lineTo(lx + (f.act === 'strike' ? 22 : 6), 42); fctx.stroke(); });
   if (f.act === 'guard') { fctx.strokeStyle = 'rgba(255,229,138,0.9)'; fctx.lineWidth = 5; fctx.beginPath(); fctx.arc(30, -6, 70, -1.2, 1.2); fctx.stroke(); }
+  if (f.act && f.actT < MOVES[f.act].wind && f.act !== 'guard') {   // wind-up warning so the other side can react
+    fctx.scale(flip, 1); fctx.font = '800 20px "Bricolage Grotesque", sans-serif'; fctx.textAlign = 'center'; fctx.fillStyle = '#FFE58A';
+    fctx.fillText(f.act === 'dive' ? 'DIVE!' : f.act === 'missile' ? 'LOCK ON' : '', 0, -62);
+  }
   fctx.restore();
+}
+function powerLines(f, base) {
+  var st = f.st, rows = [
+    ['Talon strike', Math.round(st.strike) + ' dmg', base && st.strike - base.strike],
+    ['Power dive', Math.round(st.dive) + ' dmg', base && st.dive - base.dive],
+    ['Dodge', Math.round(st.dodge * 100) + '%', base && st.dodge - base.dodge],
+    ['Critical hits', Math.round(st.crit * 100) + '%' + (st.acc < 1 ? ', misses ' + Math.round((1 - st.acc) * 100) + '%' : ''), base && (st.crit - base.crit) - (1 - st.acc)],
+    ['Recharge', Math.round(st.recharge * 100) + '%', base && st.recharge - base.recharge]
+  ];
+  return rows;
 }
 function drawFight() {
   if (!F) return;
@@ -1238,40 +1410,49 @@ function drawFight() {
   [[120, 0.6], [240, 0.72], [380, 0.55], [520, 0.7], [660, 0.58], [800, 0.7], [900, 0.62]].forEach(function (p) { fctx.lineTo(p[0], FH * p[1]); });
   fctx.lineTo(FW, FH); fctx.lineTo(0, FH); fctx.closePath(); fctx.fill();
   fctx.fillStyle = '#150A18'; fctx.fillRect(0, FH * 0.88, FW, FH * 0.12);
-  // fighters, with lunge offsets
   function offs(f) {
     if (!f.act) return { x: 0, y: 0 };
-    var m = MOVES[f.act], u = Math.min(1, f.actT / m.total);
-    if (f.act === 'strike') return { x: 120 * Math.sin(u * Math.PI), y: 0 };
-    if (f.act === 'dive') return u < 0.6 ? { x: -20 * u, y: -120 * (u / 0.6) } : { x: 260 * (u - 0.6) / 0.4 * (1 - (u - 0.6) / 0.4) * 2, y: -120 * (1 - (u - 0.6) / 0.4) };
+    var m = MOVES[f.act], u = Math.min(1, f.actT / m.total), w0 = m.wind / m.total;
+    if (f.act === 'strike') return u < w0 ? { x: -25 * u / w0, y: 0 } : { x: 130 * Math.sin((u - w0) / (1 - w0) * Math.PI), y: 0 };
+    if (f.act === 'dive') return u < w0 ? { x: -20 * u / w0, y: -120 * (u / w0) } : { x: 520 * (u - w0) / (1 - w0) * (1 - (u - w0) / (1 - w0)), y: -120 * (1 - (u - w0) / (1 - w0)) };
     return { x: 0, y: 0 };
   }
   var po = offs(F.p), eo = offs(F.e);
-  drawFightBird(FW * 0.28 + po.x, FH * 0.62 + po.y, 1, false, F.p, 1.15);
-  drawFightBird(FW * 0.72 - eo.x, FH * 0.62 + eo.y, -1, true, F.e, F.lvl > 1 ? 1.3 : 1.2);
+  drawFightBird(FW * 0.28 + po.x, FH * 0.66 + po.y, 1, false, F.p, 1.1);
+  drawFightBird(FW * 0.72 - eo.x, FH * 0.66 + eo.y, -1, true, F.e, F.lvl > 1 ? 1.25 : 1.15);
   F.shots.forEach(function (sh) {
-    var u = sh.t / 0.5, x0 = FW * 0.32, x1 = FW * 0.68, x = x0 + (x1 - x0) * u, y = FH * 0.5 - Math.sin(u * Math.PI) * 60;
+    var u = sh.t / 0.8, fromP = sh.from === F.p, x0 = FW * (fromP ? 0.32 : 0.68), x1 = FW * (fromP ? 0.68 : 0.32), x = x0 + (x1 - x0) * u, y = FH * 0.55 - Math.sin(u * Math.PI) * 60;
     fctx.fillStyle = 'rgba(220,220,220,0.5)'; for (var k = 1; k < 6; k++) { fctx.beginPath(); fctx.arc(x - k * 14, y + k * 2, 6 + k, 0, 6.283); fctx.fill(); }
     fctx.fillStyle = '#D8DDE3'; fctx.fillRect(x - 18, y - 5, 30, 10); fctx.fillStyle = '#E0483A'; fctx.beginPath(); fctx.moveTo(x + 12, y - 5); fctx.lineTo(x + 24, y); fctx.lineTo(x + 12, y + 5); fctx.fill();
   });
-  // health bars
   function bar(f, x0, flip) {
     var w = FW * 0.38, pct = clamp(f.hp / 100, 0, 1);
-    fctx.fillStyle = '#140C10'; fctx.fillRect(x0 - 4, 26, w + 8, 30);
-    fctx.fillStyle = '#5A1414'; fctx.fillRect(x0, 30, w, 22);
+    fctx.fillStyle = '#140C10'; fctx.fillRect(x0 - 4, 18, w + 8, 30);
+    fctx.fillStyle = '#5A1414'; fctx.fillRect(x0, 22, w, 22);
     fctx.fillStyle = pct > 0.4 ? '#F2C230' : (pct > 0.15 ? '#F08A3C' : '#E0483A');
-    if (flip) fctx.fillRect(x0 + w * (1 - pct), 30, w * pct, 22); else fctx.fillRect(x0, 30, w * pct, 22);
-    fctx.fillStyle = 'rgba(255,255,255,0.35)'; fctx.fillRect(x0 + (flip ? w * 0.85 : w * 0.15) - 1, 30, 2, 22);   // the 15% knockout line
-    fctx.font = '800 20px "Bricolage Grotesque", sans-serif'; fctx.fillStyle = '#FFFFFF'; fctx.textAlign = flip ? 'right' : 'left';
-    fctx.fillText(f.name + '  ' + Math.max(0, Math.round(f.hp)) + '%', flip ? x0 + w : x0, 80);
+    if (flip) fctx.fillRect(x0 + w * (1 - pct), 22, w * pct, 22); else fctx.fillRect(x0, 22, w * pct, 22);
+    fctx.fillStyle = 'rgba(255,255,255,0.35)'; fctx.fillRect(x0 + (flip ? w * 0.85 : w * 0.15) - 1, 22, 2, 22);
+    fctx.font = '800 19px "Bricolage Grotesque", sans-serif'; fctx.fillStyle = '#FFFFFF'; fctx.textAlign = flip ? 'right' : 'left';
+    fctx.fillText(f.name + '  ' + Math.max(0, Math.round(f.hp)) + '%', flip ? x0 + w : x0, 70);
+    // power card: what the traits do in a fight
+    var rows = powerLines(f, f === F.p ? fightPowers(HAWK_BASE) : null), y0 = 92;
+    fctx.fillStyle = 'rgba(10,6,12,0.55)'; fctx.fillRect(flip ? x0 + w - 230 : x0 - 4, y0 - 16, 234, rows.length * 19 + 12);
+    fctx.font = '600 14px "IBM Plex Sans", sans-serif';
+    rows.forEach(function (r, i) {
+      var y = y0 + i * 19, xl = flip ? x0 + w - 222 : x0 + 4, xr = flip ? x0 + w - 4 : x0 + 222;
+      fctx.textAlign = 'left'; fctx.fillStyle = '#E8DDE8'; fctx.fillText(r[0], xl, y);
+      var d = r[2], col = d === null || d === undefined || Math.abs(d) < 1e-6 ? '#FFFFFF' : (d > 0 ? '#7CE0A0' : '#FF8A7A');
+      fctx.textAlign = 'right'; fctx.fillStyle = col; fctx.fillText(r[1] + (d && Math.abs(d) > 1e-6 ? (d > 0 ? ' ▲' : ' ▼') : ''), xr, y);
+    });
   }
   bar(F.p, FW * 0.04, false); bar(F.e, FW * 0.58, true);
-  fctx.font = '800 26px "Bricolage Grotesque", sans-serif'; fctx.fillStyle = '#FFD34D'; fctx.textAlign = 'center'; fctx.fillText('VS', FW / 2, 50);
-  F.floats.forEach(function (fl) { fctx.globalAlpha = 1 - fl.t; fctx.font = '800 30px "Bricolage Grotesque", sans-serif'; fctx.fillStyle = fl.col; fctx.strokeStyle = '#140C10'; fctx.lineWidth = 5; fctx.strokeText(fl.txt, FW * fl.x, FH * fl.y - fl.t * 50); fctx.fillText(fl.txt, FW * fl.x, FH * fl.y - fl.t * 50); });
+  fctx.font = '800 26px "Bricolage Grotesque", sans-serif'; fctx.fillStyle = '#FFD34D'; fctx.textAlign = 'center'; fctx.fillText('VS', FW / 2, 42);
+  fctx.font = '600 12px "IBM Plex Sans", sans-serif'; fctx.fillStyle = '#E8DDE8'; fctx.fillText('▲▼ = changed by your', FW / 2, 92); fctx.fillText('hawk’s mutations', FW / 2, 108);
+  F.floats.forEach(function (fl) { fctx.globalAlpha = Math.min(1, 1.4 - fl.t); fctx.textAlign = 'center'; fctx.font = '800 30px "Bricolage Grotesque", sans-serif'; fctx.fillStyle = fl.col; fctx.strokeStyle = '#140C10'; fctx.lineWidth = 5; fctx.strokeText(fl.txt, FW * fl.x, FH * fl.y - fl.t * 35); fctx.fillText(fl.txt, FW * fl.x, FH * fl.y - fl.t * 35); });
   fctx.globalAlpha = 1;
-  function big(t, col, sz) { fctx.font = '900 ' + sz + 'px "Bricolage Grotesque", sans-serif'; fctx.textAlign = 'center'; fctx.lineWidth = 10; fctx.strokeStyle = '#140C10'; fctx.strokeText(t, FW / 2, FH * 0.45); fctx.fillStyle = col; fctx.fillText(t, FW / 2, FH * 0.45); }
-  if (F.t < 0.8) big('ROUND ' + (stats.wins + 1), '#FFFFFF', 64);
-  else if (F.t < 1.4) big('FIGHT!', '#FFD34D', 90);
+  function big(t, col, sz) { fctx.font = '900 ' + sz + 'px "Bricolage Grotesque", sans-serif'; fctx.textAlign = 'center'; fctx.lineWidth = 10; fctx.strokeStyle = '#140C10'; fctx.strokeText(t, FW / 2, FH * 0.5); fctx.fillStyle = col; fctx.fillText(t, FW / 2, FH * 0.5); }
+  if (F.t < 1.2) big('ROUND ' + (stats.wins + 1), '#FFFFFF', 64);
+  else if (F.t < 2.2) big('FIGHT!', '#FFD34D', 90);
   if (F.over) big(F.over === 'player' ? 'K.O.!' : 'YOU LOSE', F.over === 'player' ? '#FFD34D' : '#FF6B5E', 96);
 }
 
@@ -1283,20 +1464,20 @@ function frame(ts) {
   if (phase === 'running') {
     acc += dtReal * speed; var steps = 0;
     while (acc >= DT && steps < 12 && phase === 'running') {
-      game.step(DT); acc -= DT; steps++; stepMissiles(DT); stepBurning(DT);
+      game.step(DT); acc -= DT; steps++; stepMissiles(DT); stepBurning(DT); stepDecoy(DT); checkWipeout();
       if (Math.floor(game.t * 2 + 1e-9) > lastRec) { lastRec = Math.floor(game.t * 2 + 1e-9); record(); }
       if (!game.hawk.alive) { stepFx(0); updateUI(); showDeath(); break; }
       stepFx(0);
       if (pendingFight) { var who = pendingFight; pendingFight = null; startFight(who); break; }
       // scheduled invaders
-      if (goalState.spawnAt !== null && game.t >= goalState.spawnAt && (!game.inv || game.inv.state === 'gone')) { game.spawnInvader(2); goalState.spawnAt = null; flashMsg('A golden eagle invades!'); }
+      if (goalState.spawnAt !== null && game.t >= goalState.spawnAt && !peaceful() && (!game.inv || game.inv.state === 'gone')) { game.spawnInvader(2); goalState.spawnAt = null; flashMsg('A golden eagle invades!'); }
       if (game.inv && game.inv.state === 'gone' && game.inv.x < -60 || game.inv && game.inv.state === 'gone' && game.inv.x > W + 60) {
-        if (!goalsDone && GOALS[goalIdx] && GOALS[goalIdx].title === 'Invader' && stats.wins < 2) game.spawnInvader(1);
+        if (!goalsDone && GOALS[goalIdx] && GOALS[goalIdx].title === 'Invader' && stats.wins < 2) { if (!peaceful()) game.spawnInvader(1); }
         else if (!goalsDone && GOALS[goalIdx] && GOALS[goalIdx].title === 'Missile strike' && !stats.missileHit && game.hawk.missiles && goalState.spawnAt === null)
           goalState.spawnAt = game.t + GEN * 0.3;
         else if (goalIdx >= MAIN_GOALS && goalState.spawnAt === null && goalState.nextInv === null) goalState.nextInv = game.t + GEN * 4;
       }
-      if (goalIdx >= MAIN_GOALS && goalState.nextInv !== null && game.t >= goalState.nextInv) { game.spawnInvader(Math.min(3, 2 + Math.floor(stats.wins / 4))); goalState.nextInv = null; flashMsg('Another invader!'); }
+      if (goalIdx >= MAIN_GOALS && goalState.nextInv !== null && game.t >= goalState.nextInv && !peaceful()) { game.spawnInvader(Math.min(3, 2 + Math.floor(stats.wins / 4))); goalState.nextInv = null; flashMsg('Another invader!'); }
       var g = genNow();
       if (g > lastGenDone) {
         lastGenDone = g;
@@ -1317,13 +1498,18 @@ function frame(ts) {
 function onResize() { fitCanvases(); drawArena(); drawChart(); }
 if (window.ResizeObserver) { new ResizeObserver(onResize).observe(dishBox); new ResizeObserver(onResize).observe(chartBox); new ResizeObserver(fitFight).observe(fcv); } else window.addEventListener('resize', onResize);
 fitCanvases(); newGame();
-window.__hh = function () { return { phase: phase, gen: genNow(), goal: goalIdx, caught: game.hawk.caught, e: game.hawk.energy, n: game.count(), wins: stats.wins, wounded: game.hawk.wounded, inv: game.inv ? game.inv.state + (game.inv.wounded ? '-w' : '') : null, ash: game.ash, trees: game.trees.length, climb: game.freq('climb').climber / Math.max(1, game.count()), smart: (game.freq('mind').smart + game.freq('mind').wise) / Math.max(1, game.count()), missiles: !!game.hawk.missiles, fire: !!game.hawk.fire, hit: stats.missileHit, mt: !!missileTarget() }; };
+window.__hh = function () { return { phase: phase, gen: genNow(), goal: goalIdx, caught: game.hawk.caught, e: game.hawk.energy, n: game.count(), wins: stats.wins, wounded: game.hawk.wounded, inv: game.inv ? game.inv.state + (game.inv.wounded ? '-w' : '') : null, ash: game.ash, trees: game.trees.length, climb: game.freq('climb').climber / Math.max(1, game.count()), smart: (game.freq('mind').smart + game.freq('mind').wise) / Math.max(1, game.count()), missiles: !!game.hawk.missiles, decoy: !!decoy, lure: !!(decoy && decoy.lure), wipes: wipe.count, peace: peaceful(), fire: !!game.hawk.fire, hit: stats.missileHit, mt: !!missileTarget() }; };
 window.__hhDive = function () { var best = null, bv = -1; game.gophers.forEach(function (c) { if (game.hidden(c)) return; var v = 1 - game.camo(c) + Math.random() * 0.2; if (v > bv) { bv = v; best = c; } }); return game.dive(best); };
 window.__hhEngage = function () { return game.engage(); };
 window.__hhMissile = function () { return fireMissile(); };
 window.__hhBurn = function () { if (game.trees[0]) burnTree(game.trees[0]); };
 window.__hhTreePt = function () { var t = game.trees.filter(function (q) { return q.r > 30; })[0]; if (!t) return null; var r = arenaCv.getBoundingClientRect(); return [r.left + t.x / W * r.width, r.top + t.y / H * r.height]; };
 window.__hhGive = function (k) { if (k === 'fire') { game.hawk.fire = true; game.hawk.fReady = 0; } else { game.hawk.missiles = true; game.hawk.mReady = 0; } renderTraits(); };
+window.__hhInv = function (l) { game.spawnInvader(l || 1); game.inv.challenge = 1; };
+window.__hhKill = function () { game.hawk.energy = 0.01; };
+window.__hhMut = function (k, v) { game.hawk.T[k] = v; renderTraits(); };
+window.__hhWipe = function () { game.gophers.length = 0; };
+window.__hhGiveDecoy = function () { game.hawk.decoy = true; renderTraits(); };
 window.__hhSetSpeed = function (v) { speed = v; };
 window.__hhFight = function (k) { if (F) doMove(F.p, k); };
 requestAnimationFrame(function (t) { lastTs = t; requestAnimationFrame(frame); });
