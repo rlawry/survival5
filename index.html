@@ -170,8 +170,25 @@ td.num { text-align: right; font-family: var(--font-data); font-variant-numeric:
 .sw { display: inline-block; width: 11px; height: 11px; vertical-align: -1px; margin-left: 4px; border: 1px solid rgba(0,0,0,.3); }
 td.fgt { font-size: 11.5px; color: var(--muted); text-align: right; white-space: nowrap; }
 td.fgt.chg { color: var(--ink); font-weight: 600; }
-.fireBtn { position: absolute; top: 8px; right: 8px; z-index: 3; display: flex; align-items: center; gap: 10px; padding: 7px 12px; border: 2px solid #FFD34D; background: rgba(12,16,22,0.88); color: #FFF; font: inherit; cursor: pointer; text-align: left; max-width: 300px; }
+.actBtns { position: absolute; top: 8px; right: 8px; z-index: 3; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.perchBtn { display: flex; align-items: center; gap: 10px; padding: 6px 11px; border: 2px solid #7CE0A0; background: rgba(12,16,22,0.85); color: #FFF; font: inherit; cursor: pointer; text-align: left; max-width: 300px; }
+.perchBtn[hidden] { display: none; }
+.perchBtn kbd { font: 800 13px var(--font-display); background: #FFFFFF; color: #140C10; padding: 4px 8px; box-shadow: 0 3px 0 #9A8A70; letter-spacing: .04em; }
+.perchBtn span { display: flex; flex-direction: column; line-height: 1.2; }
+.perchBtn small { font-size: 11.5px; color: #C9D1D9; }
+.perchBtn.on { background: #1E5A3A; border-color: #B8F5CF; }
+.fireBtn { position: relative; display: flex; align-items: center; gap: 10px; padding: 7px 12px; border: 2px solid #FFD34D; background: rgba(12,16,22,0.88); color: #FFF; font: inherit; cursor: pointer; text-align: left; max-width: 300px; }
 .fireBtn[hidden] { display: none; }
+.saveStat { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.saveStat.bad { color: var(--bad); font-weight: 600; }
+.saves { display: flex; flex-direction: column; gap: 8px; max-height: 46vh; overflow-y: auto; }
+.saveRow { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--line); background: var(--surface); }
+.saveRow.cur { border-color: var(--accent); }
+.saveRow .sw { width: 16px; height: 16px; margin: 0; flex: 0 0 auto; }
+.saveRow .si { display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; font-size: 12.5px; line-height: 1.3; }
+.saveRow .si b { font-size: 14px; }
+.btn.danger { background: var(--bad); color: #FFFFFF; border-color: transparent; }
+@media (max-width: 560px) { .saveStat { display: none; } .saveRow { flex-wrap: wrap; } }
 .warnBar { position: absolute; left: 50%; bottom: 52px; transform: translateX(-50%); max-width: calc(100% - 20px); width: max-content; padding: 7px 14px; background: #8A5A00; color: #FFF6DC; font-size: 13.5px; text-align: center; pointer-events: none; border: 2px solid #FFD34D; }
 .warnBar.bad { background: #9E2230; border-color: #FFB3B3; }
 .warnBar[hidden] { display: none; }
@@ -200,6 +217,8 @@ td.fgt.chg { color: var(--ink); font-weight: 600; }
     <h1>Hawk Hunter</h1>
     <p class="sub">You are the hawk. Click the ground to hover there, or click a rodent to dive for it. Survive volcanoes, growing trees and invading eagles, and don’t eat your food supply away.</p>
     <div class="run">
+      <span class="saveStat" id="saveStat" aria-live="polite"></span>
+      <button type="button" class="btn" id="openSaves">Games</button>
       <button type="button" class="btn primary" id="play" disabled>Pause</button>
       <button type="button" class="btn" id="restart">Restart</button>
       <div class="seg" role="group" aria-label="Game speed" id="speed">
@@ -216,7 +235,7 @@ td.fgt.chg { color: var(--ink); font-weight: 600; }
         <div class="hud"><span id="hudGen">Gen 1</span><span>Energy</span><span class="bar"><i id="hudBar"></i></span><span id="hudE">80%</span><span class="wnd" id="hudW" hidden>WOUNDED: eat to 75%</span><span id="hudM" hidden></span><span id="hudF" hidden></span></div>
         <div class="goalTip" id="goalTip"></div>
         <div class="warnBar" id="warnBar" role="status" hidden></div>
-        <button type="button" class="fireBtn" id="fireBtn" hidden></button>
+        <div class="actBtns"><button type="button" class="fireBtn" id="fireBtn" hidden></button><button type="button" class="perchBtn" id="perchBtn" aria-pressed="false" hidden></button></div>
       </div>
       <section class="chartPanel" aria-label="rodent traits">
         <div class="chartHead">
@@ -291,17 +310,19 @@ var REPRO_RATE = 0.2, EAT_R = 11, REPRO_E = 75, REPRO_COST = 50, CHILD_E = 40, M
 var MUT_RATE = 0.01, COAT_MUT = 0.04, CLIMB_GAIN = 0.08, CLIMB_LOSS = 0.01;
 var TREE = { first: 2, every: 2, max: 5, full: 46, grow: 14, hideMin: 22 };   // grow = radius per generation
 var ASH = { hold: 1, fade: 6 };   // generations at full ash, then generations to wash away
-var RECOVER = 75;                 // energy % a wounded bird needs before it can fight again
+var RECOVER = 75;
+var INV_MIN_FOOD = 12, INV_CHALLENGE_MIN_E = 50;   // eagles leave, and stop hunting, when rodents are scarce; they don't challenge a weak hawk                 // energy % a wounded bird needs before it can fight again
 
 /* Hawk traits and mutations. Names describe a body change, not what it does. */
-var HAWK_BASE = { speed: 270, grip: 0.92, alert: 100, hunger: 1.6, sight: 0 };
-var HAWK_LIMITS = { speed: [150, 360], grip: [0.5, 1], alert: [50, 200], hunger: [0.9, 3], sight: [-1, 2] };
+var HAWK_BASE = { speed: 270, grip: 0.92, alert: 100, hunger: 1.6, sight: 0, evade: 0 };
+var HAWK_LIMITS = { speed: [150, 360], grip: [0.5, 1], alert: [50, 200], hunger: [0.9, 3], sight: [-1, 2], evade: [0, 0.5] };
 var HAWK_INFO = [
   { k: 'speed',  label: 'Diving speed',      fmt: function (v) { return Math.round(v); }, better: 1 },
   { k: 'grip',   label: 'Grip',              fmt: function (v) { return Math.round(v * 100) + '%'; }, better: 1 },
   { k: 'alert',  label: 'Rodents notice at', fmt: function (v) { return Math.round(v); }, better: -1 },
   { k: 'hunger', label: 'Energy use',        fmt: function (v) { return v.toFixed(1) + '/s'; }, better: -1 },
-  { k: 'sight',  label: 'Eyesight',          fmt: function (v) { return ['Blurry', 'Normal', 'Sharp', 'Very sharp'][Math.round(v) + 1]; }, better: 1 }
+  { k: 'sight',  label: 'Eyesight',          fmt: function (v) { return ['Blurry', 'Normal', 'Sharp', 'Very sharp'][Math.round(v) + 1]; }, better: 1 },
+  { k: 'evade',  label: 'Evade eagles', fmt: function (v) { return Math.round(v * 100) + '%'; }, better: 1 }
 ];
 var HAWK_MUTATIONS = [
   { id: 'eyes',     kind: 'helpful', fx: { sight: 1 },     names: ['Larger eyes', 'Even larger eyes'], texts: ['The eyes grow larger.', 'The eyes grow larger again.'] },
@@ -309,11 +330,13 @@ var HAWK_MUTATIONS = [
   { id: 'talons',   kind: 'helpful', fx: { grip: 0.07 },   names: ['Curved talons', 'Sharper talons'], texts: ['The claws curve more.', 'The claws grow sharper.'] },
   { id: 'feathers', kind: 'helpful', fx: { alert: -25 },   names: ['Soft-edged feathers', 'Softer feathers'], texts: ['The edges of the flight feathers become soft.', 'The feathers grow softer still.'] },
   { id: 'crop',     kind: 'helpful', fx: { hunger: -0.25 }, names: ['Larger crop', 'Even larger crop'], texts: ['The pouch in the throat that stores food grows.', 'The throat pouch grows again.'] },
+  { id: 'tail',     kind: 'helpful', fx: { evade: 0.2 },  names: ['Forked tail', 'Deeper forked tail'], texts: ['The tail feathers split into a fork, so the hawk can twist and roll in the air.', 'The fork in the tail grows deeper.'] },
   { id: 'heavy',    kind: 'harmful', fx: { speed: -40 },   names: ['Heavier body', 'Even heavier body'], texts: ['The body grows heavier.', 'The body grows heavier again.'] },
   { id: 'noisy',    kind: 'harmful', fx: { alert: 35 },    names: ['Stiff wing feathers', 'Stiffer wing feathers'], texts: ['The wing feathers become stiff.', 'The wing feathers stiffen further.'] },
   { id: 'metab',    kind: 'harmful', fx: { hunger: 0.35 }, names: ['Faster heartbeat', 'Racing heartbeat'], texts: ['The heart beats faster.', 'The heart beats faster still.'] },
   { id: 'blur',     kind: 'harmful', fx: { sight: -1 },    names: ['Cloudy eye lens', 'Cloudier eye lens'], texts: ['The lens of each eye becomes cloudy.', 'The lenses grow cloudier.'] }
 ];
+var PERCH = { drain: 0.35, fool: 6, speed: 230 };   // perched: energy use x0.35; after 6 s the rodents think the hawk has gone
 function clampH(k, v) { var l = HAWK_LIMITS[k]; return Math.max(l[0], Math.min(l[1], v)); }
 function canChangeH(T, m) { for (var k in m.fx) if (Math.abs(clampH(k, T[k] + m.fx[k]) - T[k]) > 1e-9) return true; return false; }
 function applyHawkMutation(T, m) { var before = {}; for (var k in m.fx) { before[k] = T[k]; T[k] = clampH(k, T[k] + m.fx[k]); } return before; }
@@ -368,6 +391,33 @@ function createWorld(rng) {
     }
     return out;
   };
+  /* ---- saving: plain-data snapshot of the whole valley (object links become indices) ---- */
+  w.snapshot = function () {
+    var trees = w.trees, hk = {}, iv = null, k;
+    for (k in w.hawk) if (k !== 'tgt') hk[k] = w.hawk[k];
+    hk.perchOn = trees.indexOf(w.hawk.perchOn);
+    if (w.inv) { iv = {}; for (k in w.inv) if (k !== 'tgt') iv[k] = w.inv[k]; }
+    return JSON.parse(JSON.stringify({
+      t: w.t, ash: w.ash, ashStart: w.ashStart, acc: w.acc, births: w.births, nextTree: w.nextTree, calm: w.calm || 0, stats: w.stats,
+      trees: trees, food: w.food.map(function (f) { return { x: f.x, y: f.y, rot: f.rot }; }),
+      gophers: w.gophers.map(function (c) { var o = {}, q; for (q in c) o[q] = c[q]; o.tgt = null; o.tree = trees.indexOf(c.tree); o.home = trees.indexOf(c.home); return o; }),
+      hawk: hk, inv: iv
+    }));
+  };
+  w.restore = function (d) {
+    w.t = d.t; w.ash = d.ash; w.ashStart = d.ashStart; w.acc = d.acc; w.births = d.births; w.nextTree = d.nextTree; w.calm = d.calm || 0;
+    w.stats = d.stats; w.trees = d.trees; w.events = [];
+    w.food = d.food.map(function (f) { f.dead = false; return f; });
+    w.gophers = d.gophers.map(function (o) {
+      o.tree = o.tree >= 0 ? w.trees[o.tree] : null; o.home = o.home >= 0 ? w.trees[o.home] : null; o.tgt = null; return o;
+    });
+    w.hawk = d.hawk; w.hawk.tgt = null; if (w.hawk.state === 'dive') w.hawk.state = 'soar';
+    for (var hb in HAWK_BASE) if (w.hawk.T[hb] === undefined) w.hawk.T[hb] = HAWK_BASE[hb];   // saves from before a trait existed
+    w.hawk.perchOn = typeof w.hawk.perchOn === 'number' && w.hawk.perchOn >= 0 ? w.trees[w.hawk.perchOn] || null : null;
+    if ((w.hawk.state === 'perch' || w.hawk.state === 'toperch') && !w.hawk.perchOn) w.hawk.state = 'soar';
+    w.hawk.perchT = w.hawk.perchT || 0; w.hawk.ambush = false;
+    w.inv = d.inv; if (w.inv) { w.inv.tgt = null; if (w.inv.state === 'dive' || w.inv.state === 'seek') w.inv.state = 'soar'; }
+  };
   w.startAsh = function () { w.ashStart = w.t; w.ash = 1; ev('ash', null, W / 2, H / 2); };
 
   for (var i = 0; i < 60; i++) spawnFood();
@@ -388,15 +438,39 @@ function createWorld(rng) {
   function intoTree(c) { var an = rng() * 6.283, rr = c.tree.r * 0.5 * rng(); c.x = c.tree.x + Math.cos(an) * rr; c.y = c.tree.y + Math.sin(an) * rr; }
   function startDive(bird, c) { bird.state = 'dive'; bird.tgt = c; bird.diveT = 0; }
   w.dive = function (c) {
-    var hk = w.hawk;
-    if (!hk.alive || hk.state !== 'soar' || !c || c.dead) return false;
+    var hk = w.hawk, perched = hk.state === 'perch' || hk.state === 'toperch';
+    if (!hk.alive || (hk.state !== 'soar' && !perched) || !c || c.dead) return false;
     if (w.hidden(c)) { ev('hid', c); return false; }
+    hk.ambush = w.fooled();   // swooping from a perch the rodents forgot about: they notice it later
+    hk.perchOn = null; hk.perchT = 0;
     startDive(hk, c); return true;
+  };
+  /* ---- perching: rest in a grown tree to save energy ---- */
+  function perchTree() {
+    var hk = w.hawk, best = null, bd = Infinity;
+    w.trees.forEach(function (t) { if (t.r < TREE.hideMin) return; var dx = t.x - hk.x, dy = t.y - hk.y, d = dx * dx + dy * dy; if (d < bd) { bd = d; best = t; } });
+    return best;
+  }
+  w.perched = function () { return w.hawk.state === 'perch'; };
+  w.fooled = function () { return w.hawk.state === 'perch' && w.hawk.perchT >= PERCH.fool; };
+  w.unperch = function () {
+    var hk = w.hawk, t = hk.perchOn;
+    if (hk.state === 'perch' || hk.state === 'toperch') { hk.state = 'soar'; hk.hover = t && w.trees.indexOf(t) >= 0 ? { x: t.x, y: t.y } : null; }
+    hk.perchOn = null; hk.perchT = 0;
+  };
+  /* Returns 'on', 'off', 'none' (no grown tree) or 'busy' */
+  w.perch = function () {
+    var hk = w.hawk;
+    if (hk.state === 'perch' || hk.state === 'toperch') { w.unperch(); return 'off'; }
+    if (!hk.alive || hk.state === 'dive' || hk.state === 'dead') return 'busy';
+    var t = perchTree(); if (!t) return 'none';
+    hk.state = 'toperch'; hk.perchOn = t; hk.perchT = 0; hk.hover = null; return 'on';
   };
   /* Player clicks the invader: fly at it to start a fight. */
   w.engage = function () {
     var hk = w.hawk, iv = w.inv;
     if (!iv || iv.state === 'gone' || !hk.alive || hk.wounded || iv.wounded || hk.state === 'dive') return false;
+    hk.perchOn = null; hk.perchT = 0; hk.ambush = false;
     hk.state = 'dive'; hk.tgt = iv; hk.diveT = 0; return true;
   };
   function resolveCatch(bird, tg, grip) {
@@ -422,11 +496,14 @@ function createWorld(rng) {
       if (bird.diveT > 3) { bird.state = 'rest'; bird.rest = 0.7; if (isPlayer) bird.misses++; if (tg.genes) ev('escape', tg); bird.tgt = null; }
     }
   }
-  function hoverAt(bird, hv, dt) {   // fly to the chosen spot, then circle tightly over it
+  var HOVER_R = 30;
+  function hoverAt(bird, hv, dt) {   // fly to the chosen spot, then circle over it
     var dx = hv.x - bird.x, dy = hv.y - bird.y, d = Math.sqrt(dx * dx + dy * dy);
-    if (d > 18) { bird.a = Math.atan2(dy, dx); var mv = Math.min(d, 230 * dt); bird.x += dx / d * mv; bird.y += dy / d * mv; }
-    else { bird.a += 2.5 * dt; bird.x += Math.cos(bird.a) * 35 * dt; bird.y += Math.sin(bird.a) * 35 * dt; }
+    if (d > HOVER_R + 12) { bird.a = Math.atan2(dy, dx); var mv = Math.min(d, 230 * dt); bird.x += dx / d * mv; bird.y += dy / d * mv; return; }
+    var ph = Math.atan2(bird.y - hv.y, bird.x - hv.x) + 1.4 * dt, r = d + (HOVER_R - d) * Math.min(1, 3 * dt);
+    bird.x = hv.x + Math.cos(ph) * r; bird.y = hv.y + Math.sin(ph) * r; bird.a = ph + Math.PI / 2;
   }
+  w.HOVER_R = HOVER_R;
   function glide(bird, dt, spd) {
     if (bird.state === 'rest') { bird.rest -= dt; if (bird.rest <= 0) bird.state = 'soar'; }
     bird.a += 0.6 * dt; bird.x += Math.cos(bird.a) * spd * dt; bird.y += Math.sin(bird.a) * spd * dt; bounce(bird);
@@ -445,12 +522,15 @@ function createWorld(rng) {
     if (hk.energy <= 0) { hk.alive = false; hk.state = 'dead'; return; }
     if (winner === 'player') { iv.wounded = true; iv.losses++; iv.challenge = 8; if (invE <= 0 || iv.losses >= 2) { iv.state = 'gone'; iv.tgt = null; } }
     else { hk.wounded = true; iv.wins++; iv.challenge = 8; }
-    hk.state = 'rest'; hk.rest = 1; hk.tgt = null;
+    hk.state = 'rest'; hk.rest = 1; hk.tgt = null; hk.perchOn = null; hk.perchT = 0;
     if (iv.state !== 'gone') { iv.state = 'rest'; iv.rest = 1; iv.tgt = null; iv.x = Math.max(40, Math.min(W - 40, iv.x + (iv.x < W / 2 ? 160 : -160))); }
   };
   function stepInvader(dt) {
     var iv = w.inv, hk = w.hawk; if (!iv) return;
+    var scarce = w.gophers.length < INV_MIN_FOOD, calm = w.t < (w.calm || 0);
     if (iv.state === 'gone') { iv.x += (iv.x < W / 2 ? -1 : 1) * 160 * dt; return; }
+    if (scarce && iv.state !== 'dive') { iv.state = 'gone'; iv.tgt = null; ev('invleft', null, iv.x, iv.y, 'scarce'); return; }   // not enough food here: moves on
+    if (calm && iv.state === 'seek') iv.state = 'soar';
     iv.energy -= iv.T.hunger * dt;
     if (iv.energy <= 0) { iv.energy = 0; iv.state = 'gone'; ev('invstarved', null, iv.x, iv.y); return; }
     if (iv.wounded && iv.energy >= RECOVER) iv.wounded = false;
@@ -460,14 +540,21 @@ function createWorld(rng) {
       if (hk.wounded || iv.wounded || !hk.alive) { iv.state = 'soar'; return; }
       var dx = hk.x - iv.x, dy = hk.y - iv.y, d = Math.sqrt(dx * dx + dy * dy);
       iv.a = Math.atan2(dy, dx); iv.x += dx / d * 170 * dt; iv.y += dy / d * 170 * dt;
-      if (d < 26) { iv.state = 'rest'; iv.rest = 0.5; ev('fight', null, iv.x, iv.y, 'invader'); }
+      if (d < 26) {
+        if (rng() < (hk.T.evade || 0)) {   // the hawk twists out of the way: the eagle overshoots
+          iv.state = 'rest'; iv.rest = 1.2; iv.challenge = 6 + rng() * 3;
+          iv.x = Math.max(20, Math.min(W - 20, iv.x + dx / (d || 1) * 70)); iv.y = Math.max(20, Math.min(H - 20, iv.y + dy / (d || 1) * 70));
+          if (hk.state !== 'perch' && hk.state !== 'dive') { var sx = -dy / (d || 1), sy = dx / (d || 1); hk.x = Math.max(20, Math.min(W - 20, hk.x + sx * 28)); hk.y = Math.max(20, Math.min(H - 20, hk.y + sy * 28)); }
+          ev('evade', null, hk.x, hk.y);
+        } else { iv.state = 'rest'; iv.rest = 0.5; ev('fight', null, iv.x, iv.y, 'invader'); }
+      }
       return;
     }
     glide(iv, dt, 50);
     if (iv.state !== 'soar') return;
-    if (!iv.wounded && !hk.wounded && hk.alive && iv.challenge <= 0 && hk.state !== 'dive') { iv.state = 'seek'; return; }
+    if (!calm && !iv.wounded && !hk.wounded && hk.alive && hk.energy >= INV_CHALLENGE_MIN_E && iv.challenge <= 0 && hk.state !== 'dive') { iv.state = 'seek'; return; }
     iv.huntT -= dt;
-    if (iv.huntT <= 0 && iv.energy < 97 && w.gophers.length) {
+    if (iv.huntT <= 0 && !calm && iv.energy < 97 && w.gophers.length >= INV_MIN_FOOD) {
       iv.huntT = 4 + rng() * 3;
       var best = null, bv = 0;
       w.gophers.forEach(function (c) { if (w.hidden(c)) return; var v = (1 - w.camo(c)) * (0.5 + rng()); if (v > bv) { bv = v; best = c; } });
@@ -527,7 +614,7 @@ function createWorld(rng) {
     // player hawk
     var hk = w.hawk, T = hk.T;
     if (hk.alive) {
-      hk.energy -= T.hunger * dt;
+      hk.energy -= T.hunger * dt * (hk.state === 'perch' ? PERCH.drain : 1);
       if (hk.wounded && hk.energy >= RECOVER) { hk.wounded = false; ev('healed', null, hk.x, hk.y); }
       if (hk.energy <= 0) { hk.energy = 0; hk.alive = false; hk.state = 'dead'; ev('hawkdead', null, hk.x, hk.y); }
     }
@@ -535,16 +622,30 @@ function createWorld(rng) {
       if (hk.tgt === w.inv && (w.inv.wounded || hk.wounded || w.inv.state === 'gone')) { hk.state = 'soar'; hk.tgt = null; }
       else {
         moveDive(hk, T.speed, T.grip, dt, true);
+        if (hk.state !== 'dive') hk.ambush = false;
         if (hk.state !== 'dive') hk.hover = { x: Math.max(20, Math.min(W - 20, hk.x)), y: Math.max(20, Math.min(H - 20, hk.y)) };   // stay where the dive ended
+      }
+    } else if (hk.state === 'toperch' || hk.state === 'perch') {
+      var pt = hk.perchOn;
+      if (!pt || w.trees.indexOf(pt) < 0) { w.unperch(); ev('perchlost', null, hk.x, hk.y); }   // the tree burned down
+      else if (hk.state === 'toperch') {
+        var px0 = pt.x - hk.x, py0 = pt.y - hk.y, pd = Math.sqrt(px0 * px0 + py0 * py0);
+        hk.a = Math.atan2(py0, px0);
+        if (pd < 4) { hk.state = 'perch'; hk.perchT = 0; hk.x = pt.x; hk.y = pt.y; ev('perched', null, hk.x, hk.y); }
+        else { var pm = Math.min(pd, PERCH.speed * dt); hk.x += px0 / pd * pm; hk.y += py0 / pd * pm; }
+      } else {
+        hk.x = pt.x; hk.y = pt.y;
+        var was = hk.perchT < PERCH.fool; hk.perchT += dt;
+        if (was && hk.perchT >= PERCH.fool) ev('fooled', null, hk.x, hk.y);
       }
     } else if (hk.state === 'soar' && hk.hover) hoverAt(hk, hk.hover, dt);
     else if (hk.state === 'rest' || hk.state === 'soar') glide(hk, dt, 40);
     stepInvader(dt);
     // rodents
     var threats = [];
-    if (hk.state === 'dive' && hk.tgt && hk.tgt.genes) threats.push({ x: hk.x, y: hk.y, r: T.alert });
+    if (hk.state === 'dive' && hk.tgt && hk.tgt.genes) threats.push({ x: hk.x, y: hk.y, r: T.alert * (hk.ambush ? 0.5 : 1) });
     if (w.inv && w.inv.state === 'dive') threats.push({ x: w.inv.x, y: w.inv.y, r: w.inv.T.alert });
-    var list = w.gophers, n = list.length, born = [];
+    var list = w.gophers, n = list.length, born = [], fooled = w.fooled();
     var start = n ? (rng() * n) | 0 : 0;
     for (var k = 0; k < n; k++) {
       var c = list[(start + k) % n]; if (c.dead) continue;
@@ -580,6 +681,7 @@ function createWorld(rng) {
         c.tree = null;
         if (c.tgt && c.tgt.dead) c.tgt = null;
         c.trip -= dt; if (c.trip <= 0) decideTrip(c);
+        if (fooled) c.stay = false;   // no hawk in sight: venture out to eat
         if (c.stay && (!c.home || w.trees.indexOf(c.home) < 0)) { c.stay = false; c.home = null; }
         c.search -= dt;
         if (!c.tgt && c.search <= 0) {
@@ -641,7 +743,7 @@ var hawkNum = 1;
 function hawkCol() { return HAWK_COLORS[(hawkNum - 1) % HAWK_COLORS.length]; }
 /* What each hawk trait does in a fight with an eagle */
 function fightPowers(T) {
-  return { strike: Math.max(2, 10 + 40 * (T.grip - 0.92)), dive: T.speed / 12, dodge: clamp((130 - T.alert) / 200, 0, 0.4),
+  return { strike: Math.max(2, 10 + 40 * (T.grip - 0.92)), dive: T.speed / 12, dodge: clamp((130 - T.alert) / 200, 0, 0.4) + 0.4 * (T.evade || 0), evade: T.evade || 0,
            crit: clamp(0.05 + 0.12 * T.sight, 0, 0.35), acc: T.sight < 0 ? 0.8 : 1, recharge: clamp(1.6 / T.hunger, 0.6, 1.8), missiles: 0 };
 }
 function fightText(k, P) {
@@ -649,6 +751,7 @@ function fightText(k, P) {
   if (k === 'grip') return 'Talon strike ' + Math.round(P.strike);
   if (k === 'alert') return 'Dodge ' + Math.round(P.dodge * 100) + '%';
   if (k === 'hunger') return 'Recharge ' + Math.round(P.recharge * 100) + '%';
+  if (k === 'evade') return P.evade > 0 ? 'Dodge +' + Math.round(P.evade * 40) + '%' : 'No extra dodge';
   return 'Critical hits ' + Math.round(P.crit * 100) + '%' + (P.acc < 1 ? ', misses ' + Math.round((1 - P.acc) * 100) + '%' : '');
 }
 var TRAIT_KEYS = Object.keys(TRAITS);
@@ -706,7 +809,7 @@ var GOALS = [
     check: function () { var n = game.count(); return n > 0 && genNow() > goalState.goalGen && game.freq('climb').climber / n >= 0.3; },
     progress: function () { var n = Math.max(1, game.count()); return 'Climbers: ' + Math.round(100 * game.freq('climb').climber / n) + '% (goal: 30%)'; } },
   { title: 'Invader', text: 'An invading eagle is hunting your rodents. Click it to attack, or it will come after you. Defeat it twice.',
-    start: function () { game.spawnInvader(1); flashMsg('An eagle invades!'); },
+    start: function () { goalState.wantInv = 1; },
     check: function () { return stats.wins >= 2; }, progress: function () { return 'Wins: ' + Math.min(2, stats.wins) + ' of 2' + invText(); } },
   { title: 'Missile strike', text: 'You beat the eagle twice! A rare mutation, air-to-air missiles, will now show up in your mutation choices until you pick it. Then a golden eagle invades: hit it with a missile by pressing the Space bar while it attacks you or while you dive at it.',
     check: function () { return stats.missileHit; },
@@ -754,13 +857,73 @@ function checkGoals() {
 
 /* ---------- state ---------- */
 var game, phase = 'intro', speed = 1, history = [], fx = [], pools = [], view = 'coat', lastRec = -1, lastGenDone = 0, lastChange = {}, deathCause = null;
-function newGame() {
-  game = createWorld(Math.random); hawkNum = 1;
+function newGame(quiet) {
+  game = createWorld(Math.random); hawkNum = 1; curId = null; mutPending = false; setSaveStat('');
   phase = 'intro'; history = []; fx = []; pools = []; lastRec = -1; lastGenDone = 0; lastChange = {}; deathCause = null;
   goalIdx = 0; goalState = { goalGen: 0, streak: 0, ashDone: false, spawnAt: null, nextInv: null, peaceUntil: 0 }; wipe = { count: 0, at: null }; skeletons = []; decoy = null; goalsDone = false; stats = { wins: 0, missileHit: false }; missiles = []; burning = []; scorches = [];
   $('fight').hidden = true;
   record(); renderTabs(); renderTraits(); renderGoals(); updateUI(); drawChart();
-  showIntro();
+  if (!quiet) showIntro();
+}
+/* ---------- saving to this browser (localStorage) ---------- */
+var SAVE_V = 1, KEY_IDX = 'hawkhunter.v1.index', KEY_G = 'hawkhunter.v1.g.', curId = null, mutPending = false, saveOK = true;
+function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+function lsSet(k, v) { try { window.localStorage.setItem(k, v); return true; } catch (e) { return false; } }
+function lsDel(k) { try { window.localStorage.removeItem(k); } catch (e) {} }
+function readIndex() { try { var o = JSON.parse(lsGet(KEY_IDX) || 'null'); if (o && o.games) return o; } catch (e) {} return { games: [], next: 1 }; }
+function writeIndex(ix) { return lsSet(KEY_IDX, JSON.stringify(ix)); }
+function histPack() { return history.map(function (h) { var r = [Math.round(h.gen * 1000) / 1000, h.n]; TRAIT_KEYS.forEach(function (tr) { TRAITS[tr].variants.forEach(function (v) { r.push(h.f[tr][v]); }); }); return r; }); }
+function histUnpack(rows) {
+  return rows.map(function (r) { var f = {}, i = 2; TRAIT_KEYS.forEach(function (tr) { f[tr] = {}; TRAITS[tr].variants.forEach(function (v) { f[tr][v] = r[i++]; }); }); return { gen: r[0], n: r[1], f: f }; });
+}
+function setSaveStat(txt, bad) { var e = $('saveStat'); e.textContent = txt; e.className = 'saveStat' + (bad ? ' bad' : ''); }
+function saveGame(why) {
+  if (!curId || phase === 'fight' || phase === 'dead' || phase === 'intro' || !game.hawk.alive) return false;
+  var payload = { v: SAVE_V, world: game.snapshot(), goalIdx: goalIdx, goalState: goalState, goalsDone: goalsDone, stats: stats, hawkNum: hawkNum, wipe: wipe,
+    skeletons: skeletons, pools: pools, scorches: scorches, hist: histPack(), lastGenDone: lastGenDone, lastRec: lastRec, lastChange: lastChange, mutPending: mutPending, view: view };
+  var ix = readIndex(), ent = ix.games.filter(function (g) { return g.id === curId; })[0];
+  if (!ent) { ent = { id: curId, name: 'Game ' + ix.next, created: Date.now() }; ix.next++; ix.games.push(ent); }
+  ent.updated = Date.now(); ent.gen = genNow() + 1; ent.hawkNum = hawkNum; ent.color = hawkCol().body; ent.colorName = hawkCol().name;
+  ent.goals = Math.min(goalIdx, MAIN_GOALS); ent.pop = game.count(); ent.wins = stats.wins;
+  var ok = lsSet(KEY_G + curId, JSON.stringify(payload)) && writeIndex(ix);
+  saveOK = ok; setSaveStat(ok ? 'Saved \u00b7 Gen ' + ent.gen : 'Could not save (storage blocked or full)', !ok);
+  return ok;
+}
+function loadGame(id) {
+  var raw = lsGet(KEY_G + id), d = null;
+  try { d = JSON.parse(raw); } catch (e) {}
+  if (!d || d.v !== SAVE_V) { flashMsg('That save could not be read'); return false; }
+  newGame(true);
+  game.restore(d.world);
+  goalIdx = d.goalIdx; goalState = d.goalState; goalsDone = d.goalsDone; stats = d.stats; hawkNum = d.hawkNum; wipe = d.wipe || { count: 0, at: null };
+  skeletons = d.skeletons || []; pools = d.pools || []; scorches = d.scorches || []; history = histUnpack(d.hist); lastGenDone = d.lastGenDone; lastRec = d.lastRec;
+  lastChange = d.lastChange || {}; view = d.view || 'coat'; mutPending = !!d.mutPending; curId = id; decoy = null; missiles = []; burning = []; pendingFight = null;
+  renderTabs(); renderTraits(); renderGoals(); updateUI(); drawChart(); setSaveStat('Loaded');
+  if (mutPending) { showMutation(); return true; }
+  phase = 'panel';
+  var ent = readIndex().games.filter(function (g) { return g.id === id; })[0] || {};
+  openPanel('<p class="eyebrow">' + (ent.name || 'Saved game') + ' loaded</p><h2 id="panelTitle">Welcome back</h2>' +
+    '<p>Generation ' + (genNow() + 1) + ' \u00b7 hawk #' + hawkNum + ' (' + hawkCol().name + ') \u00b7 ' + game.count() + ' rodents \u00b7 ' + Math.min(goalIdx, MAIN_GOALS) + ' of ' + MAIN_GOALS + ' goals complete.</p>' +
+    '<div class="actions"><button type="button" class="btn primary big" data-act="resume" data-focus>Continue</button></div>');
+  return true;
+}
+var savesBack = null;
+function showSaves(canClose) {
+  var ix = readIndex(), rows = ix.games.slice().sort(function (a, b) { return b.updated - a.updated; });
+  var h = '<p class="eyebrow">Saved games</p><h2 id="panelTitle">' + (rows.length ? 'Choose a game' : 'No saved games yet') + '</h2>';
+  if (!rows.length) h += '<p>Your progress saves automatically at the end of every generation, in this browser only.</p>';
+  h += '<div class="saves">';
+  rows.forEach(function (g, i) {
+    h += '<div class="saveRow' + (g.id === curId ? ' cur' : '') + '"><i class="sw" style="background:' + (g.color || '#C8372D') + '"></i><span class="si"><b>' + g.name + (g.id === curId ? ' (playing now)' : '') + '</b>' +
+      '<span>Gen ' + g.gen + ' \u00b7 hawk #' + g.hawkNum + ' \u00b7 ' + g.goals + '/' + MAIN_GOALS + ' goals \u00b7 ' + g.pop + ' rodents \u00b7 ' + g.wins + ' fights won</span>' +
+      '<span class="dim">' + new Date(g.updated).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) + '</span></span>' +
+      '<button type="button" class="btn primary" data-load="' + g.id + '"' + (i === 0 ? ' data-focus' : '') + '>Load</button>' +
+      '<button type="button" class="btn" data-del="' + g.id + '">Delete</button></div>';
+  });
+  h += '</div>';
+  if (!saveOK || !lsSet('hawkhunter.v1.probe', '1')) h += '<p class="dim">Saving isn\u2019t available in this browser right now (private window or blocked storage), so progress will be lost when the tab closes.</p>';
+  h += '<div class="actions">' + (canClose ? '<button type="button" class="btn" data-act="closesaves">Back to game</button>' : '') + '<button type="button" class="btn' + (rows.length ? '' : ' primary') + ' big" data-act="newsave"' + (rows.length ? '' : ' data-focus') + '>New game</button></div>';
+  openPanel(h);
 }
 function record() { var f = {}; TRAIT_KEYS.forEach(function (tr) { f[tr] = game.freq(tr); }); history.push({ gen: game.t / GEN, n: game.count(), f: f }); }
 
@@ -771,6 +934,7 @@ function closePanel() { overlay.hidden = true; playBtn.disabled = false; }
 function showIntro() {
   openPanel('<p class="eyebrow">How to play</p><h2 id="panelTitle">You are the hawk</h2><ul class="rules">' +
     '<li><b>Click empty ground</b> and your hawk flies there and hovers, so you can wait close to your prey.</li>' +
+    '<li><b>Press Ctrl</b> to perch in the nearest grown tree (press it again to take off). A perched hawk uses much less energy. Sit still long enough and the rodents forget you are there and come out to eat.</li>' +
     '<li><b>Click a rodent</b> and your hawk dives for it. A rodent that sees you coming tries to run. Long legs help it escape.</li>' +
     '<li>Your hawk uses energy all the time, and each rodent you catch refills some. <b>If your energy reaches zero, your hawk dies.</b></li>' +
     '<li>Rodents eat seeds and have babies that inherit their parent’s traits, including how smart they are. Catch them faster than they can reproduce and <b>your food runs out</b>.</li>' +
@@ -780,36 +944,52 @@ function showIntro() {
 }
 var hand = [];
 function showMutation() {
-  phase = 'panel';
+  phase = 'panel'; mutPending = true;
   hand = dealHawkCards(Math.random, game.hawk);
-  if (stats.wins >= 2 && !game.hawk.missiles) hand.push(SPECIAL.missile);
-  if (genNow() >= 40 && !game.hawk.fire) hand.push(SPECIAL.fire);
-  if (stats.wins >= 3 && !game.hawk.decoy) hand.push(SPECIAL.decoy);
+  var hk0 = game.hawk, sp = [];
+  if (stats.wins >= 2 && !hk0.missiles) sp.push(SPECIAL.missile);
+  if (genNow() >= 40 && !hk0.fire) sp.push(SPECIAL.fire);
+  if (stats.wins >= 3 && !hk0.decoy) sp.push(SPECIAL.decoy);
+  if (hk0.missiles && (hk0.ammoMax || 1) < MISSILE_MAX) sp.push(ammoCard());
+  if (hk0.decoy && !hk0.counter) sp.push(SPECIAL.counter);
+  if (sp.length) hand.push(sp[0] === SPECIAL.missile ? sp[0] : sp[(Math.random() * sp.length) | 0]);   // one rare card per set
   var h = '<p class="eyebrow">Generation ' + genNow() + ' complete</p><h2 id="panelTitle" tabindex="-1" data-focus>Your hawk’s chicks have new mutations</h2>' +
-    '<p>Choose the one that spreads to the next generation of hawks. One of them is harmful.' + (hand.length > 3 ? ' A rare mutation is also on offer. It will keep showing up until you choose it.' : '') + '</p><div class="mut' + (hand.length > 3 ? ' four' : '') + '">';
-  hand.forEach(function (c, i) { h += '<button type="button" class="mcard' + (c.special ? ' rare' : '') + (c.golden ? ' golden' : '') + '" data-pick="' + i + '">' + (c.special ? '<span class="rk">' + (c.golden ? 'Golden bonus' : 'Rare') + '</span>' : '') + '<span class="nm">' + c.name + '</span><span class="tx">' + c.text + '</span></button>'; });
+    '<p>Choose the one that spreads to the next generation of hawks. One of them is harmful.' + (hand.length > 3 ? (hand[3].special === 'ammo' ? ' A missile upgrade is also on offer. You can build it instead of a mutation.' : ' A rare mutation is also on offer. It will keep showing up until you choose it.') : '') + '</p><div class="mut' + (hand.length > 3 ? ' four' : '') + '">';
+  hand.forEach(function (c, i) { h += '<button type="button" class="mcard' + (c.special ? ' rare' : '') + (c.golden ? ' golden' : '') + '" data-pick="' + i + '">' + (c.special ? '<span class="rk">' + (c.upgrade ? 'Upgrade' : c.golden ? 'Golden bonus' : 'Rare') + '</span>' : '') + '<span class="nm">' + c.name + '</span><span class="tx">' + c.text + '</span></button>'; });
   openPanel(h + '</div>');
 }
 var SPECIAL = {
   missile: { special: 'missile', name: 'Air-to-air missiles', text: 'Fire a missile at an invading eagle with the Space bar while it attacks you or while you dive at it. Reloads in 8 seconds.' },
   decoy: { special: 'decoy', golden: true, name: 'Golden decoy', text: 'A golden look-alike hawk follows you. When an eagle comes to attack, the decoy lures it away. Costs a little extra energy all the time.' },
-  fire: { special: 'fire', name: 'Fire breath', text: 'Click a tree to burn it down. Rodents hiding in it fall out. Recharges in 12 seconds.' }
+  fire: { special: 'fire', name: 'Fire breath', text: 'Click a tree to burn it down. Rodents hiding in it fall out. Recharges in 12 seconds.' },
+  counter: { special: 'counter', golden: true, name: 'Decoy countermeasures', text: 'Upgrade your golden decoy: it comes back in 6 seconds instead of 15. Your hawk also drops flares that break off an eagle attack when the decoy is away, and block the first eagle hit in a fight.' }
 };
+function ammoCard() {
+  var n = game.hawk.ammoMax || 1;
+  return { special: 'ammo', upgrade: true, name: 'Build a missile rack (' + n + ' → ' + (n + 1) + ' missiles)', text: 'Carry one more missile so you can fire again without waiting. Each missile reloads in ' + MISSILE_RELOAD + ' seconds, one at a time. Can be built up to ' + MISSILE_MAX + ' missiles.' };
+}
 function pickSpecial(c) {
   var hk = game.hawk, how;
   if (c.special === 'missile') {
-    hk.missiles = true; hk.mReady = game.t;
+    hk.missiles = true; hk.ammoMax = 1; hk.ammo = 1; hk.mNext = 0; hk.mCool = 0;
     if (!goalsDone && GOALS[goalIdx] && GOALS[goalIdx].title === 'Missile strike' && (!game.inv || game.inv.state === 'gone')) goalState.spawnAt = game.t + GEN * 0.3;
     how = 'Press the <b>Space bar</b> to fire a missile at an eagle that is attacking you (red dashed line) or that you are diving at. A hit wounds the eagle; two hits drive it away.';
+  } else if (c.special === 'ammo') {
+    hk.ammoMax = Math.min(MISSILE_MAX, (hk.ammoMax || 1) + 1); hk.ammo = Math.min(hk.ammoMax, (hk.ammo || 0) + 1);
+    how = 'Your hawk now carries <b>' + hk.ammoMax + ' missiles</b>. Press the Space bar again to fire the next one right away. Empty racks refill one at a time, ' + MISSILE_RELOAD + ' seconds each. In a fight you can fire all of them.';
+  } else if (c.special === 'counter') {
+    hk.counter = true;
+    how = 'Your golden decoy now comes back in ' + DECOY_RELOAD_FAST + ' seconds. While it is away, your hawk drops <b>flares</b> when an eagle attacks: the eagle breaks off (flares refill in ' + FLARE_RELOAD + ' seconds). In a fight, flares block the first eagle hit.';
   } else if (c.special === 'decoy') {
     hk.decoy = true;
     how = 'A golden decoy hawk now follows yours. When an eagle comes to attack you, the decoy flies at it and lures it away, then needs ' + DECOY_RELOAD + ' seconds to come back. Keeping it costs ' + DECOY_DRAIN + ' extra energy per second. You can still click an eagle to fight it yourself.';
   } else { hk.fire = true; hk.fReady = game.t; how = 'Click a tree to burn it down. Rodents hiding in it fall to the ground where you can catch them. New trees will still grow.'; }
   renderTraits(true);
-  openPanel('<p class="eyebrow">Rare mutation passed on</p><h2 id="panelTitle">' + c.name + ' <span class="chipk good">Rare</span></h2>' +
+  openPanel('<p class="eyebrow">' + (c.upgrade ? 'Upgrade built' : 'Rare mutation passed on') + '</p><h2 id="panelTitle">' + c.name + ' <span class="chipk good">' + (c.upgrade ? 'Upgrade' : c.golden ? 'Golden' : 'Rare') + '</span></h2>' +
     '<p>' + how + '</p><p class="dim">(Real hawks can\u2019t do this. It\u2019s a game reward.)</p><div class="actions"><button type="button" class="btn primary big" data-act="resume" data-focus>Keep hunting</button></div>');
 }
 function pick(i) {
+  mutPending = false;
   if (hand[i].special) { pickSpecial(hand[i]); return; }
   var c = hand[i], before = applyHawkMutation(game.hawk.T, c.m), harm = c.m.kind === 'harmful';
   game.hawk.picks.push(c.m); lastChange = before; renderTraits(true);
@@ -838,13 +1018,15 @@ function migrateHawk() {
   hawkNum++;
   var hk = game.hawk, T = {};
   for (var k in HAWK_BASE) T[k] = HAWK_BASE[k];
-  var fresh = { x: -30, y: H / 2, a: 0, state: 'soar', tgt: null, energy: 80, rest: 0, diveT: 0, caught: 0, misses: 0, alive: true, wounded: false, T: T, picks: [], missiles: false, fire: false, decoy: false, mReady: 0, fReady: 0, hover: null };
+  var fresh = { x: -30, y: H / 2, a: 0, state: 'soar', tgt: null, energy: 80, rest: 0, diveT: 0, caught: 0, misses: 0, alive: true, wounded: false, T: T, picks: [], missiles: false, fire: false, decoy: false, counter: false, ammo: 0, ammoMax: 1, mNext: 0, mCool: 0, flareReady: 0, fReady: 0, hover: null, perchOn: null, perchT: 0, ambush: false };
   for (k in fresh) hk[k] = fresh[k];
   missiles = []; decoy = null; lastChange = {}; renderTraits();
   if (game.count() === 0) { game.immigrate(2); wipe = { count: 0, at: null }; }
   deathCause = null; updateUI();
-  closePanel(); phase = 'running'; playBtn.textContent = 'Pause';
-  flashMsg('A new ' + hawkCol().name + ' hawk migrates into the valley'); renderGoals();
+  if (game.inv && game.inv.state !== 'gone') { game.inv.state = 'gone'; game.inv.tgt = null; }
+  grantCalm(3);
+  closePanel(); phase = 'running'; playBtn.textContent = 'Pause'; saveGame('migrate');
+  flashMsg('A new ' + hawkCol().name + ' hawk migrates in. The valley is calm for 3 generations'); renderGoals();
 }
 function showGoalsDone() {
   phase = 'panel';
@@ -856,8 +1038,18 @@ function showGoalsDone() {
 panel.addEventListener('click', function (e) {
   var b = e.target.closest('button'); if (!b) return;
   if (b.dataset.pick !== undefined) { pick(parseInt(b.dataset.pick, 10)); return; }
+  if (b.dataset.load) { loadGame(b.dataset.load); return; }
+  if (b.dataset.del) {
+    if (b.dataset.sure !== '1') { b.dataset.sure = '1'; b.textContent = 'Really delete?'; b.className = 'btn danger'; return; }
+    var ix = readIndex(); ix.games = ix.games.filter(function (g) { return g.id !== b.dataset.del; }); writeIndex(ix); lsDel(KEY_G + b.dataset.del);
+    if (b.dataset.del === curId) curId = null;
+    showSaves(savesBack !== null); return;
+  }
   var act = b.dataset.act;
-  if (act === 'start' || act === 'resume') { closePanel(); phase = 'running'; playBtn.textContent = 'Pause'; renderGoals(); }
+  if (act === 'start' && !curId) { curId = 'g' + Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36); setTimeout(function () { saveGame('start'); }, 0); }
+  if (act === 'closesaves') { closePanel(); phase = savesBack === 'running' ? 'running' : 'paused'; playBtn.textContent = phase === 'running' ? 'Pause' : 'Resume'; renderGoals(); }
+  else if (act === 'newsave') { newGame(); }
+  else if (act === 'start' || act === 'resume') { closePanel(); phase = 'running'; playBtn.textContent = 'Pause'; renderGoals(); }
   else if (act === 'again') newGame();
   else if (act === 'migrate') migrateHawk();
 });
@@ -866,7 +1058,13 @@ playBtn.addEventListener('click', function () {
   else if (phase === 'paused') { phase = 'running'; playBtn.textContent = 'Pause'; }
   renderGoals();
 });
-$('restart').addEventListener('click', newGame);
+$('restart').addEventListener('click', function () { saveGame('restart'); newGame(); });
+$('openSaves').addEventListener('click', function () {
+  if (phase === 'running' || phase === 'paused') { savesBack = phase; phase = 'panel'; saveGame('open'); showSaves(true); }
+  else if (phase === 'intro') { savesBack = null; showSaves(false); }
+});
+document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') saveGame('hidden'); });
+window.addEventListener('pagehide', function () { saveGame('hide'); });
 $('speed').addEventListener('click', function (e) {
   var b = e.target.closest('button'); if (!b) return;
   speed = parseInt(b.dataset.speed, 10);
@@ -876,6 +1074,7 @@ $('speed').addEventListener('click', function (e) {
 /* ---------- clicking to hunt ---------- */
 var arenaCv = $('arena');
 $('fireBtn').addEventListener('click', function () { fireMissile(); });
+$('perchBtn').addEventListener('click', function () { togglePerch(); });
 arenaCv.addEventListener('click', function (e) {
   if (phase !== 'running') return;
   var r = arenaCv.getBoundingClientRect(), gx = (e.clientX - r.left) / r.width * W, gy = (e.clientY - r.top) / r.height * H;
@@ -897,6 +1096,7 @@ arenaCv.addEventListener('click', function (e) {
   }
   if (!best || game.hidden(best)) {   // empty ground (or a rodent out of reach in a tree): fly there and hover
     if (best) fx.push({ kind: 'hid', x: best.x, y: best.y, age: 0 });
+    if (game.hawk.state === 'perch' || game.hawk.state === 'toperch') game.unperch();
     game.hawk.hover = { x: clamp(gx, 20, W - 20), y: clamp(gy, 20, H - 20) };
     fx.push({ kind: 'click', x: gx, y: gy, age: 0 }); return;
   }
@@ -905,7 +1105,26 @@ arenaCv.addEventListener('click', function (e) {
 
 /* ---------- missiles and fire breath ---------- */
 var missiles = [], burning = [], scorches = [], MISSILE_RELOAD = 8, FIRE_RELOAD = 12;
-var PEACE_GENS = 4, SKELETON_GENS = 2, MAX_MIGRATIONS = 2, DECOY_DRAIN = 0.15, DECOY_RELOAD = 15;
+var PEACE_GENS = 4, SKELETON_GENS = 2, MAX_MIGRATIONS = 2, DECOY_DRAIN = 0.15, DECOY_RELOAD = 15, DECOY_RELOAD_FAST = 6, FLARE_RELOAD = 10;
+var MISSILE_MAX = 4, MISSILE_GAP = 0.6;
+/* Missiles: each rack holds one; empty racks refill one at a time */
+function tickAmmo() {
+  var hk = game.hawk; if (!hk.missiles) return;
+  if (hk.ammoMax === undefined) { hk.ammoMax = 1; hk.ammo = 1; hk.mNext = 0; }
+  if (hk.ammo >= hk.ammoMax) { hk.mNext = 0; return; }
+  if (!hk.mNext) hk.mNext = game.t + MISSILE_RELOAD;
+  if (game.t >= hk.mNext) { hk.ammo++; hk.mNext = hk.ammo < hk.ammoMax ? game.t + MISSILE_RELOAD : 0; }
+}
+function missileReady() { var hk = game.hawk; return !!hk.missiles && hk.ammo > 0 && game.t >= (hk.mCool || 0); }
+function ammoPips() { var hk = game.hawk, o = ''; for (var i = 0; i < hk.ammoMax; i++) o += i < hk.ammo ? '\u25AE' : '\u25AF'; return o; }
+function togglePerch() {
+  if (phase !== 'running' || !game.hawk.alive) return;
+  var r = game.perch();
+  if (r === 'on') flashMsg('Flying to the nearest tree to perch');
+  else if (r === 'off') flashMsg('Your hawk takes off');
+  else if (r === 'none') flashMsg('No grown trees to perch in yet');
+  updateUI();
+}
 var wipe = { count: 0, at: null }, skeletons = [], decoy = null;
 /* Victory: once an invader is driven out, the valley stays eagle-free for a while */
 function declareVictory() {
@@ -913,6 +1132,13 @@ function declareVictory() {
   flashMsg('Victory! The valley is yours for ' + PEACE_GENS + ' generations');
 }
 function peaceful() { return game.t < goalState.peaceUntil; }
+var INV_SPAWN_MIN = 18;   // no new eagles unless rodents are plentiful
+function canInvade() { return !peaceful() && game.count() >= INV_SPAWN_MIN && game.hawk.alive; }
+/* A hawk that just arrived (or is recovering from near-death) gets a calm valley: eagles stay passive */
+function grantCalm(gens) {
+  game.calm = Math.max(game.calm || 0, game.t + gens * GEN);
+  goalState.peaceUntil = Math.max(goalState.peaceUntil, game.t + gens * GEN);
+}
 /* Rodent wipe-outs: a pair migrates in, but only a limited number of times */
 function checkWipeout() {
   if (game.count() > 0) { wipe.at = null; return; }
@@ -938,8 +1164,20 @@ function stepDecoy(dt) {
     decoy.lure.t -= dt;
     tx = decoy.lure.x; ty = decoy.lure.y; sp = 220;
     if (iv && iv.state !== 'gone') { var lx = decoy.x - iv.x, ly = decoy.y - iv.y, ld = Math.sqrt(lx * lx + ly * ly) || 1; iv.a = Math.atan2(ly, lx); iv.x += lx / ld * 150 * dt; iv.y += ly / ld * 150 * dt; iv.x = clamp(iv.x, 20, W - 20); iv.y = clamp(iv.y, 20, H - 20); }
-    if (decoy.lure.t <= 0) { decoy.lure = null; decoy.ready = game.t + DECOY_RELOAD; }
-  } else if (iv && iv.state === 'seek' && game.t >= decoy.ready) {
+    if (decoy.lure.t <= 0) { decoy.lure = null; decoy.ready = game.t + (hk.counter ? DECOY_RELOAD_FAST : DECOY_RELOAD); }
+  }
+  if (hk.counter && iv && iv.state === 'seek' && (decoy.lure || game.t < decoy.ready) && game.t >= (hk.flareReady || 0)) {   // decoy is away: drop flares
+    var fx0 = iv.x - hk.x, fy0 = iv.y - hk.y;
+    if (fx0 * fx0 + fy0 * fy0 < 90 * 90) {
+      iv.state = 'rest'; iv.rest = 2; iv.tgt = null; iv.challenge = 8;
+      iv.x = clamp(iv.x + fx0 * 0.8, 20, W - 20); iv.y = clamp(iv.y + fy0 * 0.8, 20, H - 20);
+      game.events = game.events.filter(function (e) { return e.kind !== 'fight'; }); pendingFight = null;
+      hk.flareReady = game.t + FLARE_RELOAD; fx.push({ kind: 'flare', x: hk.x, y: hk.y, a: hk.a, age: 0 });
+      flashMsg('Flares! The eagle breaks off its attack');
+    }
+  }
+  if (decoy.lure) { /* still leading the eagle away (target set above) */ }
+  else if (iv && iv.state === 'seek' && game.t >= decoy.ready) {
     tx = iv.x; ty = iv.y; sp = 520;
     var dx = iv.x - decoy.x, dy = iv.y - decoy.y;
     var hx = iv.x - hk.x, hy = iv.y - hk.y;
@@ -963,11 +1201,12 @@ function missileTarget() {
 function fireMissile() {
   var hk = game.hawk;
   if (phase !== 'running' || !hk.missiles || !hk.alive) return false;
-  if (game.t < hk.mReady) { flashMsg('Missile is reloading'); return false; }
+  if (!hk.ammo) { flashMsg('Missiles are reloading'); return false; }
+  if (game.t < (hk.mCool || 0)) return false;
   var iv = missileTarget();
   if (!iv) { flashMsg(game.inv && game.inv.state !== 'gone' ? 'Wait until the eagle attacks, or dive at it' : 'No eagle to fire at'); return false; }
   missiles.push({ x: hk.x, y: hk.y, a: Math.atan2(iv.y - hk.y, iv.x - hk.x), t: 0, trail: [] });
-  hk.mReady = game.t + MISSILE_RELOAD; return true;
+  hk.ammo--; hk.mCool = game.t + MISSILE_GAP; tickAmmo(); return true;
 }
 function stepMissiles(dt) {
   var iv = game.inv, hk = game.hawk;
@@ -1022,6 +1261,10 @@ document.addEventListener('keydown', function (e) {
   if (!game.hawk.missiles) return;
   fireMissile();
 });
+document.addEventListener('keydown', function (e) {
+  if (e.key !== 'Control' || e.repeat || phase !== 'running') return;
+  e.preventDefault(); togglePerch();
+});
 
 /* ---------- sidebar ---------- */
 function renderTraits(flash) {
@@ -1031,8 +1274,9 @@ function renderTraits(flash) {
     else cell = '<td class="num">' + t.fmt(v) + '</td>';
     var P = fightPowers(game.hawk.T), B = fightPowers(HAWK_BASE), ft = fightText(t.k, P), fb = fightText(t.k, B);
     return '<tr><td>' + t.label + '</td>' + cell + '<td class="fgt' + (ft !== fb ? ' chg' : '') + '">' + ft + '</td></tr>';
-  }).join('') + (game.hawk.missiles ? '<tr><td>Air-to-air missiles</td><td class="num"><span class="up">Yes</span></td><td class="fgt">Missile ' + MISSILE_DMG + '</td></tr>' : '') +
+  }).join('') + (game.hawk.missiles ? '<tr><td>Air-to-air missiles</td><td class="num"><span class="up">' + (game.hawk.ammoMax || 1) + '</span></td><td class="fgt">Missile ' + MISSILE_DMG + ' each</td></tr>' : '') +
     (game.hawk.decoy ? '<tr><td>Golden decoy</td><td class="num"><span class="up">Yes</span></td><td class="fgt">+' + DECOY_DRAIN + '/s energy</td></tr>' : '') +
+    (game.hawk.counter ? '<tr><td>Countermeasures</td><td class="num"><span class="up">Yes</span></td><td class="fgt">Flares block 1 hit</td></tr>' : '') +
     (game.hawk.fire ? '<tr><td>Fire breath</td><td class="num"><span class="up">Yes</span></td><td class="fgt">Burns trees</td></tr>' : '');
 }
 function renderTabs() { $('tabs').innerHTML = TRAIT_KEYS.map(function (tr) { return '<button type="button" data-tr="' + tr + '" aria-pressed="' + (tr === view) + '">' + TRAITS[tr].label + '</button>'; }).join(''); }
@@ -1043,15 +1287,24 @@ function updateUI() {
   $('hudE').textContent = e + '%'; $('hudGen').textContent = 'Gen ' + (genNow() + 1);
   $('hudW').hidden = !hk.wounded;
   var hm = $('hudM'); hm.hidden = true;
-  if (hk.missiles) { var mr = game.t >= hk.mReady; hm.textContent = mr ? (missileTarget() ? 'MISSILE: press Space!' : 'Missile ready') : 'Missile reloading'; hm.className = mr ? (missileTarget() ? 'hot' : 'ok') : 'wait'; }
+  if (hk.missiles) { var mr = hk.ammo > 0; hm.textContent = 'Missiles ' + ammoPips() + (mr && missileTarget() ? ' press Space!' : ''); hm.className = mr ? (missileTarget() ? 'hot' : 'ok') : 'wait'; }
   var hf = $('hudF'); hf.hidden = !hk.fire;
   if (hk.fire) { var fr = game.t >= hk.fReady; hf.textContent = fr ? 'Fire breath ready: click a tree' : 'Fire recharging'; hf.className = fr ? 'ok' : 'wait'; }
   $('hawkTitle').innerHTML = 'Your hawk' + (hawkNum > 1 ? ' #' + hawkNum : '') + ' <i class="sw" style="background:' + hawkCol().body + '"></i>';
-  var fb = $('fireBtn'), tgt = hk.missiles ? missileTarget() : null, rdy = hk.missiles && game.t >= hk.mReady;
+  var fb = $('fireBtn'), tgt = hk.missiles ? missileTarget() : null, rdy = missileReady();
   fb.hidden = !hk.missiles || phase === 'fight';
   if (hk.missiles) {
     fb.className = 'fireBtn' + (rdy && tgt ? ' hot' : rdy ? '' : ' wait');
-    fb.innerHTML = '<kbd>SPACE</kbd><span>' + (rdy && tgt ? '<b>FIRE MISSILE NOW!</b>' : rdy ? '<b>Missile ready</b><small>Fire when an eagle attacks you or you dive at it</small>' : '<b>Missile reloading</b><small>' + Math.ceil(hk.mReady - game.t) + ' s</small>') + '</span>';
+    fb.innerHTML = '<kbd>SPACE</kbd><span>' + (rdy && tgt ? '<b>FIRE MISSILE NOW!</b>' : rdy ? '<b>Missiles ready ' + ammoPips() + '</b><small>Fire when an eagle attacks you or you dive at it</small>' : '<b>Missiles reloading ' + ammoPips() + '</b><small>' + (hk.mNext ? 'Next in ' + Math.max(1, Math.ceil(hk.mNext - game.t)) + ' s' : '') + '</small>') + '</span>';
+  }
+  var pb = $('perchBtn'), grown = game.trees.some(function (t) { return t.r >= TREE.hideMin; }), onP = hk.state === 'perch' || hk.state === 'toperch';
+  pb.hidden = phase === 'fight' || !hk.alive || (!grown && !onP);
+  if (!pb.hidden) {
+    pb.className = 'perchBtn' + (onP ? ' on' : '');
+    pb.setAttribute('aria-pressed', String(onP));
+    pb.innerHTML = '<kbd>CTRL</kbd><span>' + (hk.state === 'toperch' ? '<b>Flying to a tree…</b><small>Press Ctrl again to cancel</small>'
+      : hk.state === 'perch' ? (game.fooled() ? '<b>Perched: rodents fooled!</b><small>They think you left. Click one to swoop.</small>' : '<b>Perched: saving energy</b><small>Rodents forget you in ' + Math.max(1, Math.ceil(PERCH.fool - hk.perchT)) + ' s</small>')
+      : '<b>Perch in a tree</b><small>Uses ' + Math.round((1 - PERCH.drain) * 100) + '% less energy</small>') + '</span>';
   }
   var wb = $('warnBar'), nn = game.count();
   if (phase !== 'fight' && nn === 0) { wb.hidden = false; wb.className = 'warnBar bad'; wb.innerHTML = '<b>No food exists, be careful!</b> ' + (wipe.count > MAX_MIGRATIONS ? 'No more rodents will come. Your hawk will die.' : 'A pair of rodents is migrating in. Wipe-outs: ' + wipe.count + ' of ' + MAX_MIGRATIONS + ' allowed. Wipe them out again and none will come.'); }
@@ -1178,8 +1431,9 @@ function drawArena() {
   }
   if (hk.hover && hk.alive) {
     var hv = hk.hover; actx.save(); actx.strokeStyle = 'rgba(255,255,255,0.75)'; actx.lineWidth = 1.5; actx.setLineDash([3, 4]);
-    actx.beginPath(); actx.arc(hv.x, hv.y, 16, 0, 6.283); actx.stroke(); actx.setLineDash([]);
-    actx.beginPath(); actx.moveTo(hv.x - 5, hv.y); actx.lineTo(hv.x + 5, hv.y); actx.moveTo(hv.x, hv.y - 5); actx.lineTo(hv.x, hv.y + 5); actx.stroke(); actx.restore();
+    var hr = game.HOVER_R + 8; actx.lineWidth = 2;
+    actx.beginPath(); actx.arc(hv.x, hv.y, hr, 0, 6.283); actx.stroke(); actx.setLineDash([]);
+    actx.beginPath(); actx.moveTo(hv.x - 8, hv.y); actx.lineTo(hv.x + 8, hv.y); actx.moveTo(hv.x, hv.y - 8); actx.lineTo(hv.x, hv.y + 8); actx.stroke(); actx.restore();
   }
   if (hk.state === 'dive' && hk.tgt) {
     actx.strokeStyle = hk.tgt === game.inv ? 'rgba(255,90,80,0.95)' : 'rgba(255,211,77,0.9)'; actx.lineWidth = 2; actx.beginPath(); actx.arc(hk.tgt.x, hk.tgt.y, 18, 0, 6.283); actx.stroke();
@@ -1197,7 +1451,7 @@ function drawArena() {
     actx.fillStyle = '#D8DDE3'; actx.fillRect(-9, -2.5, 15, 5); actx.fillStyle = '#E0483A'; actx.beginPath(); actx.moveTo(6, -2.5); actx.lineTo(11, 0); actx.lineTo(6, 2.5); actx.fill();
     actx.fillStyle = '#FFB347'; actx.beginPath(); actx.moveTo(-9, -2); actx.lineTo(-15, 0); actx.lineTo(-9, 2); actx.fill(); actx.restore();
   });
-  var mt = game.hawk.missiles && game.t >= hk.mReady ? missileTarget() : null;
+  var mt = missileReady() ? missileTarget() : null;
   if (mt) { actx.strokeStyle = '#FF5A50'; actx.lineWidth = 2; var rr2 = 26 + (reduceMotion ? 0 : Math.sin(game.t * 10) * 3); actx.beginPath(); actx.arc(mt.x, mt.y, rr2, 0, 6.283); actx.moveTo(mt.x - rr2 - 6, mt.y); actx.lineTo(mt.x - rr2 + 6, mt.y); actx.moveTo(mt.x + rr2 - 6, mt.y); actx.lineTo(mt.x + rr2 + 6, mt.y); actx.stroke();
     actx.font = '800 16px "Bricolage Grotesque", sans-serif'; actx.textAlign = 'center'; var lbl = 'PRESS SPACE!', lw = actx.measureText(lbl).width;
     actx.fillStyle = 'rgba(12,16,22,0.85)'; actx.fillRect(mt.x - lw / 2 - 8, mt.y - rr2 - 30, lw + 16, 22); actx.fillStyle = '#FFD34D'; actx.fillText(lbl, mt.x, mt.y - rr2 - 13); }
@@ -1207,13 +1461,23 @@ function drawArena() {
     actx.save(); actx.translate(decoy.x, decoy.y); actx.rotate(decoy.a); actx.globalAlpha = dg;
     actx.fillStyle = '#E8B923'; actx.strokeStyle = '#FFF6C8'; actx.lineWidth = 1.5; birdPath(actx, false); actx.fill(); actx.stroke(); actx.restore();
   }
-  if (hk.state !== 'dead') drawBird(hk.x, hk.y, hk.a, hk.state === 'dive' ? 1.1 : 1.35, hk.state === 'rest' || hk.wounded ? 0.75 : 1, false, hk.wounded);
+  if (hk.state === 'perch') {   // ring that fills while the rodents forget the hawk
+    var pu = Math.min(1, hk.perchT / PERCH.fool), fo = game.fooled();
+    actx.save(); actx.lineWidth = 3; actx.strokeStyle = 'rgba(12,16,22,0.5)'; actx.beginPath(); actx.arc(hk.x, hk.y, 24, 0, 6.283); actx.stroke();
+    actx.strokeStyle = fo ? '#7CE0A0' : '#FFFFFF'; actx.beginPath(); actx.arc(hk.x, hk.y, 24, -Math.PI / 2, -Math.PI / 2 + pu * 6.283); actx.stroke();
+    if (fo) { actx.font = '700 12px "IBM Plex Sans", sans-serif'; actx.textAlign = 'center'; var fl2 = 'rodents fooled', fw = actx.measureText(fl2).width; actx.fillStyle = 'rgba(12,16,22,0.8)'; actx.fillRect(hk.x - fw / 2 - 5, hk.y - 46, fw + 10, 17); actx.fillStyle = '#7CE0A0'; actx.fillText(fl2, hk.x, hk.y - 33); }
+    actx.restore();
+  }
+  if (hk.state !== 'dead') drawBird(hk.x, hk.y, hk.a, hk.state === 'dive' ? 1.1 : hk.state === 'perch' ? 1.05 : 1.35, hk.state === 'rest' || hk.wounded ? 0.75 : 1, false, hk.wounded);
   for (i = 0; i < fx.length; i++) {
     var e = fx[i];
     if (e.kind === 'escape') { actx.globalAlpha = 1 - e.age / 0.9; actx.strokeStyle = '#FFFFFF'; actx.lineWidth = 2; actx.beginPath(); actx.arc(e.x, e.y, 12 + (reduceMotion ? 0 : e.age * 10), 0, 6.283); actx.stroke(); }
     else if (e.kind === 'click' || e.kind === 'busy') { actx.globalAlpha = 1 - e.age / 0.6; actx.strokeStyle = e.kind === 'busy' ? '#F0905A' : 'rgba(255,255,255,0.8)'; actx.lineWidth = 1.5; actx.beginPath(); actx.arc(e.x, e.y, 8, 0, 6.283); actx.stroke(); }
     else if (e.kind === 'hid' || e.kind === 'climb') { actx.globalAlpha = 1 - e.age / 0.9; actx.fillStyle = '#FFFFFF'; actx.font = '700 13px "IBM Plex Sans", sans-serif'; actx.textAlign = 'center'; actx.fillText('hid in tree', e.x, e.y - 16 - e.age * 10); }
     else if (e.kind === 'boom') { var bu = e.age / 0.9, br = (e.small ? 10 : 22) + bu * (e.small ? 14 : 34); actx.globalAlpha = 1 - bu; actx.fillStyle = '#FFB347'; actx.beginPath(); actx.arc(e.x, e.y, br, 0, 6.283); actx.fill(); actx.fillStyle = '#FFF2B0'; actx.beginPath(); actx.arc(e.x, e.y, br * 0.5, 0, 6.283); actx.fill(); }
+    else if (e.kind === 'evade') { actx.globalAlpha = Math.max(0, 1 - e.age / 1.2); actx.font = '800 16px "Bricolage Grotesque", sans-serif'; actx.textAlign = 'center'; actx.fillStyle = 'rgba(12,16,22,0.8)'; actx.fillRect(e.x - 42, e.y - 50 - e.age * 12, 84, 22); actx.fillStyle = '#9FE3FF'; actx.fillText('EVADED!', e.x, e.y - 33 - e.age * 12);
+      actx.strokeStyle = '#9FE3FF'; actx.lineWidth = 2; actx.beginPath(); actx.arc(e.x, e.y, 18 + e.age * 20, 0, 6.283); actx.stroke(); }
+    else if (e.kind === 'flare') { var fu = e.age / 1.2; for (var fq = 0; fq < 8; fq++) { var fa2 = e.a + Math.PI + (fq - 3.5) * 0.35, fd = 12 + fu * (60 + (fq % 3) * 18); actx.globalAlpha = 1 - fu; actx.fillStyle = fq % 2 ? '#FFB347' : '#FFF2B0'; actx.beginPath(); actx.arc(e.x + Math.cos(fa2) * fd, e.y + Math.sin(fa2) * fd + fu * 20, 4 - fu * 2, 0, 6.283); actx.fill(); } }
     else if (e.kind === 'mutant') { actx.globalAlpha = Math.max(0, 1 - e.age / 2); actx.strokeStyle = '#FFD34D'; actx.lineWidth = 2; actx.beginPath(); actx.arc(e.x, e.y, 13, 0, 6.283); actx.stroke(); }
   }
   actx.globalAlpha = 1;
@@ -1232,13 +1496,18 @@ function stepFx(dtReal) {
       skeletons.push({ x: e.x, y: e.y, a: Math.random() * 6.283, t: game.t }); if (skeletons.length > 80) skeletons.shift();
     } else if (e.kind === 'fight') pendingFight = e.extra === 'invader' ? 'invader' : 'player';
     else if (e.kind === 'ashgone') goalState.ashDone = true;
+    else if (e.kind === 'invleft') { flashMsg('The eagle leaves: too few rodents to hunt'); goalState.peaceUntil = Math.max(goalState.peaceUntil, game.t + 2 * GEN); }
     else if (e.kind === 'healed') flashMsg('Your hawk has recovered');
     else if (e.kind === 'invstarved') flashMsg('The eagle starved and is gone');
+    else if (e.kind === 'evade') { fx.push({ kind: 'evade', x: e.x, y: e.y, age: 0 }); flashMsg('Evaded! The eagle missed'); }
+    else if (e.kind === 'perched') flashMsg('Perched. Stay still and the rodents will forget you');
+    else if (e.kind === 'fooled') flashMsg('The rodents think your hawk has gone!');
+    else if (e.kind === 'perchlost') flashMsg('Your tree is gone! Your hawk takes off');
     else if (e.kind === 'escape' || e.kind === 'mutant' || e.kind === 'hid' || e.kind === 'climb') fx.push({ kind: e.kind, x: e.x, y: e.y, age: 0 });
   });
   game.events.length = 0;
   pools = pools.filter(function (p) { return game.t - p.t <= 14; }).slice(-120);
-  fx = fx.filter(function (f) { f.age += dtReal; return f.age < (f.kind === 'mutant' ? 2 : 0.9); });
+  fx = fx.filter(function (f) { f.age += dtReal; return f.age < (f.kind === 'mutant' ? 2 : f.kind === 'evade' || f.kind === 'flare' ? 1.2 : 0.9); });
   if (msg) msg.age += dtReal;
 }
 var MONO = '11px "IBM Plex Mono", ui-monospace, Menlo, monospace';
@@ -1276,7 +1545,7 @@ var MOVES = {
   strike:  { label: 'Talon strike', key: 'J', wind: 0.35, total: 0.9, cd: 1.3 },
   dive:    { label: 'Power dive',   key: 'K', wind: 0.9,  total: 1.5, cd: 3.6 },
   guard:   { label: 'Wing guard',   key: 'L', wind: 0,    total: 1.3, cd: 1.4 },
-  missile: { label: 'Missile',      key: 'M', wind: 0.4,  total: 1.0, cd: 99 }
+  missile: { label: 'Missile',      key: 'M', wind: 0.4,  total: 1.0, cd: 1.8 }
 };
 var MISSILE_DMG = 38;
 function fitFight() {
@@ -1290,12 +1559,13 @@ function fighter(name, hp, side, st) {
 function eagleStats(lvl) { return { strike: 8 + 3 * lvl, dive: 16 + 6 * lvl, dodge: 0.08 + 0.06 * lvl, crit: 0.08, acc: 1, recharge: 1, missiles: 0 }; }
 function startFight(who) {
   var hk = game.hawk, iv = game.inv, lvl = iv.level, st = fightPowers(hk.T);
-  st.missiles = hk.missiles && game.t >= hk.mReady ? 1 : 0;
+  st.missiles = hk.missiles ? hk.ammo || 0 : 0;
   phase = 'fight';
   F = { t: 0, over: null, overT: 0, floats: [], shots: [], who: who, lvl: lvl,
     p: fighter('YOUR HAWK', hk.energy, -1, st),
     e: fighter(lvl > 1 ? 'GOLDEN EAGLE' : 'INVADING EAGLE', iv.energy, 1, eagleStats(lvl)),
     think: 2.6 };
+  F.p.flares = hk.counter ? 1 : 0;
   fightEl.hidden = false; fitFight(); renderFightButtons();
   $('fightMsg').innerHTML = (who === 'invader' ? 'The eagle attacked you!' : 'You attacked the eagle!') +
     ' <span class="fhint">Your hawk’s traits set its powers (left). Evolve better traits to hit harder, dodge more and recharge faster.</span>';
@@ -1304,16 +1574,16 @@ function startFight(who) {
 function renderFightButtons() {
   var st = F.p.st, order = ['strike', 'dive', 'guard'].concat(game.hawk.missiles ? ['missile'] : []);
   $('fightBtns').innerHTML = order.map(function (k) {
-    var m = MOVES[k], extra = k === 'strike' ? Math.round(st.strike) + ' damage' : k === 'dive' ? Math.round(st.dive) + ' damage, slow' : k === 'guard' ? 'blocks 75%' : (st.missiles ? MISSILE_DMG + ' damage, can’t be blocked' : 'still reloading');
-    return '<button type="button" class="fbtn" data-move="' + k + '"><kbd>' + m.key + '</kbd><span class="ft"><b>' + m.label + '</b><span>' + extra + '</span></span><i></i></button>';
+    var m = MOVES[k], extra = k === 'strike' ? Math.round(st.strike) + ' damage' : k === 'dive' ? Math.round(st.dive) + ' damage, slow' : k === 'guard' ? 'blocks 75%' : (st.missiles ? MISSILE_DMG + ' damage · ' + st.missiles + ' left' : 'none left');
+    return '<button type="button" class="fbtn" data-move="' + k + '"><kbd>' + m.key + '</kbd><span class="ft"><b>' + m.label + '</b><span' + (k === 'missile' ? ' id="fMisTxt"' : '') + '>' + extra + '</span></span><i></i></button>';
   }).join('');
 }
 function canAct(f) { return !F.over && F.t > 2.2 && !f.act; }
 function doMove(f, k) {
   if (!canAct(f) || f.cd[k] > 0) return false;
-  if (k === 'missile' && (f.st.missiles <= 0 || f.used.missile)) return false;
+  if (k === 'missile' && f.st.missiles <= 0) return false;
   f.act = k; f.actT = 0; f.hitDone = false; f.cd[k] = MOVES[k].cd / (f.st.recharge || 1);
-  if (k === 'missile') { f.used.missile = true; if (f === F.p) game.hawk.mReady = game.t + MISSILE_RELOAD; }
+  if (k === 'missile') { f.st.missiles--; if (f === F.p) { game.hawk.ammo = Math.max(0, (game.hawk.ammo || 0) - 1); var mtx = $('fMisTxt'); if (mtx) mtx.textContent = f.st.missiles ? MISSILE_DMG + ' damage · ' + f.st.missiles + ' left' : 'none left'; } }
   return true;
 }
 function floatTxt(f, txt, col) { F.floats.push({ x: f.side < 0 ? 0.28 : 0.72, y: 0.46, t: 0, txt: txt, col: col }); }
@@ -1321,6 +1591,7 @@ function resolveHit(att, def, k) {
   var st = att.st;
   if (k !== 'missile' && Math.random() < def.st.dodge) { floatTxt(def, 'DODGE', '#9FE3FF'); return; }
   if (k !== 'missile' && Math.random() > st.acc) { floatTxt(def, 'MISS', '#CCCCCC'); return; }
+  if (def.flares > 0 && k !== 'missile') { def.flares--; floatTxt(def, 'FLARES! BLOCKED', '#FFB347'); return; }
   var dmg = k === 'missile' ? MISSILE_DMG : st[k], crit = k !== 'missile' && Math.random() < st.crit;
   if (crit) dmg *= 1.75;
   if (k !== 'missile' && def.act === 'guard') { dmg *= 0.25; floatTxt(def, 'BLOCK', '#FFE58A'); }
@@ -1363,7 +1634,7 @@ function stepFight(dt) {
   F.floats = F.floats.filter(function (fl) { fl.t += dt; return fl.t < 1.4; });
   [].forEach.call(document.querySelectorAll('.fbtn'), function (b) {
     var k = b.dataset.move, cdv = F.p.cd[k], m = MOVES[k], cdMax = m.cd / (F.p.st.recharge || 1),
-        dis = !canAct(F.p) || cdv > 0 || (k === 'missile' && (F.p.used.missile || !F.p.st.missiles));
+        dis = !canAct(F.p) || cdv > 0 || (k === 'missile' && !F.p.st.missiles);
     b.disabled = dis; b.querySelector('i').style.width = (cdv > 0 && m.cd < 50 ? Math.min(100, 100 * cdv / cdMax) : 0) + '%';
   });
 }
@@ -1489,48 +1760,54 @@ function frame(ts) {
   if (phase === 'running') {
     acc += dtReal * speed; var steps = 0;
     while (acc >= DT && steps < 12 && phase === 'running') {
-      game.step(DT); acc -= DT; steps++; stepMissiles(DT); stepBurning(DT); stepDecoy(DT); checkWipeout();
+      game.step(DT); acc -= DT; steps++; stepMissiles(DT); stepBurning(DT); stepDecoy(DT); tickAmmo(); checkWipeout();
       if (Math.floor(game.t * 2 + 1e-9) > lastRec) { lastRec = Math.floor(game.t * 2 + 1e-9); record(); }
       if (!game.hawk.alive) { stepFx(0); updateUI(); showDeath(); break; }
       stepFx(0);
       if (pendingFight) { var who = pendingFight; pendingFight = null; startFight(who); break; }
       // scheduled invaders
-      if (goalState.spawnAt !== null && game.t >= goalState.spawnAt && !peaceful() && (!game.inv || game.inv.state === 'gone')) { game.spawnInvader(2); goalState.spawnAt = null; flashMsg('A golden eagle invades!'); }
+      if (goalState.wantInv && canInvade() && (!game.inv || game.inv.state === 'gone')) { game.spawnInvader(goalState.wantInv); goalState.wantInv = 0; flashMsg('An eagle invades!'); }
+      if (goalState.spawnAt !== null && game.t >= goalState.spawnAt && canInvade() && (!game.inv || game.inv.state === 'gone')) { game.spawnInvader(2); goalState.spawnAt = null; flashMsg('A golden eagle invades!'); }
       if (game.inv && game.inv.state === 'gone' && game.inv.x < -60 || game.inv && game.inv.state === 'gone' && game.inv.x > W + 60) {
-        if (!goalsDone && GOALS[goalIdx] && GOALS[goalIdx].title === 'Invader' && stats.wins < 2) { if (!peaceful()) game.spawnInvader(1); }
+        if (!goalsDone && GOALS[goalIdx] && GOALS[goalIdx].title === 'Invader' && stats.wins < 2) { if (canInvade()) game.spawnInvader(1); }
         else if (!goalsDone && GOALS[goalIdx] && GOALS[goalIdx].title === 'Missile strike' && !stats.missileHit && game.hawk.missiles && goalState.spawnAt === null)
           goalState.spawnAt = game.t + GEN * 0.3;
         else if (goalIdx >= MAIN_GOALS && goalState.spawnAt === null && goalState.nextInv === null) goalState.nextInv = game.t + GEN * 4;
       }
-      if (goalIdx >= MAIN_GOALS && goalState.nextInv !== null && game.t >= goalState.nextInv && !peaceful()) { game.spawnInvader(Math.min(3, 2 + Math.floor(stats.wins / 4))); goalState.nextInv = null; flashMsg('Another invader!'); }
+      if (goalIdx >= MAIN_GOALS && goalState.nextInv !== null && game.t >= goalState.nextInv && canInvade()) { game.spawnInvader(Math.min(3, 2 + Math.floor(stats.wins / 4))); goalState.nextInv = null; flashMsg('Another invader!'); }
       var g = genNow();
       if (g > lastGenDone) {
         lastGenDone = g;
         if (goalIdx === 1) goalState.streak = game.count() >= 15 ? goalState.streak + 1 : 0;
         checkGoals();
-        if (phase === 'running' && g % MUT_EVERY === 0) { showMutation(); break; }
+        if (phase === 'running' && g % MUT_EVERY === 0) { showMutation(); saveGame('gen'); break; }
+        saveGame('gen');
       }
     }
     if (steps >= 12) acc = 0;
     if (phase === 'running') { uiAcc += dtReal; if (uiAcc > 0.4) { uiAcc = 0; checkGoals(); } }
   }
   if (msg) msg.age += dtReal;
-  fx = fx.filter(function (f) { f.age += dtReal; return f.age < (f.kind === 'mutant' ? 2 : 0.9); });
+  fx = fx.filter(function (f) { f.age += dtReal; return f.age < (f.kind === 'mutant' ? 2 : f.kind === 'evade' || f.kind === 'flare' ? 1.2 : 0.9); });
   drawArena();
   chAcc += dtReal; if (chAcc > 0.25) { chAcc = 0; drawChart(); updateUI(); if (phase === 'running') renderGoals(); }
   requestAnimationFrame(frame);
 }
 function onResize() { fitCanvases(); drawArena(); drawChart(); }
 if (window.ResizeObserver) { new ResizeObserver(onResize).observe(dishBox); new ResizeObserver(onResize).observe(chartBox); new ResizeObserver(fitFight).observe(fcv); } else window.addEventListener('resize', onResize);
-fitCanvases(); newGame();
+fitCanvases(); newGame(); if (readIndex().games.length) { savesBack = null; showSaves(false); }
 window.__hh = function () { return { phase: phase, gen: genNow(), goal: goalIdx, caught: game.hawk.caught, e: game.hawk.energy, n: game.count(), wins: stats.wins, wounded: game.hawk.wounded, inv: game.inv ? game.inv.state + (game.inv.wounded ? '-w' : '') : null, ash: game.ash, trees: game.trees.length, climb: game.freq('climb').climber / Math.max(1, game.count()), smart: (game.freq('mind').smart + game.freq('mind').wise) / Math.max(1, game.count()), missiles: !!game.hawk.missiles, decoy: !!decoy, lure: !!(decoy && decoy.lure), wipes: wipe.count, peace: peaceful(), fire: !!game.hawk.fire, hit: stats.missileHit, mt: !!missileTarget() }; };
 window.__hhDive = function () { var best = null, bv = -1; game.gophers.forEach(function (c) { if (game.hidden(c)) return; var v = 1 - game.camo(c) + Math.random() * 0.2; if (v > bv) { bv = v; best = c; } }); return game.dive(best); };
 window.__hhEngage = function () { return game.engage(); };
 window.__hhMissile = function () { return fireMissile(); };
 window.__hhBurn = function () { if (game.trees[0]) burnTree(game.trees[0]); };
 window.__hhTreePt = function () { var t = game.trees.filter(function (q) { return q.r > 30; })[0]; if (!t) return null; var r = arenaCv.getBoundingClientRect(); return [r.left + t.x / W * r.width, r.top + t.y / H * r.height]; };
-window.__hhGive = function (k) { if (k === 'fire') { game.hawk.fire = true; game.hawk.fReady = 0; } else { game.hawk.missiles = true; game.hawk.mReady = 0; } renderTraits(); };
-window.__hhInv = function (l) { game.spawnInvader(l || 1); game.inv.challenge = 1; };
+window.__hhGive = function (k) { if (k === 'fire') { game.hawk.fire = true; game.hawk.fReady = 0; } else if (k === 'ammo') { pickSpecial(ammoCard()); } else if (k === 'counter') { game.hawk.counter = true; } else if (k === 'evade') { game.hawk.T.evade = 0.5; } else { game.hawk.missiles = true; game.hawk.ammoMax = 1; game.hawk.ammo = 1; game.hawk.mNext = 0; } renderTraits(); };
+window.__hhPerch = function () { var h = game.hawk; return { state: h.state, perchT: h.perchT, fooled: game.fooled(), e: h.energy, stay: game.gophers.filter(function (c) { return c.stay; }).length, n: game.count() }; };
+window.__hhShowMut = function () { showMutation(); };
+window.__hhGame = function () { return game; };
+window.__hhAmmo = function () { var h = game.hawk; return { ammo: h.ammo, max: h.ammoMax, next: h.mNext, t: game.t }; };
+window.__hhInv = function (l) { game.spawnInvader(l || 1); game.inv.challenge = (arguments[1] === undefined ? 1 : arguments[1]); };
 window.__hhKill = function () { game.hawk.energy = 0.01; };
 window.__hhMut = function (k, v) { game.hawk.T[k] = v; renderTraits(); };
 window.__hhWipe = function () { game.gophers.length = 0; };
@@ -1538,6 +1815,8 @@ window.__hhGiveDecoy = function () { game.hawk.decoy = true; renderTraits(); };
 window.__hhTreeInfo = function () { return game.trees.map(function (t) { var r = arenaCv.getBoundingClientRect(); return { px: r.left + t.x / W * r.width, py: r.top + t.y / H * r.height, x: t.x, y: t.y, r: t.r, hid: game.gophers.filter(function (c) { return c.tree === t && c.hide > 0; }).length }; }); };
 window.__hhHover = function () { return game.hawk.hover && { x: game.hawk.hover.x, y: game.hawk.hover.y, hx: game.hawk.x, hy: game.hawk.y }; };
 window.__hhRodents = function () { return game.gophers.map(function (c) { return { x: c.x, y: c.y, hide: c.hide }; }); };
+window.__hhSetPop = function (n) { game.gophers.length = Math.min(game.gophers.length, n); };
+window.__hhCalm = function () { return { calm: game.calm, t: game.t, inv: game.inv && game.inv.state }; };
 window.__hhSetSpeed = function (v) { speed = v; };
 window.__hhFight = function (k) { if (F) doMove(F.p, k); };
 requestAnimationFrame(function (t) { lastTs = t; requestAnimationFrame(frame); });
