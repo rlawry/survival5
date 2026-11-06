@@ -184,6 +184,49 @@ td.fgt.chg { color: var(--ink); font-weight: 600; }
 .keyRow.hot { border-color: #C8372D; border-width: 2px; background: color-mix(in srgb, #C8372D 16%, var(--surface)); }
 .keyRow.hot kbd { background: #C8372D; color: #FFFFFF; }
 #invadeBtn { margin-top: 8px; width: 100%; }
+.menu { position: fixed; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; padding: 16px 16px 140px; background: #0F1A33; overflow: hidden; }
+.menu[hidden] { display: none; }
+#menuCv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.menuBox { position: relative; width: min(440px, 100%); max-height: 100%; overflow-y: auto; display: flex; flex-direction: column; gap: 9px; padding: 22px 24px; background: rgba(10, 14, 24, 0.9); color: #F4F1EA; border: 2px solid #F2C230; box-shadow: 0 20px 50px rgba(0,0,0,0.45); }
+.menuTitle { font: 800 clamp(40px, 9vw, 64px)/1 var(--font-display); letter-spacing: -0.02em; color: #FFD34D; text-align: center; text-shadow: 0 4px 0 #8E241D, 0 8px 18px rgba(0,0,0,0.5); white-space: nowrap; }
+.menuSub { margin: 0 0 6px; text-align: center; font-size: 13px; color: #C9D1D9; }
+.menuH { font: 800 28px var(--font-display); color: #FFD34D; }
+.menuP { margin: 0; font-size: 14px; color: #E6E2D8; }
+.mbtn { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 100%; padding: 11px 14px; font: 700 18px var(--font-display); letter-spacing: .01em; color: #F4F1EA; background: #1F2A40; border: 2px solid #4A5878; cursor: pointer; }
+.mbtn small { font: 400 12.5px var(--font-body); color: #C9D1D9; letter-spacing: 0; }
+.mbtn:hover:not(:disabled) { background: #2C3A58; border-color: #F2C230; }
+.mbtn.primary { background: #F2C230; color: #1A1405; border-color: #F2C230; }
+.mbtn.primary small { color: #3A2E08; }
+.mbtn.primary:hover { background: #FFD34D; }
+.mbtn:disabled { opacity: .45; cursor: not-allowed; }
+.mbtn.back { font-size: 15px; padding: 8px 14px; margin-top: 4px; }
+.mbtn.sm { width: auto; flex: 0 0 auto; font-size: 14px; padding: 6px 12px; }
+.mbtn.danger { background: #B0303F; border-color: #F58A98; color: #FFFFFF; }
+.mSaves { display: flex; flex-direction: column; gap: 7px; }
+.mSave { display: flex; align-items: center; gap: 10px; padding: 7px 9px; border: 1px solid #4A5878; background: rgba(31, 42, 64, 0.85); }
+.mSave.cur { border-color: #F2C230; }
+.mSave .hthumb { width: 48px; height: 48px; border-color: #4A5878; }
+.mSave .si { display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; font-size: 12.5px; line-height: 1.3; }
+.mSave .si b { font-size: 14px; }
+.mSave .dim { color: #AAB4C0; }
+.mSec { margin: 6px 0 0; font: 600 11.5px var(--font-body); letter-spacing: .07em; text-transform: uppercase; color: #C9D1D9; }
+.mAch { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+.mAch li { display: flex; gap: 7px; padding: 5px 7px; border: 1px solid #3A4660; color: #8E98A8; font-size: 12px; line-height: 1.25; }
+.mAch li b { display: block; font-size: 12.5px; }
+.mAch li small { display: block; font-size: 11px; }
+.mAch li .mk { flex: 0 0 auto; width: 16px; height: 16px; border: 1.5px solid #4A5878; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+.mAch li.got { color: #F4F1EA; border-color: #6A8A5A; }
+.mAch li.got .mk { background: #5FD08D; border-color: #5FD08D; color: #0C1016; }
+.mSet { display: grid; grid-template-columns: minmax(0, 1fr) 140px 30px; align-items: center; gap: 8px; font-size: 13.5px; }
+.mSet input[type="range"] { width: 100%; accent-color: #F2C230; }
+.mSet output { font: 500 12px var(--font-data); text-align: right; color: #C9D1D9; }
+.mSet.tog { grid-template-columns: minmax(0, 1fr) auto; }
+.mSet.tog input { width: 18px; height: 18px; accent-color: #F2C230; }
+.dim2 { color: #AAB4C0; font-size: 12px; }
+.achToast { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 40; padding: 9px 16px; background: #1F2A40; color: #F4F1EA; border: 2px solid #5FD08D; font-size: 14px; box-shadow: 0 10px 24px rgba(0,0,0,0.35); pointer-events: none; }
+.achToast[hidden] { display: none; }
+.achToast b { color: #9FE3B4; }
+@media (max-width: 560px) { .mAch { grid-template-columns: 1fr; } .mSet { grid-template-columns: minmax(0, 1fr) 110px 28px; } .menu { padding-bottom: 100px; } }
 .saveStat { font-size: 12px; color: var(--muted); white-space: nowrap; }
 .saveStat.bad { color: var(--bad); font-weight: 600; }
 .saves { display: flex; flex-direction: column; gap: 8px; max-height: 46vh; overflow-y: auto; }
@@ -220,7 +263,7 @@ td.fgt.chg { color: var(--ink); font-weight: 600; }
     <p class="sub">You are the hawk. Click the ground to hover there, or click a rodent to dive for it. Survive volcanoes, growing trees and invading eagles, and don’t eat your food supply away.</p>
     <div class="run">
       <span class="saveStat" id="saveStat" aria-live="polite"></span>
-      <button type="button" class="btn" id="openSaves">Games</button>
+      <button type="button" class="btn" id="openSaves">Menu</button>
       <button type="button" class="btn primary" id="play" disabled>Pause</button>
       <button type="button" class="btn" id="restart">Restart</button>
       <div class="seg" role="group" aria-label="Game speed" id="speed">
@@ -294,6 +337,11 @@ td.fgt.chg { color: var(--ink); font-weight: 600; }
     </aside>
   </main>
 </div>
+<div class="achToast" id="achToast" role="status" hidden></div>
+<div class="menu" id="menu" hidden>
+  <canvas id="menuCv" aria-hidden="true"></canvas>
+  <div class="menuBox" id="menuBox" role="dialog" aria-modal="true" aria-labelledby="menuTitle"></div>
+</div>
 
 <script>
 (function () {
@@ -352,6 +400,8 @@ var PERCH = { drain: 0.35, fool: 6, speed: 230 };   // perched: energy use x0.35
 /* The jungle: a second territory with darker ground, more trees, monkeys in the treetops, and eagles that haven't noticed the hawk yet */
 var JUNGLE = { tone: 0.8, trees0: 9, treeMax: 12, treeEvery: 1, spacing: 150, rodents0: 36, monkeys0: 6, monkeyMin: 4, eagles: 4,
                spot: 160, aware: 0.5, forget: 0.5, stickR: 70, stickDmg: 7, stickCd: 4, ambush: 1.2, spinReload: 10, seedRate: 5, foodCap: 70 };
+/* Difficulty: how fast the hawk burns energy and how hard enemies hit */
+var DIFFS = { beginner: { label: 'Beginner', drain: 0.75, enemy: 0.75 }, normal: { label: 'Normal', drain: 1, enemy: 1 }, hard: { label: 'Hard', drain: 1.25, enemy: 1.3 } };
 function maxedAll(T) {   // every home-valley trait at its best limit
   return HAWK_INFO.filter(function (i) { return !i.zone; }).every(function (i) { var l = HAWK_LIMITS[i.k]; return Math.abs(T[i.k] - (i.better > 0 ? l[1] : l[0])) < 1e-6; });
 }
@@ -379,7 +429,7 @@ function camoAt(coat, ash) { return 0.8 * Math.max(0, 1 - Math.abs(TONE[coat] - 
 function pickMix(rng, mix) { var u = rng(), acc = 0, k; for (k in mix) { acc += mix[k]; if (u < acc) return k; } return k; }
 
 function createWorld(rng, zone) {
-  var w = { zone: zone === 'jungle' ? 'jungle' : 'home', monkeys: [], eagles: [], monkeysBeaten: 0, kingBeaten: false, monkeyNext: 0, eagleNext: 0, fightMonkey: null, t: 0, ash: 0, ashStart: null, food: [], gophers: [], trees: [], events: [], acc: 0, stats: {}, births: 0, nextTree: TREE.first * GEN,
+  var w = { diff: 'normal', zone: zone === 'jungle' ? 'jungle' : 'home', monkeys: [], eagles: [], monkeysBeaten: 0, kingBeaten: false, monkeyNext: 0, eagleNext: 0, fightMonkey: null, t: 0, ash: 0, ashStart: null, food: [], gophers: [], trees: [], events: [], acc: 0, stats: {}, births: 0, nextTree: TREE.first * GEN,
             hawk: { x: W / 2, y: H / 2, a: 0, state: 'soar', tgt: null, energy: 80, maxE: 100, rest: 0, diveT: 0, caught: 0, misses: 0,
                     alive: true, wounded: false, T: {}, picks: [], missiles: false, hover: null },
             inv: null };
@@ -400,6 +450,7 @@ function createWorld(rng, zone) {
   w.count = function () { return w.gophers.length; };
   w.freq = function (tr) { var o = {}; TRAITS[tr].variants.forEach(function (v) { o[v] = 0; }); w.gophers.forEach(function (c) { o[c.genes[tr]]++; }); return o; };
   w.jungle = w.zone === 'jungle';
+  w.D = function () { return DIFFS[w.diff] || DIFFS.normal; };
   w.tone = function () { return w.jungle ? JUNGLE.tone : w.ash; };   // how dark the ground is
   w.camo = function (c) { return camoAt(c.genes.coat, w.tone()); };
   w.hidden = function (c) { return c.hide > 0; };
@@ -424,7 +475,7 @@ function createWorld(rng, zone) {
       t: w.t, ash: w.ash, ashStart: w.ashStart, acc: w.acc, births: w.births, nextTree: w.nextTree, calm: w.calm || 0, stats: w.stats,
       trees: trees, food: w.food.map(function (f) { return { x: f.x, y: f.y, rot: f.rot }; }),
       gophers: w.gophers.map(function (c) { var o = {}, q; for (q in c) o[q] = c[q]; o.tgt = null; o.tree = trees.indexOf(c.tree); o.home = trees.indexOf(c.home); return o; }),
-      hawk: hk, inv: iv, zone: w.zone, eagles: eg, monkeys: mk, monkeysBeaten: w.monkeysBeaten, kingBeaten: w.kingBeaten, monkeyNext: w.monkeyNext, eagleNext: w.eagleNext
+      hawk: hk, inv: iv, diff: w.diff, zone: w.zone, eagles: eg, monkeys: mk, monkeysBeaten: w.monkeysBeaten, kingBeaten: w.kingBeaten, monkeyNext: w.monkeyNext, eagleNext: w.eagleNext
     }));
   };
   w.restore = function (d) {
@@ -440,7 +491,7 @@ function createWorld(rng, zone) {
     if ((w.hawk.state === 'perch' || w.hawk.state === 'toperch') && !w.hawk.perchOn) w.hawk.state = 'soar';
     w.hawk.perchT = w.hawk.perchT || 0; w.hawk.ambush = false;
     w.inv = d.inv; if (w.inv) { w.inv.tgt = null; if (w.inv.state === 'dive' || w.inv.state === 'seek') w.inv.state = 'soar'; }
-    w.zone = d.zone === 'jungle' ? 'jungle' : 'home'; w.jungle = w.zone === 'jungle';
+    w.zone = d.zone === 'jungle' ? 'jungle' : 'home'; w.jungle = w.zone === 'jungle'; w.diff = DIFFS[d.diff] ? d.diff : 'normal';
     w.eagles = (d.eagles || []).map(function (e) { e.tgt = null; return e; });
     w.monkeys = (d.monkeys || []).map(function (m) { m.tree = m.tree >= 0 ? w.trees[m.tree] || null : null; m.goal = m.goal >= 0 ? w.trees[m.goal] || null : null; if (m.state === 'tree' && !m.tree) m.state = 'ground'; return m; });
     w.monkeysBeaten = d.monkeysBeaten || 0; w.kingBeaten = !!d.kingBeaten; w.monkeyNext = d.monkeyNext || 0; w.eagleNext = d.eagleNext || 0; w.fightMonkey = null;
@@ -681,7 +732,7 @@ function createWorld(rng, zone) {
       if (hk.alive && hk.state !== 'dive' && hk.state !== 'perch' && hk.state !== 'dead' && m.stickT <= 0) {
         var hx = hk.x - m.x, hy = hk.y - m.y;
         if (hx * hx + hy * hy < JUNGLE.stickR * JUNGLE.stickR) {
-          m.stickT = JUNGLE.stickCd; var dmg = JUNGLE.stickDmg * (m.king ? 1.5 : 1) * (1 - (hk.T.skull || 0));
+          m.stickT = JUNGLE.stickCd; var dmg = JUNGLE.stickDmg * (m.king ? 1.5 : 1) * (1 - (hk.T.skull || 0)) * w.D().enemy;
           hk.energy -= dmg; ev('stick', null, hk.x, hk.y, Math.round(dmg * 10) / 10);
         }
       }
@@ -721,7 +772,7 @@ function createWorld(rng, zone) {
       glide(e, dt, 55);
       var dx = hk.x - e.x, dy = hk.y - e.y, d = Math.sqrt(dx * dx + dy * dy), spot = w.spotRange();
       if (hk.alive && !hidden && !calm && !hk.wounded && hk.state !== 'dead' && d < spot && hk.energy >= INV_CHALLENGE_MIN_E && e.state === 'soar')
-        e.aware = Math.min(1, e.aware + JUNGLE.aware * dt * (1 - 0.5 * d / spot));
+        e.aware = Math.min(1, e.aware + JUNGLE.aware * w.D().enemy * dt * (1 - 0.5 * d / spot));
       else e.aware = Math.max(0, e.aware - (hidden ? 1.5 : JUNGLE.forget) * dt);
       if (e.aware >= 1 && !(w.inv && w.inv.state !== 'gone')) {   // spotted you: this eagle attacks
         e.state = 'seek'; e.challenge = 0; e.aware = 0; w.inv = e; ev('spotted', null, e.x, e.y); continue;
@@ -833,7 +884,7 @@ function createWorld(rng, zone) {
     // player hawk
     var hk = w.hawk, T = hk.T;
     if (hk.alive) {
-      hk.energy -= T.hunger * dt * (hk.state === 'perch' ? PERCH.drain : 1);
+      hk.energy -= T.hunger * dt * (hk.state === 'perch' ? PERCH.drain : 1) * w.D().drain;
       if (hk.wounded && hk.energy >= RECOVER) { hk.wounded = false; ev('healed', null, hk.x, hk.y); }
       if (hk.energy <= 0) { hk.energy = 0; hk.alive = false; hk.state = 'dead'; ev('hawkdead', null, hk.x, hk.y); }
     }
@@ -1119,8 +1170,10 @@ function checkGoals() {
 
 /* ---------- state ---------- */
 var game, phase = 'intro', speed = 1, history = [], fx = [], pools = [], view = 'coat', lastRec = -1, lastGenDone = 0, lastChange = {}, deathCause = null;
-function newGame(quiet) {
-  game = createWorld(Math.random); setZoneGoals(); hawkNum = 1; curId = null; mutPending = false; setSaveStat('');
+var curDiff = 'normal';
+function newGame(quiet, diff) {
+  if (diff) curDiff = diff;
+  game = createWorld(Math.random); game.diff = curDiff; setZoneGoals(); hawkNum = 1; curId = null; mutPending = false; setSaveStat('');
   phase = 'intro'; history = []; fx = []; pools = []; lastRec = -1; lastGenDone = 0; lastChange = {}; deathCause = null;
   goalIdx = 0; goalState = { goalGen: 0, streak: 0, ashDone: false, spawnAt: null, nextInv: null, peaceUntil: 0 }; wipe = { count: 0, at: null }; skeletons = []; decoy = null; goalsDone = false; stats = { wins: 0, missileHit: false, shots: 0 }; missiles = []; burning = []; scorches = [];
   $('fight').hidden = true;
@@ -1146,7 +1199,7 @@ function saveGame(why) {
   var ix = readIndex(), ent = ix.games.filter(function (g) { return g.id === curId; })[0];
   if (!ent) { ent = { id: curId, name: 'Game ' + ix.next, created: Date.now() }; ix.next++; ix.games.push(ent); }
   ent.updated = Date.now(); ent.gen = genNow() + 1; ent.hawkNum = hawkNum; ent.color = hawkCol().body; ent.colorName = hawkCol().name; ent.look = hawkLook(game.hawk);
-  ent.goals = Math.min(goalIdx, MAIN_GOALS); ent.goalsMax = MAIN_GOALS; ent.zone = game.zone; ent.pop = game.count(); ent.wins = stats.wins;
+  ent.goals = Math.min(goalIdx, MAIN_GOALS); ent.goalsMax = MAIN_GOALS; ent.zone = game.zone; ent.diff = game.diff; ent.pop = game.count(); ent.wins = stats.wins;
   var ok = lsSet(KEY_G + curId, JSON.stringify(payload)) && writeIndex(ix);
   saveOK = ok; setSaveStat(ok ? 'Saved \u00b7 Gen ' + ent.gen : 'Could not save (storage blocked or full)', !ok);
   return ok;
@@ -1204,7 +1257,7 @@ var overlay = $('overlay'), panel = $('panel'), playBtn = $('play');
 function openPanel(html) { panel.innerHTML = html; overlay.hidden = false; var b = panel.querySelector('[data-focus]'); if (b) b.focus({ preventScroll: true }); playBtn.disabled = true; }
 function closePanel() { overlay.hidden = true; playBtn.disabled = false; }
 function showIntro() {
-  openPanel('<p class="eyebrow">How to play</p><h2 id="panelTitle">You are the hawk</h2><ul class="rules">' +
+  openPanel('<p class="eyebrow">How to play \u00b7 ' + game.D().label + '</p><h2 id="panelTitle">You are the hawk</h2><ul class="rules">' +
     '<li><b>Click empty ground</b> and your hawk flies there and hovers, so you can wait close to your prey.</li>' +
     '<li><b>Press Ctrl</b> to perch in the nearest grown tree (press it again to take off). A perched hawk uses much less energy. Sit still long enough and the rodents forget you are there and come out to eat.</li>' +
     '<li><b>Click a rodent</b> and your hawk dives for it. A rodent that sees you coming tries to run. Long legs help it escape.</li>' +
@@ -1345,7 +1398,7 @@ function showInvadeOffer() {
 }
 function invadeTerritory() {
   var hk = game.hawk, oldWins = stats.wins;
-  game = createWorld(Math.random, 'jungle');
+  var d0 = game.diff; game = createWorld(Math.random, 'jungle'); game.diff = d0;
   var keep = { x: 30, y: H / 2, a: 0, state: 'soar', tgt: null, energy: 100, rest: 0, diveT: 0, alive: true, wounded: false, hover: { x: 160, y: H / 2 }, perchOn: null, perchT: 0, ambush: false, mkT: 0 };
   for (var k in keep) hk[k] = keep[k];
   if (hk.missiles) hk.ammo = hk.ammoMax || 1;
@@ -1390,10 +1443,12 @@ playBtn.addEventListener('click', function () {
   else if (phase === 'paused') { phase = 'running'; playBtn.textContent = 'Pause'; }
   renderGoals();
 });
-$('restart').addEventListener('click', function () { saveGame('restart'); newGame(); });
-$('openSaves').addEventListener('click', function () {
-  if (phase === 'running' || phase === 'paused') { savesBack = phase; phase = 'panel'; saveGame('open'); showSaves(true); }
-  else if (phase === 'intro') { savesBack = null; showSaves(false); }
+$('restart').addEventListener('click', function () { if (phase === 'menu') return; saveGame('restart'); newGame(false, game.diff); });
+$('openSaves').addEventListener('click', function () { showMenu('main'); });
+document.addEventListener('keydown', function (e) {
+  if (e.key !== 'Escape') return;
+  if (menuOn) { if (menuScreen !== 'main') showMenu('main'); else if (hasGame()) resumeFromMenu(); }
+  else showMenu('main');
 });
 document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') saveGame('hidden'); });
 window.addEventListener('pagehide', function () { saveGame('hide'); });
@@ -1600,7 +1655,7 @@ function stepMissiles(dt) {
 function burnTree(t) {
   var hk = game.hawk;
   if (game.t < hk.fReady) { flashMsg('Fire breath is recharging'); return; }
-  hk.fReady = game.t + FIRE_RELOAD;
+  hk.fReady = game.t + FIRE_RELOAD; stats.burned = (stats.burned || 0) + 1;
   game.trees.splice(game.trees.indexOf(t), 1);
   game.nextTree = Math.max(game.nextTree, game.t + TREE.every * GEN);   // a new sapling takes a while to sprout
   burning.push({ x: t.x, y: t.y, r: t.r, t: 0, fromX: hk.x, fromY: hk.y });
@@ -2066,8 +2121,8 @@ function fitFight() {
 function fighter(name, hp, side, st) {
   return { name: name, hp: hp, side: side, act: null, actT: 0, hitDone: false, held: 0, cd: { strike: 0, dive: 0, guard: 0, missile: 0 }, flash: 0, shake: 0, used: {}, st: st };
 }
-function eagleStats(lvl) { return { strike: 8 + 3 * lvl, dive: 16 + 6 * lvl, dodge: 0.08 + 0.06 * lvl, crit: 0.08, acc: 1, recharge: 1, missiles: 0 }; }
-function monkeyStats(king) { return { strike: king ? 13 : 9, dive: king ? 17 : 12, dodge: king ? 0.18 : 0.12, crit: 0.08, acc: 1, recharge: 1, missiles: 0 }; }
+function eagleStats(lvl) { var k = game.D().enemy; return { strike: (8 + 3 * lvl) * k, dive: (16 + 6 * lvl) * k, dodge: 0.08 + 0.06 * lvl, crit: 0.08, acc: 1, recharge: 1, missiles: 0 }; }
+function monkeyStats(king) { var k = game.D().enemy; return { strike: (king ? 13 : 9) * k, dive: (king ? 17 : 12) * k, dodge: king ? 0.18 : 0.12, crit: 0.08, acc: 1, recharge: 1, missiles: 0 }; }
 function startFight(who) {
   var hk = game.hawk, iv = game.inv, st = fightPowers(hk.T), mk = null, lvl, opp, kind = 'eagle';
   st.missiles = hk.missiles ? hk.ammo || 0 : 0;
@@ -2175,14 +2230,14 @@ $('fightGo').addEventListener('click', function () {
     if (win) { stats.wins++; flashMsg(wasKing ? 'You beat the Monkey King!' : 'The monkey flees! Monkeys beaten: ' + game.monkeysBeaten); }
     fightEl.hidden = true; F = null;
     if (!game.hawk.alive) { deathCause = 'fight'; updateUI(); showDeath(); return; }
-    phase = 'running'; renderTraits(); updateUI(); checkGoals(); renderGoals(); return;
+    phase = 'running'; renderTraits(); updateUI(); checkGoals(); renderGoals(); checkAch(); return;
   }
   game.fightOutcome(win ? 'player' : 'invader', Math.round(win ? Math.max(30, F.p.hp) : (!F.killed ? Math.max(20, F.p.hp) : F.p.hp)), Math.round(F.e.hp));
   if (win) stats.wins++;
   if (win && game.inv && game.inv.state === 'gone') declareVictory();
   fightEl.hidden = true; F = null;
   if (!game.hawk.alive) { deathCause = 'fight'; updateUI(); showDeath(); return; }
-  phase = 'running'; renderTraits(); updateUI(); checkGoals(); renderGoals();
+  phase = 'running'; renderTraits(); updateUI(); checkGoals(); renderGoals(); checkAch();
 });
 $('fightBtns').addEventListener('click', function (e) { var b = e.target.closest('.fbtn'); if (b && F) doMove(F.p, b.dataset.move); });
 document.addEventListener('keydown', function (e) {
@@ -2316,6 +2371,250 @@ function drawFight() {
   if (F.over) big(F.over === 'player' ? 'K.O.!' : 'YOU LOSE', F.over === 'player' ? '#FFD34D' : '#FF6B5E', 96);
 }
 
+/* ================= ACHIEVEMENTS (kept in this browser, across games) ================= */
+var KEY_ACH = 'hawkhunter.v1.ach', KEY_SET = 'hawkhunter.v1.settings';
+var ACH = [
+  { id: 'catch1', name: 'First bite', text: 'Catch your first rodent.', test: function () { return game.hawk.caught >= 1; } },
+  { id: 'catch100', name: 'Big appetite', text: 'Catch 100 rodents with one hawk.', test: function () { return game.hawk.caught >= 100; } },
+  { id: 'win1', name: 'First victory', text: 'Win a fight.', test: function () { return stats.wins >= 1; } },
+  { id: 'missile', name: 'Lock on', text: 'Hit the golden eagle with a missile.', test: function () { return !!stats.missileHit; } },
+  { id: 'fire', name: 'Firestarter', text: 'Burn down a tree with fire breath.', test: function () { return (stats.burned || 0) >= 1; } },
+  { id: 'valley', name: 'Ruler of the valley', text: 'Complete all 6 valley goals.', test: function () { return !game.jungle && goalIdx >= 6; } },
+  { id: 'gen50', name: 'Long reign', text: 'Reach generation 50.', test: function () { return genNow() + 1 >= 50; } },
+  { id: 'jungle', name: 'Into the jungle', text: 'Invade the jungle.', test: function () { return game.jungle; } },
+  { id: 'hide', name: 'Hide in the leaves', text: 'Hide from an eagle by perching in the jungle.', test: function () { return (goalState.hidFrom || 0) >= 1; } },
+  { id: 'king', name: 'Long live the hawk', text: 'Beat the Monkey King.', test: function () { return !!game.kingBeaten; } },
+  { id: 'spin', name: 'Spin cycle', text: 'Knock everything out of a tree with the Talisman spin.', test: function () { return (goalState.spun || 0) >= 1; } },
+  { id: 'hard', name: 'Hard as talons', text: 'Win a fight on Hard.', test: function () { return game.diff === 'hard' && stats.wins >= 1; } }
+];
+function achGet() { try { return JSON.parse(lsGet(KEY_ACH) || '{}') || {}; } catch (e) { return {}; } }
+var achDone = achGet(), toastT = null;
+function toast(t) { var el = $('achToast'); el.innerHTML = t; el.hidden = false; clearTimeout(toastT); toastT = setTimeout(function () { el.hidden = true; }, 3800); }
+function checkAch() {
+  if (!game || !game.hawk) return;
+  ACH.forEach(function (a) {
+    if (achDone[a.id]) return;
+    var ok = false; try { ok = a.test(); } catch (e) {}
+    if (ok) { achDone[a.id] = Date.now(); lsSet(KEY_ACH, JSON.stringify(achDone)); toast('<b>Achievement unlocked:</b> ' + a.name); }
+  });
+}
+function setGet() { try { return JSON.parse(lsGet(KEY_SET) || '{}') || {}; } catch (e) { return {}; } }
+
+/* ================= TITLE MENU ("Go HAWKS!") ================= */
+var menuEl = $('menu'), menuBox = $('menuBox'), menuCv = $('menuCv'), mctx = menuCv.getContext('2d'), menuOn = false, menuBack = null, menuScreen = 'main';
+function hasGame() { return ['running', 'paused', 'panel', 'fight', 'dead'].indexOf(menuBack) >= 0; }
+function showMenu(screen) {
+  if (!menuOn) {
+    menuBack = phase; if (phase === 'running') saveGame('menu');
+    phase = 'menu'; menuOn = true; menuEl.hidden = false; playBtn.disabled = true; startMenuAnim();
+  }
+  menuScreen = screen;
+  var h = '';
+  if (screen === 'main') {
+    h = '<h1 class="menuTitle" id="menuTitle">Go HAWKS!</h1><p class="menuSub">Hawk Hunter: a natural selection game</p>' +
+      (hasGame() ? '<button type="button" class="mbtn primary" data-m="resume" data-focus>Resume game</button>' : '') +
+      '<button type="button" class="mbtn' + (hasGame() ? '' : ' primary') + '" data-m="new"' + (hasGame() ? '' : ' data-focus') + '>New Game</button>' +
+      '<button type="button" class="mbtn" data-m="load">Load Game</button>' +
+      '<button type="button" class="mbtn" disabled aria-disabled="true">Multiplayer<small>coming soon (yeah right)</small></button>' +
+      '<button type="button" class="mbtn" data-m="settings">Settings</button>' +
+      '<button type="button" class="mbtn" data-m="quit">Quit Game</button>';
+  } else if (screen === 'new') {
+    h = '<h2 class="menuH" id="menuTitle">New game</h2><p class="menuP">Choose a difficulty.</p>' +
+      [['beginner', 'Your hawk burns energy slowly, and eagles and monkeys hit softer.'], ['normal', 'The game as designed.'], ['hard', 'Your hawk burns energy fast, and eagles and monkeys hit harder.']].map(function (d, i) {
+        return '<button type="button" class="mbtn' + (d[0] === 'normal' ? ' primary' : '') + '" data-diff="' + d[0] + '"' + (d[0] === 'normal' ? ' data-focus' : '') + '>' + DIFFS[d[0]].label + '<small>' + d[1] + '</small></button>';
+      }).join('') + '<button type="button" class="mbtn back" data-m="main">Back</button>';
+  } else if (screen === 'load') {
+    var rows = readIndex().games.slice().sort(function (a, b) { return b.updated - a.updated; });
+    h = '<h2 class="menuH" id="menuTitle">Load game</h2>';
+    if (!rows.length) h += '<p class="menuP">No saved games yet. Your game saves itself at the end of every generation, in this browser only.</p>';
+    else h += '<div class="mSaves">' + rows.map(function (g, i) {
+      return '<div class="mSave' + (g.id === curId ? ' cur' : '') + '"><canvas class="hthumb" data-size="48" data-i="' + i + '" aria-hidden="true"></canvas><span class="si"><b>' + g.name + (g.id === curId ? ' (current)' : '') + '</b>' +
+        '<span>' + (g.zone === 'jungle' ? 'Jungle · ' : '') + (DIFFS[g.diff] ? DIFFS[g.diff].label : 'Normal') + ' · Gen ' + g.gen + ' · ' + g.goals + '/' + (g.goalsMax || 6) + ' goals</span>' +
+        '<span class="dim">' + new Date(g.updated).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) + '</span></span>' +
+        '<button type="button" class="mbtn sm primary" data-load="' + g.id + '"' + (i === 0 ? ' data-focus' : '') + '>Load</button><button type="button" class="mbtn sm" data-del="' + g.id + '">Delete</button></div>';
+    }).join('') + '</div>';
+    h += '<button type="button" class="mbtn back" data-m="main"' + (rows.length ? '' : ' data-focus') + '>Back</button>';
+    menuBox.innerHTML = h; afterMenu();
+    [].forEach.call(menuBox.querySelectorAll('canvas.hthumb'), function (cv) {
+      var g = rows[+cv.dataset.i], col = HAWK_COLORS.filter(function (c) { return c.body === g.color; })[0] || HAWK_COLORS[((g.hawkNum || 1) - 1) % HAWK_COLORS.length];
+      drawHawkThumb(cv, g.look || { n: {}, missiles: 0 }, col);
+    });
+    return;
+  } else if (screen === 'settings') {
+    var st = setGet(), nDone = ACH.filter(function (a) { return achDone[a.id]; }).length;
+    function slider(k, label, def) { var v = st[k] === undefined ? def : st[k]; return '<label class="mSet"><span>' + label + '</span><input type="range" min="0" max="100" value="' + v + '" data-set="' + k + '"><output>' + v + '</output></label>'; }
+    function toggle(k, label, def) { var v = st[k] === undefined ? def : st[k]; return '<label class="mSet tog"><span>' + label + '</span><input type="checkbox" data-set="' + k + '"' + (v ? ' checked' : '') + '></label>'; }
+    h = '<h2 class="menuH" id="menuTitle" tabindex="-1" data-focus>Settings</h2>' +
+      '<h3 class="mSec">Achievements · ' + nDone + ' of ' + ACH.length + '</h3><ul class="mAch">' + ACH.map(function (a) {
+        var d = achDone[a.id]; return '<li class="' + (d ? 'got' : '') + '"><span class="mk">' + (d ? '✓' : '') + '</span><span><b>' + a.name + '</b><small>' + a.text + '</small></span></li>';
+      }).join('') + '</ul>' +
+      '<h3 class="mSec">Sound and picture</h3>' +
+      slider('bright', 'Brightness', 70) + slider('master', 'Master volume', 80) + slider('music', 'Music', 60) + slider('sfx', 'Sound effects', 75) + slider('screech', 'Hawk screech volume', 100) +
+      toggle('shake', 'Screen shake', true) + toggle('feathers', 'Extra feathers', true) + toggle('subs', 'Subtitles for rodents', false) +
+      '<p class="menuP dim2">These controls are just for show. The game has no sound yet.</p>' +
+      '<button type="button" class="mbtn back" data-m="main">Back</button>';
+  } else if (screen === 'quit') {
+    h = '<h2 class="menuH" id="menuTitle" tabindex="-1" data-focus>Thanks for playing!</h2><p class="menuP">' + (curId ? 'Your game is saved in this browser. ' : '') + 'You can close this tab now.</p>' +
+      '<button type="button" class="mbtn primary" data-m="main">Back to menu</button>';
+  }
+  menuBox.innerHTML = h; afterMenu();
+}
+function afterMenu() { var f = menuBox.querySelector('[data-focus]'); if (f) f.focus({ preventScroll: true }); menuBox.scrollTop = 0; }
+function hideMenu() { menuOn = false; menuEl.hidden = true; playBtn.disabled = !overlay.hidden; }
+function resumeFromMenu() {
+  hideMenu(); phase = menuBack;
+  if (phase === 'running' || phase === 'paused') playBtn.textContent = phase === 'running' ? 'Pause' : 'Resume';
+  renderGoals();
+}
+menuBox.addEventListener('click', function (e) {
+  var b = e.target.closest('button'); if (!b || b.disabled) return;
+  var m = b.dataset.m;
+  if (m === 'resume') { resumeFromMenu(); return; }
+  if (m === 'main' || m === 'new' || m === 'load' || m === 'settings' || m === 'quit') { showMenu(m); return; }
+  if (b.dataset.diff) { hideMenu(); fightEl.hidden = true; F = null; newGame(false, b.dataset.diff); return; }
+  if (b.dataset.load) { var id = b.dataset.load; hideMenu(); fightEl.hidden = true; F = null; if (!loadGame(id)) showMenu('load'); return; }
+  if (b.dataset.del) {
+    if (b.dataset.sure !== '1') { b.dataset.sure = '1'; b.textContent = 'Really?'; b.classList.add('danger'); return; }
+    var ix = readIndex(); ix.games = ix.games.filter(function (g) { return g.id !== b.dataset.del; }); writeIndex(ix); lsDel(KEY_G + b.dataset.del);
+    if (b.dataset.del === curId) curId = null;
+    showMenu('load');
+  }
+});
+menuBox.addEventListener('input', function (e) {
+  var el = e.target; if (!el.dataset || !el.dataset.set) return;
+  var st = setGet(); st[el.dataset.set] = el.type === 'checkbox' ? el.checked : +el.value; lsSet(KEY_SET, JSON.stringify(st));
+  var o = el.parentNode.querySelector('output'); if (o) o.textContent = el.value;
+});
+
+/* Menu background: hawks and eagles soar and dive on rodents scurrying along the ground */
+var MB = null, mbRunning = false, mbLast = 0;
+function randGenes() { return { coat: pickMix(Math.random, { sandy: 1 / 3, medium: 1 / 3, dark: 1 / 3 }), legs: Math.random() < 0.5 ? 'short' : 'long', stripe: Math.random() < 0.5 ? 'plain' : 'striped', climb: Math.random() < 0.5 ? 'ground' : 'climber', mind: pickMix(Math.random, { simple: 0.5, smart: 0.3, wise: 0.2 }) }; }
+function mbRodent(w, h, g, edge) { var dir = Math.random() < 0.5 ? 1 : -1; return { x: edge ? (dir > 0 ? -20 : w + 20) : Math.random() * w, y: h - g + 18 + Math.random() * (g - 34), dir: dir, sp: 35 + Math.random() * 50, genes: randGenes(), ph: Math.random() * 6 }; }
+function mbBird(i, w, h, g) {
+  var eagle = i % 3 === 2, n = {};
+  ['wings', 'eyes', 'tail', 'talons', 'feathers', 'crop'].forEach(function (k) { var r = Math.random(); if (r < 0.35) n[k] = r < 0.12 ? 2 : 1; });
+  return { x: Math.random() * w, y: 50 + Math.random() * Math.max(40, h - g - 200), a: Math.random() < 0.5 ? 0 : Math.PI, eagle: eagle, golden: eagle && i === 5, col: HAWK_COLORS[i % HAWK_COLORS.length],
+           look: { n: n, missiles: 0, fire: Math.random() < 0.2, counter: false }, v: 80 + Math.random() * 50, state: 'soar', timer: 1.5 + Math.random() * 6, tgt: null, climbT: 0, wob: Math.random() * 6, sc: eagle ? 1.75 : 1.5 };
+}
+function initMB() {
+  var r = menuEl.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1), w = Math.max(1, r.width), h = Math.max(1, r.height);
+  menuCv.width = Math.round(w * dpr); menuCv.height = Math.round(h * dpr);
+  if (MB && Math.abs(MB.w - w) < 1 && Math.abs(MB.h - h) < 1) { MB.dpr = dpr; return; }
+  var g = Math.max(70, Math.min(120, h * 0.16));
+  MB = { w: w, h: h, g: g, dpr: dpr, t: SKY_CYCLE * 0.9, birds: [], rodents: [], puffs: [], bones: [], spawn: 0 };
+  for (var i = 0; i < 8; i++) MB.birds.push(mbBird(i, w, h, g));
+  for (i = 0; i < 14; i++) MB.rodents.push(mbRodent(w, h, g, false));
+}
+function stepMB(dt) {
+  var M = MB, w = M.w, h = M.h, gy = h - M.g; M.t += dt;
+  M.rodents.forEach(function (r) {
+    var fear = M.birds.some(function (b) { return b.state === 'dive' && Math.abs(b.x - r.x) < 140 && b.y > gy - 220; });
+    if (fear) { var nb = M.birds.filter(function (b) { return b.state === 'dive'; })[0]; if (nb) r.dir = r.x > nb.x ? 1 : -1; }
+    r.x += r.dir * r.sp * (fear ? 1.9 : 1) * dt; r.ph += dt * 8; r.y += Math.sin(r.ph) * 0.3;
+    r.y = clamp(r.y, gy + 16, h - 16);
+  });
+  M.rodents = M.rodents.filter(function (r) { return r.x > -40 && r.x < w + 40 && !r.dead; });
+  M.spawn -= dt; if (M.rodents.length < 14 && M.spawn <= 0) { M.rodents.push(mbRodent(w, h, M.g, true)); M.spawn = 0.8 + Math.random(); }
+  M.birds.forEach(function (b) {
+    if (b.state === 'soar') {
+      b.a += Math.sin(M.t * 0.6 + b.wob) * 0.5 * dt;
+      if (b.y < 40) b.a += (Math.sin(b.a) < 0 ? 1 : 0) * dt * (Math.cos(b.a) > 0 ? 1.5 : -1.5);
+      if (b.y > gy - 150) b.a += (Math.sin(b.a) > 0 ? 1 : 0) * dt * (Math.cos(b.a) > 0 ? -1.5 : 1.5);
+      b.x += Math.cos(b.a) * b.v * dt; b.y += Math.sin(b.a) * b.v * 0.5 * dt;
+      if (b.x < -70) b.x = w + 60; if (b.x > w + 70) b.x = -60;
+      b.timer -= dt;
+      if (b.timer <= 0 && M.rodents.length) {
+        var best = null, bd = Infinity; M.rodents.forEach(function (r) { if (r.x < 10 || r.x > w - 10) return; var d = Math.abs(r.x - b.x) + Math.random() * 200; if (d < bd) { bd = d; best = r; } });
+        if (best) { b.state = 'dive'; b.tgt = best; } else b.timer = 1;
+      }
+    } else if (b.state === 'dive') {
+      var r = b.tgt;
+      if (!r || r.dead || M.rodents.indexOf(r) < 0) { b.state = 'climb'; b.climbT = 1.2; b.a = -Math.PI / 2; return; }
+      var dx = r.x - b.x, dy = r.y - b.y, d = Math.sqrt(dx * dx + dy * dy); b.a = Math.atan2(dy, dx);
+      var spd = b.eagle ? 330 : 360;
+      if (d < 14) {
+        r.dead = true; M.puffs.push({ x: r.x, y: r.y, t: 0, col: VCOL.coat[r.genes.coat] }); M.bones.push({ x: r.x, y: r.y, a: Math.random() * 6.28, t: 0 });
+        b.state = 'climb'; b.climbT = 1.6; b.a = -Math.PI / 2 + (Math.random() - 0.5) * 1.2;
+      } else { b.x += dx / d * spd * dt; b.y += dy / d * spd * dt; }
+    } else {
+      b.x += Math.cos(b.a) * 170 * dt; b.y += Math.sin(b.a) * 170 * dt; b.climbT -= dt;
+      if (b.climbT <= 0 || b.y < h * 0.3) { b.state = 'soar'; b.a = Math.random() < 0.5 ? -0.2 : Math.PI + 0.2; b.timer = 3 + Math.random() * 7; }
+    }
+  });
+  M.puffs = M.puffs.filter(function (p) { p.t += dt; return p.t < 0.8; });
+  M.bones = M.bones.filter(function (p) { p.t += dt; return p.t < 5; });
+}
+/* Very slow scenery: one full dusk-night-dawn-day cycle takes SKY_CYCLE seconds; clouds and hills drift a few pixels a second */
+var SKY_CYCLE = 360;
+var SKY_KEYS = [[0, ['#0F1A33', '#2E4C7A', '#E7A85C'], '#2A2A3E'], [0.25, ['#05081A', '#0E1730', '#26304E'], '#12141F'], [0.5, ['#26386A', '#7A6A9A', '#F2B27A'], '#3A3450'],
+                [0.75, ['#3A78C0', '#80B4E2', '#D2E8F2'], '#4E6A5A'], [1, ['#0F1A33', '#2E4C7A', '#E7A85C'], '#2A2A3E']];
+function hexRGB(hx) { var n = parseInt(hx.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }
+function mixHex(a, b, u) { var A = hexRGB(a), B = hexRGB(b); return 'rgb(' + A.map(function (v, i) { return Math.round(v + (B[i] - v) * u); }).join(',') + ')'; }
+function skyAt(cy) {
+  for (var i = 0; i < SKY_KEYS.length - 1; i++) {
+    var k0 = SKY_KEYS[i], k1 = SKY_KEYS[i + 1];
+    if (cy >= k0[0] && cy <= k1[0]) { var u = (cy - k0[0]) / (k1[0] - k0[0]); u = u * u * (3 - 2 * u); return { sky: k0[1].map(function (c, j) { return mixHex(c, k1[1][j], u); }), hill: mixHex(k0[2], k1[2], u) }; }
+  }
+  return { sky: SKY_KEYS[0][1], hill: SKY_KEYS[0][2] };
+}
+function drawMB() {
+  var M = MB, c = mctx, w = M.w, h = M.h, gy = h - M.g, cy = (M.t / SKY_CYCLE) % 1, S = skyAt(cy), i;
+  c.setTransform(M.dpr, 0, 0, M.dpr, 0, 0);
+  var sky = c.createLinearGradient(0, 0, 0, gy); sky.addColorStop(0, S.sky[0]); sky.addColorStop(0.6, S.sky[1]); sky.addColorStop(1, S.sky[2]);
+  c.fillStyle = sky; c.fillRect(0, 0, w, gy);
+  // stars fade in at night
+  var night = Math.max(0, Math.cos((cy - 0.25) * 6.283)), sunUp = Math.cos((cy - 0.75) * 6.283);
+  if (night > 0.05) { c.fillStyle = '#FFFFFF'; for (i = 0; i < 70; i++) { c.globalAlpha = night * (0.35 + 0.35 * Math.sin(M.t * 0.3 + i)); c.fillRect((i * 173.3) % w, (i * 61.7) % (gy * 0.7), 1.6, 1.6); } c.globalAlpha = 1; }
+  // sun (and moon on the other side of the cycle) moving slowly across the sky, left to right
+  function arcPos(off) { var u = ((cy - 0.5 + off) % 1 + 1) % 1; return { x: w * (0.08 + 0.84 * u * 2), y: gy - 20 - Math.sin(Math.min(1, u * 2) * Math.PI) * (gy * 0.55), up: u < 0.5 }; }
+  var sp = arcPos(0), mp = arcPos(0.5);
+  if (sp.up) { c.fillStyle = 'rgba(255,' + Math.round(200 + 40 * Math.max(0, sunUp)) + ',' + Math.round(120 + 100 * Math.max(0, sunUp)) + ',0.9)'; c.beginPath(); c.arc(sp.x, sp.y, 52, 0, 6.283); c.fill(); }
+  if (mp.up) { c.fillStyle = 'rgba(236,240,250,0.9)'; c.beginPath(); c.arc(mp.x, mp.y, 30, 0, 6.283); c.fill(); c.fillStyle = S.sky[1]; c.beginPath(); c.arc(mp.x + 11, mp.y - 6, 26, 0, 6.283); c.fill(); }
+  // clouds drift very slowly
+  c.fillStyle = 'rgba(255,255,255,' + (0.18 + 0.3 * Math.max(0, sunUp)) + ')';
+  for (i = 0; i < 6; i++) {
+    var cw = 90 + (i * 37) % 70, cx = ((i * 263 + M.t * (3 + i % 3)) % (w + 2 * cw)) - cw, cyy = 40 + (i * 71) % Math.max(60, gy * 0.45);
+    c.beginPath(); c.ellipse(cx, cyy, cw * 0.5, 14, 0, 0, 6.283); c.ellipse(cx - cw * 0.22, cyy - 9, cw * 0.26, 12, 0, 0, 6.283); c.ellipse(cx + cw * 0.18, cyy - 11, cw * 0.3, 14, 0, 0, 6.283); c.fill();
+  }
+  // two layers of hills sliding slowly (the far one slower)
+  [[1.5, 0.55, 46, 0.006], [4, 1, 30, 0.011]].forEach(function (L) {
+    var off = M.t * L[0]; c.fillStyle = S.hill; c.globalAlpha = L[1];
+    c.beginPath(); c.moveTo(0, gy);
+    for (var x = 0; x <= w + 40; x += 30) c.lineTo(x, gy - L[2] + 4 - (L[2] * 0.6) * Math.sin((x + off) * L[3]) - 14 * Math.sin((x + off) * 0.027 + 1));
+    c.lineTo(w, gy); c.closePath(); c.fill(); c.globalAlpha = 1;
+  });
+  var x;
+  c.fillStyle = '#CDB98C'; c.fillRect(0, gy, w, M.g);
+  c.fillStyle = 'rgba(120,95,55,0.18)'; for (var i = 0; i < 160; i++) c.fillRect((i * 137.5) % w, gy + ((i * 53.3) % M.g), 2, 2);
+  c.fillStyle = '#7A9A4A'; for (x = 6; x < w; x += 23) { c.beginPath(); c.moveTo(x, gy + 2); c.lineTo(x + 3, gy - 6); c.lineTo(x + 6, gy + 2); c.fill(); }
+  if (night > 0.02) { c.fillStyle = 'rgba(8,12,34,' + (night * 0.4) + ')'; c.fillRect(0, gy - 8, w, M.g + 8); }   // the ground darkens at night too
+  M.bones.forEach(function (p) { c.globalAlpha = Math.min(1, (5 - p.t) / 1.5) * 0.85; c.strokeStyle = '#F4F0E6'; c.lineWidth = 1.6; c.save(); c.translate(p.x, p.y); c.rotate(p.a); c.beginPath(); c.moveTo(-10, 0); c.lineTo(7, 0); for (var q = -6; q <= 3; q += 3) { c.moveTo(q, -4); c.lineTo(q, 4); } c.stroke(); c.fillStyle = '#F4F0E6'; c.beginPath(); c.arc(10, 0, 3.4, 0, 6.283); c.fill(); c.restore(); });
+  c.globalAlpha = 1;
+  M.rodents.forEach(function (r) {
+    c.save(); c.translate(r.x, r.y); if (r.dir < 0) c.rotate(Math.PI); c.scale(1.25, 1.25);
+    c.drawImage(spriteFor(r.genes), -SPR.cx, -SPR.cy, SPR.w, SPR.h); c.restore();
+  });
+  M.puffs.forEach(function (p) { var u = p.t / 0.8; c.globalAlpha = 1 - u; c.fillStyle = p.col; for (var q = 0; q < 7; q++) { var an = q * 0.9; c.beginPath(); c.arc(p.x + Math.cos(an) * (6 + u * 26), p.y + Math.sin(an) * (6 + u * 18), 3.2 * (1 - u) + 1, 0, 6.283); c.fill(); } });
+  c.globalAlpha = 1;
+  M.birds.forEach(function (b) {
+    if (b.state === 'dive') { c.fillStyle = 'rgba(0,0,0,0.18)'; c.beginPath(); c.ellipse(b.x, gy + M.g * 0.5, 16, 5, 0, 0, 6.283); c.fill(); }
+    c.save(); c.translate(b.x, b.y); c.rotate(b.a); c.scale(b.sc, b.sc);
+    if (b.eagle) { c.fillStyle = b.golden ? '#C9A227' : EAGLE_COL; c.strokeStyle = b.golden ? '#FFF2B0' : '#E8D8FF'; c.lineWidth = 1.6; birdPath(c, true); c.fill(); c.stroke(); c.fillStyle = '#F2F2F2'; c.beginPath(); c.arc(13, 0, 3, 0, 6.283); c.fill(); }
+    else drawHawkShape(c, b.look, b.col);
+    c.restore();
+  });
+}
+function menuFrame(ts) {
+  if (!menuOn) { mbRunning = false; return; }
+  var dt = Math.min(0.05, (ts - mbLast) / 1000) * (reduceMotion ? 0.2 : 0.5); mbLast = ts;   // title scene runs at half speed (slower still with reduced motion)
+  stepMB(dt); drawMB(); requestAnimationFrame(menuFrame);
+}
+function startMenuAnim() {
+  initMB();
+  if (!mbRunning) { mbRunning = true; mbLast = performance.now(); requestAnimationFrame(menuFrame); }
+}
+window.addEventListener('resize', function () { if (menuOn) initMB(); });
+
 /* ---------- loop ---------- */
 var lastTs = 0, acc = 0, uiAcc = 0, chAcc = 0;
 function frame(ts) {
@@ -2352,17 +2651,17 @@ function frame(ts) {
       }
     }
     if (steps >= 12) acc = 0;
-    if (phase === 'running') { uiAcc += dtReal; if (uiAcc > 0.4) { uiAcc = 0; checkGoals(); } }
+    if (phase === 'running') { uiAcc += dtReal; if (uiAcc > 0.4) { uiAcc = 0; checkGoals(); checkAch(); } }
   }
   if (msg) msg.age += dtReal;
   fx = fx.filter(function (f) { f.age += dtReal; return f.age < fxLife(f); });
-  drawArena();
+  if (!menuOn) drawArena();
   chAcc += dtReal; if (chAcc > 0.25) { chAcc = 0; drawChart(); updateUI(); if (phase === 'running') renderGoals(); }
   requestAnimationFrame(frame);
 }
 function onResize() { fitCanvases(); drawArena(); drawChart(); }
 if (window.ResizeObserver) { new ResizeObserver(onResize).observe(dishBox); new ResizeObserver(onResize).observe(chartBox); new ResizeObserver(fitFight).observe(fcv); } else window.addEventListener('resize', onResize);
-fitCanvases(); newGame(); if (readIndex().games.length) { savesBack = null; showSaves(false); }
+fitCanvases(); newGame(true); closePanel(); showMenu('main');
 window.__hh = function () { return { phase: phase, gen: genNow(), goal: goalIdx, caught: game.hawk.caught, e: game.hawk.energy, n: game.count(), wins: stats.wins, wounded: game.hawk.wounded, inv: game.inv ? game.inv.state + (game.inv.wounded ? '-w' : '') : null, ash: game.ash, trees: game.trees.length, climb: game.freq('climb').climber / Math.max(1, game.count()), smart: (game.freq('mind').smart + game.freq('mind').wise) / Math.max(1, game.count()), missiles: !!game.hawk.missiles, decoy: !!decoy, lure: !!(decoy && decoy.lure), wipes: wipe.count, peace: peaceful(), fire: !!game.hawk.fire, hit: stats.missileHit, mt: !!missileTarget() }; };
 window.__hhDive = function () { var best = null, bv = -1; game.gophers.forEach(function (c) { if (game.hidden(c)) return; var v = 1 - game.camo(c) + Math.random() * 0.2; if (v > bv) { bv = v; best = c; } }); return game.dive(best); };
 window.__hhEngage = function () { return game.engage(); };
@@ -2381,6 +2680,10 @@ window.__hhOffer = function () { goalState.jungleOffered = false; return checkUn
 window.__hhSpecial = function (k) { pickSpecial(SPECIAL[k]); };
 window.__hhMonkeyFight = function (ambush) { var m = game.monkeys[0]; if (!m) return false; game.fightMonkey = m; startFight(ambush ? 'monkeyambush' : 'monkey'); return true; };
 window.__hhKeys = function () { return keysSig; };
+window.__hhMenu = function () { return { on: menuOn, screen: menuScreen, phase: phase, back: menuBack, birds: MB && MB.birds.map(function (b) { return b.state; }).join(','), rodents: MB && MB.rodents.length }; };
+window.__hhSkyT = function (f) { MB.t = SKY_CYCLE * f; };
+window.__hhBirdX = function () { return MB.t; };
+window.__hhAch = function () { return achDone; };
 window.__hhAmmo = function () { var h = game.hawk; return { ammo: h.ammo, max: h.ammoMax, next: h.mNext, t: game.t }; };
 window.__hhInv = function (l) { game.spawnInvader(l || 1); game.inv.challenge = (arguments[1] === undefined ? 1 : arguments[1]); };
 window.__hhKill = function () { game.hawk.energy = 0.01; };
