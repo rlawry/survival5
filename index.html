@@ -170,15 +170,20 @@ td.num { text-align: right; font-family: var(--font-data); font-variant-numeric:
 .sw { display: inline-block; width: 11px; height: 11px; vertical-align: -1px; margin-left: 4px; border: 1px solid rgba(0,0,0,.3); }
 td.fgt { font-size: 11.5px; color: var(--muted); text-align: right; white-space: nowrap; }
 td.fgt.chg { color: var(--ink); font-weight: 600; }
-.actBtns { position: absolute; top: 8px; right: 8px; z-index: 3; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
-.perchBtn { display: flex; align-items: center; gap: 10px; padding: 6px 11px; border: 2px solid #7CE0A0; background: rgba(12,16,22,0.85); color: #FFF; font: inherit; cursor: pointer; text-align: left; max-width: 300px; }
-.perchBtn[hidden] { display: none; }
-.perchBtn kbd { font: 800 13px var(--font-display); background: #FFFFFF; color: #140C10; padding: 4px 8px; box-shadow: 0 3px 0 #9A8A70; letter-spacing: .04em; }
-.perchBtn span { display: flex; flex-direction: column; line-height: 1.2; }
-.perchBtn small { font-size: 11.5px; color: #C9D1D9; }
-.perchBtn.on { background: #1E5A3A; border-color: #B8F5CF; }
-.fireBtn { position: relative; display: flex; align-items: center; gap: 10px; padding: 7px 12px; border: 2px solid #FFD34D; background: rgba(12,16,22,0.88); color: #FFF; font: inherit; cursor: pointer; text-align: left; max-width: 300px; }
-.fireBtn[hidden] { display: none; }
+.keys { display: flex; flex-direction: column; gap: 5px; }
+.keys .dim { margin: 0; }
+.keyRow { display: grid; grid-template-columns: 54px minmax(0, 1fr); align-items: center; gap: 9px; width: 100%; padding: 5px 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.keyRow:hover { background: var(--surface-2); }
+.keyRow kbd { font: 800 11.5px var(--font-display); letter-spacing: .04em; text-align: center; padding: 4px 0; background: var(--ink); color: var(--bg); box-shadow: 0 2px 0 var(--muted); }
+.keyRow span { display: flex; flex-direction: column; min-width: 0; font-size: 12.5px; line-height: 1.25; }
+.keyRow span b { font-weight: 600; }
+.keyRow small { font-size: 11.5px; color: var(--muted); }
+.keyRow small b { color: var(--ink); }
+.keyRow.wait { opacity: .72; }
+.keyRow.on { border-color: var(--good); background: color-mix(in srgb, var(--good) 13%, var(--surface)); }
+.keyRow.hot { border-color: #C8372D; border-width: 2px; background: color-mix(in srgb, #C8372D 16%, var(--surface)); }
+.keyRow.hot kbd { background: #C8372D; color: #FFFFFF; }
+#invadeBtn { margin-top: 8px; width: 100%; }
 .saveStat { font-size: 12px; color: var(--muted); white-space: nowrap; }
 .saveStat.bad { color: var(--bad); font-weight: 600; }
 .saves { display: flex; flex-direction: column; gap: 8px; max-height: 46vh; overflow-y: auto; }
@@ -199,13 +204,6 @@ td.fgt.chg { color: var(--ink); font-weight: 600; }
 .mcard.golden { border: 2px solid #C9A227; background: linear-gradient(135deg, #FFF3C4, #F5D66B); color: #2A2005; }
 .mcard.golden .tx { color: #4A3A10; }
 .mcard.golden .rk { background: #8A6A00; color: #FFF6DC; }
-.fireBtn kbd { font: 800 15px var(--font-display); background: #FFFFFF; color: #140C10; padding: 5px 10px; box-shadow: 0 3px 0 #9A8A70; letter-spacing: .04em; }
-.fireBtn span { display: flex; flex-direction: column; line-height: 1.2; }
-.fireBtn small { font-size: 11.5px; color: #C9D1D9; }
-.fireBtn.wait { border-color: #6A737D; opacity: .8; }
-.fireBtn.hot { background: #C8372D; border-color: #FFE58A; font-size: 16px; animation: firePulse .7s ease-in-out infinite alternate; }
-@keyframes firePulse { from { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,211,77,.7); } to { transform: scale(1.06); box-shadow: 0 0 0 8px rgba(255,211,77,0); } }
-@media (prefers-reduced-motion: reduce) { .fireBtn.hot { animation: none; } }
 .fbtn i { position: absolute; left: 0; bottom: 0; height: 4px; background: #F2C230; width: 0; }
 .fbtn[data-move="missile"] { border-color: #FF6B5E; }
 .fbtn:disabled { opacity: .45; cursor: not-allowed; }
@@ -236,10 +234,9 @@ td.fgt.chg { color: var(--ink); font-weight: 600; }
     <div class="stage">
       <div class="dishBox" id="dishBox">
         <canvas id="arena" role="img" aria-label="The hunting ground. rodents with different coat colors, leg lengths, tail patterns and climbing claws look for seeds. Trees grow over time. Click a rodent to send your hawk diving for it, or click an invading eagle to fight it."></canvas>
-        <div class="hud"><span id="hudGen">Gen 1</span><span>Energy</span><span class="bar"><i id="hudBar"></i></span><span id="hudE">80%</span><span class="wnd" id="hudW" hidden>WOUNDED: eat to 75%</span><span id="hudM" hidden></span><span id="hudF" hidden></span></div>
+        <div class="hud"><span id="hudGen">Gen 1</span><span>Energy</span><span class="bar"><i id="hudBar"></i></span><span id="hudE">80%</span><span class="wnd" id="hudW" hidden>WOUNDED: eat to 75%</span></div>
         <div class="goalTip" id="goalTip"></div>
         <div class="warnBar" id="warnBar" role="status" hidden></div>
-        <div class="actBtns"><button type="button" class="fireBtn" id="fireBtn" hidden></button><button type="button" class="perchBtn" id="perchBtn" aria-pressed="false" hidden></button></div>
       </div>
       <section class="chartPanel" aria-label="rodent traits">
         <div class="chartHead">
@@ -250,8 +247,8 @@ td.fgt.chg { color: var(--ink); font-weight: 600; }
         <div class="chartBox" id="chartBox"><canvas id="chart" role="img" aria-label="Stacked graph of the percent of rodents with each variant over the generations, with the rodent population as a dashed line."></canvas></div>
       </section>
       <div class="overlay" id="overlay"><div class="card" id="panel" role="dialog" aria-modal="false" aria-labelledby="panelTitle"></div></div>
-      <div class="fight" id="fight" role="dialog" aria-label="Fight with the invading eagle" hidden>
-        <canvas id="fightCv" role="img" aria-label="Your hawk on the left fights the invading eagle on the right. Health bars at the top."></canvas>
+      <div class="fight" id="fight" role="dialog" aria-label="Fight screen" hidden>
+        <canvas id="fightCv" role="img" aria-label="Your hawk on the left fights an eagle or a monkey on the right. Health bars at the top."></canvas>
         <div class="fbar">
           <p class="fmsg" id="fightMsg"></p>
           <div class="fbtns" id="fightBtns"></div>
@@ -272,17 +269,23 @@ td.fgt.chg { color: var(--ink); font-weight: 600; }
           <div class="stat"><b id="stPop">0</b><span>rodents left</span></div>
         </div>
       </section>
+      <section aria-label="Controls">
+        <h3 class="secT">Controls</h3>
+        <div class="keys" id="keys"></div>
+      </section>
       <section>
         <h3 class="secT">Goals</h3>
         <ol class="goals" id="goals"></ol>
       </section>
       <section>
-        <h3 class="secT">The valley</h3>
+        <h3 class="secT" id="envTitle">The valley</h3>
         <dl class="envT">
           <dt>Ground</dt><dd id="envGround">Light sand</dd>
           <dt>Trees</dt><dd id="envTrees">None yet</dd>
-          <dt>Invader</dt><dd id="envInv">None</dd>
+          <dt id="envInvL">Invader</dt><dd id="envInv">None</dd>
+          <dt id="envMkL" hidden>Monkeys</dt><dd id="envMk" hidden></dd>
         </dl>
+        <button type="button" class="btn primary" id="invadeBtn" hidden>Invade a new territory</button>
       </section>
       <section>
         <h3 class="secT">Hawk traits</h3>
@@ -306,7 +309,7 @@ var TRAITS = {
   mind:   { label: 'Mind',         variants: ['simple', 'smart', 'wise'], names: { simple: 'Simple mind', smart: 'Smart', wise: 'Very smart' } }
 };
 /* Mind: the chance a climber decides to stay near a tree on each food trip. Hungry rodents take more risks. */
-var NOTICE = { simple: 0.03, smart: 0.3, wise: 0.7 }, WATCH = 1.8;   // chance per look (every 0.5 s) to notice a predator overhead; WATCH x alert = how far they look
+var NOTICE = { simple: 0.02, smart: 0.15, wise: 0.35 }, WATCH = 1.3, CALM_DOWN = [4, 7];   // chance per look (every 0.5 s) to notice a predator overhead; WATCH x alert = how far they look
 var MIND = { simple: 0, smart: 0.5, wise: 0.8 }, MIND_UP = 0.035, MIND_DOWN = 0.015, SAFE_R = 2, TRIP = [4, 8];
 var TONE = { sandy: 0, medium: 0.5, dark: 1 };
 var LEGS = { short: { speed: 42, cost: 0.9, escape: 0.2 }, long: { speed: 52, cost: 1.05, escape: 0.5 } };
@@ -319,15 +322,17 @@ var RECOVER = 75;
 var INV_MIN_FOOD = 12, INV_CHALLENGE_MIN_E = 50;   // eagles leave, and stop hunting, when rodents are scarce; they don't challenge a weak hawk                 // energy % a wounded bird needs before it can fight again
 
 /* Hawk traits and mutations. Names describe a body change, not what it does. */
-var HAWK_BASE = { speed: 270, grip: 0.92, alert: 100, hunger: 1.6, sight: 0, evade: 0 };
-var HAWK_LIMITS = { speed: [150, 360], grip: [0.5, 1], alert: [50, 200], hunger: [0.9, 3], sight: [-1, 2], evade: [0, 0.5] };
+var HAWK_BASE = { speed: 270, grip: 0.92, alert: 100, hunger: 1.6, sight: 0, evade: 0, oil: 0, skull: 0 };
+var HAWK_LIMITS = { speed: [150, 360], grip: [0.5, 1], alert: [50, 200], hunger: [0.9, 3], sight: [-1, 2], evade: [0, 0.5], oil: [0, 0.6], skull: [0, 0.6] };
 var HAWK_INFO = [
   { k: 'speed',  label: 'Diving speed',      fmt: function (v) { return Math.round(v); }, better: 1 },
   { k: 'grip',   label: 'Grip',              fmt: function (v) { return Math.round(v * 100) + '%'; }, better: 1 },
   { k: 'alert',  label: 'Rodents notice at', fmt: function (v) { return Math.round(v); }, better: -1 },
   { k: 'hunger', label: 'Energy use',        fmt: function (v) { return v.toFixed(1) + '/s'; }, better: -1 },
   { k: 'sight',  label: 'Eyesight',          fmt: function (v) { return ['Blurry', 'Normal', 'Sharp', 'Very sharp'][Math.round(v) + 1]; }, better: 1 },
-  { k: 'evade',  label: 'Evade eagles', fmt: function (v) { return Math.round(v * 100) + '%'; }, better: 1 }
+  { k: 'evade',  label: 'Evade eagles', fmt: function (v) { return Math.round(v * 100) + '%'; }, better: 1 },
+  { k: 'oil',    label: 'Slip a monkey grab', zone: 'jungle', fmt: function (v) { return Math.round((0.1 + v) * 100) + '%'; }, better: 1 },
+  { k: 'skull',  label: 'Stick damage taken', zone: 'jungle', fmt: function (v) { return Math.round((1 - v) * 100) + '%'; }, better: 1 }
 ];
 var HAWK_MUTATIONS = [
   { id: 'eyes',     kind: 'helpful', fx: { sight: 1 },     names: ['Larger eyes', 'Even larger eyes'], texts: ['The eyes grow larger.', 'The eyes grow larger again.'] },
@@ -336,19 +341,28 @@ var HAWK_MUTATIONS = [
   { id: 'feathers', kind: 'helpful', fx: { alert: -25 },   names: ['Soft-edged feathers', 'Softer feathers'], texts: ['The edges of the flight feathers become soft.', 'The feathers grow softer still.'] },
   { id: 'crop',     kind: 'helpful', fx: { hunger: -0.25 }, names: ['Larger crop', 'Even larger crop'], texts: ['The pouch in the throat that stores food grows.', 'The throat pouch grows again.'] },
   { id: 'tail',     kind: 'helpful', fx: { evade: 0.2 },  names: ['Forked tail', 'Deeper forked tail'], texts: ['The tail feathers split into a fork, so the hawk can twist and roll in the air.', 'The fork in the tail grows deeper.'] },
+  { id: 'oily',     kind: 'helpful', zone: 'jungle', fx: { oil: 0.3 }, names: ['Oily feathers', 'Oilier feathers'], texts: ['Glands near the tail coat the feathers in slippery oil.', 'The feathers grow even oilier.'] },
+  { id: 'skull',    kind: 'helpful', zone: 'jungle', fx: { skull: 0.3 }, names: ['Harder skull', 'Even harder skull'], texts: ['The bones of the skull grow thicker and harder.', 'The skull bones thicken again.'] },
   { id: 'heavy',    kind: 'harmful', fx: { speed: -40 },   names: ['Heavier body', 'Even heavier body'], texts: ['The body grows heavier.', 'The body grows heavier again.'] },
   { id: 'noisy',    kind: 'harmful', fx: { alert: 35 },    names: ['Stiff wing feathers', 'Stiffer wing feathers'], texts: ['The wing feathers become stiff.', 'The wing feathers stiffen further.'] },
   { id: 'metab',    kind: 'harmful', fx: { hunger: 0.35 }, names: ['Faster heartbeat', 'Racing heartbeat'], texts: ['The heart beats faster.', 'The heart beats faster still.'] },
   { id: 'blur',     kind: 'harmful', fx: { sight: -1 },    names: ['Cloudy eye lens', 'Cloudier eye lens'], texts: ['The lens of each eye becomes cloudy.', 'The lenses grow cloudier.'] }
 ];
 var PERCH = { drain: 0.35, fool: 6, speed: 230 };   // perched: energy use x0.35; after 6 s the rodents think the hawk has gone
+/* The jungle: a second territory with darker ground, more trees, monkeys in the treetops, and eagles that haven't noticed the hawk yet */
+var JUNGLE = { tone: 0.8, trees0: 9, treeMax: 12, treeEvery: 1, spacing: 150, rodents0: 36, monkeys0: 6, monkeyMin: 4, eagles: 4,
+               spot: 160, aware: 0.5, forget: 0.5, stickR: 70, stickDmg: 7, stickCd: 4, ambush: 1.2, spinReload: 10, seedRate: 5, foodCap: 70 };
+function maxedAll(T) {   // every home-valley trait at its best limit
+  return HAWK_INFO.filter(function (i) { return !i.zone; }).every(function (i) { var l = HAWK_LIMITS[i.k]; return Math.abs(T[i.k] - (i.better > 0 ? l[1] : l[0])) < 1e-6; });
+}
 function clampH(k, v) { var l = HAWK_LIMITS[k]; return Math.max(l[0], Math.min(l[1], v)); }
 function canChangeH(T, m) { for (var k in m.fx) if (Math.abs(clampH(k, T[k] + m.fx[k]) - T[k]) > 1e-9) return true; return false; }
 function applyHawkMutation(T, m) { var before = {}; for (var k in m.fx) { before[k] = T[k]; T[k] = clampH(k, T[k] + m.fx[k]); } return before; }
-function dealHawkCards(rng, hawk) {
+function dealHawkCards(rng, hawk, zone) {
+  function inZone(m) { return !m.zone || m.zone === zone; }
   function pickFrom(kind, avoid) {
-    var pool = HAWK_MUTATIONS.filter(function (m) { return m.kind === kind && avoid.indexOf(m.id) < 0 && canChangeH(hawk.T, m); });
-    if (!pool.length) pool = HAWK_MUTATIONS.filter(function (m) { return m.kind === kind && avoid.indexOf(m.id) < 0; });
+    var pool = HAWK_MUTATIONS.filter(function (m) { return m.kind === kind && inZone(m) && avoid.indexOf(m.id) < 0 && canChangeH(hawk.T, m); });
+    if (!pool.length) pool = HAWK_MUTATIONS.filter(function (m) { return m.kind === kind && inZone(m) && avoid.indexOf(m.id) < 0; });
     return pool[(rng() * pool.length) | 0];
   }
   var a = pickFrom('helpful', []), b = pickFrom('helpful', [a.id]), c = pickFrom('harmful', []);
@@ -364,8 +378,8 @@ function dealHawkCards(rng, hawk) {
 function camoAt(coat, ash) { return 0.8 * Math.max(0, 1 - Math.abs(TONE[coat] - ash) * 1.6); }
 function pickMix(rng, mix) { var u = rng(), acc = 0, k; for (k in mix) { acc += mix[k]; if (u < acc) return k; } return k; }
 
-function createWorld(rng) {
-  var w = { t: 0, ash: 0, ashStart: null, food: [], gophers: [], trees: [], events: [], acc: 0, stats: {}, births: 0, nextTree: TREE.first * GEN,
+function createWorld(rng, zone) {
+  var w = { zone: zone === 'jungle' ? 'jungle' : 'home', monkeys: [], eagles: [], monkeysBeaten: 0, kingBeaten: false, monkeyNext: 0, eagleNext: 0, fightMonkey: null, t: 0, ash: 0, ashStart: null, food: [], gophers: [], trees: [], events: [], acc: 0, stats: {}, births: 0, nextTree: TREE.first * GEN,
             hawk: { x: W / 2, y: H / 2, a: 0, state: 'soar', tgt: null, energy: 80, maxE: 100, rest: 0, diveT: 0, caught: 0, misses: 0,
                     alive: true, wounded: false, T: {}, picks: [], missiles: false, hover: null },
             inv: null };
@@ -385,7 +399,9 @@ function createWorld(rng) {
   function tally(c, key) { for (var tr in c.genes) w.stats[tr + ':' + c.genes[tr]][key]++; }
   w.count = function () { return w.gophers.length; };
   w.freq = function (tr) { var o = {}; TRAITS[tr].variants.forEach(function (v) { o[v] = 0; }); w.gophers.forEach(function (c) { o[c.genes[tr]]++; }); return o; };
-  w.camo = function (c) { return camoAt(c.genes.coat, w.ash); };
+  w.jungle = w.zone === 'jungle';
+  w.tone = function () { return w.jungle ? JUNGLE.tone : w.ash; };   // how dark the ground is
+  w.camo = function (c) { return camoAt(c.genes.coat, w.tone()); };
   w.hidden = function (c) { return c.hide > 0; };
   w.immigrate = function (n) {   // a few rodents wander in from outside the valley
     var side = rng() < 0.5 ? 30 : W - 30, y0 = 80 + rng() * (H - 160), out = [];
@@ -402,11 +418,13 @@ function createWorld(rng) {
     for (k in w.hawk) if (k !== 'tgt') hk[k] = w.hawk[k];
     hk.perchOn = trees.indexOf(w.hawk.perchOn);
     if (w.inv) { iv = {}; for (k in w.inv) if (k !== 'tgt') iv[k] = w.inv[k]; }
+    var eg = w.eagles.map(function (e) { var o = {}, q; for (q in e) if (q !== 'tgt') o[q] = e[q]; if (o.state === 'dive') o.state = 'soar'; return o; });
+    var mk = w.monkeys.map(function (m) { var o = {}, q; for (q in m) o[q] = m[q]; o.tree = trees.indexOf(m.tree); o.goal = trees.indexOf(m.goal); return o; });
     return JSON.parse(JSON.stringify({
       t: w.t, ash: w.ash, ashStart: w.ashStart, acc: w.acc, births: w.births, nextTree: w.nextTree, calm: w.calm || 0, stats: w.stats,
       trees: trees, food: w.food.map(function (f) { return { x: f.x, y: f.y, rot: f.rot }; }),
       gophers: w.gophers.map(function (c) { var o = {}, q; for (q in c) o[q] = c[q]; o.tgt = null; o.tree = trees.indexOf(c.tree); o.home = trees.indexOf(c.home); return o; }),
-      hawk: hk, inv: iv
+      hawk: hk, inv: iv, zone: w.zone, eagles: eg, monkeys: mk, monkeysBeaten: w.monkeysBeaten, kingBeaten: w.kingBeaten, monkeyNext: w.monkeyNext, eagleNext: w.eagleNext
     }));
   };
   w.restore = function (d) {
@@ -422,21 +440,36 @@ function createWorld(rng) {
     if ((w.hawk.state === 'perch' || w.hawk.state === 'toperch') && !w.hawk.perchOn) w.hawk.state = 'soar';
     w.hawk.perchT = w.hawk.perchT || 0; w.hawk.ambush = false;
     w.inv = d.inv; if (w.inv) { w.inv.tgt = null; if (w.inv.state === 'dive' || w.inv.state === 'seek') w.inv.state = 'soar'; }
+    w.zone = d.zone === 'jungle' ? 'jungle' : 'home'; w.jungle = w.zone === 'jungle';
+    w.eagles = (d.eagles || []).map(function (e) { e.tgt = null; return e; });
+    w.monkeys = (d.monkeys || []).map(function (m) { m.tree = m.tree >= 0 ? w.trees[m.tree] || null : null; m.goal = m.goal >= 0 ? w.trees[m.goal] || null : null; if (m.state === 'tree' && !m.tree) m.state = 'ground'; return m; });
+    w.monkeysBeaten = d.monkeysBeaten || 0; w.kingBeaten = !!d.kingBeaten; w.monkeyNext = d.monkeyNext || 0; w.eagleNext = d.eagleNext || 0; w.fightMonkey = null;
+    w.hawk.mkT = 0;
   };
   w.startAsh = function () { w.ashStart = w.t; w.ash = 1; ev('ash', null, W / 2, H / 2); };
 
+  function plantTree(r0) {
+    var sp = w.jungle ? JUNGLE.spacing : 200, pad = w.jungle ? 60 : 90;
+    for (var tries = 0; tries < 80; tries++) {
+      var x = pad + rng() * (W - 2 * pad), y = pad + rng() * (H - 2 * pad), ok = true;
+      w.trees.forEach(function (t) { var dx = t.x - x, dy = t.y - y; if (dx * dx + dy * dy < sp * sp) ok = false; });
+      if (ok) { var t = { x: x, y: y, r: r0 || 6 }; w.trees.push(t); if (!r0) ev('tree', null, x, y); return t; }
+    }
+    return null;
+  }
+  function treeMax() { return w.jungle ? JUNGLE.treeMax : TREE.max; }
+  if (w.jungle) for (var tq = 0; tq < JUNGLE.trees0; tq++) plantTree(TREE.full);
   for (var i = 0; i < 60; i++) spawnFood();
-  for (i = 0; i < 28; i++) {
+  for (i = 0; i < (w.jungle ? JUNGLE.rodents0 : 28); i++) {
     var genes = { coat: pickMix(rng, { sandy: 1 / 3, medium: 1 / 3, dark: 1 / 3 }), legs: pickMix(rng, { short: 0.5, long: 0.5 }),
-                  stripe: pickMix(rng, { plain: 0.5, striped: 0.5 }), climb: 'ground', mind: 'simple' };
+                  stripe: pickMix(rng, { plain: 0.5, striped: 0.5 }),
+                  climb: w.jungle && rng() < 0.6 ? 'climber' : 'ground', mind: w.jungle ? pickMix(rng, { simple: 0.5, smart: 0.35, wise: 0.15 }) : 'simple' };
     w.gophers.push(make(genes, 40 + rng() * (W - 80), 40 + rng() * (H - 80), 55 + rng() * 20, rng() * 50));
   }
-  function plantTree() {
-    for (var tries = 0; tries < 60; tries++) {
-      var x = 90 + rng() * (W - 180), y = 90 + rng() * (H - 180), ok = true;
-      w.trees.forEach(function (t) { var dx = t.x - x, dy = t.y - y; if (dx * dx + dy * dy < 200 * 200) ok = false; });
-      if (ok) { w.trees.push({ x: x, y: y, r: 6 }); ev('tree', null, x, y); return; }
-    }
+  if (w.jungle) {
+    w.nextTree = TREE.every * GEN;
+    var gt = w.trees.slice(); for (var mq = 0; mq < JUNGLE.monkeys0 && gt.length; mq++) w.monkeys.push(makeMonkey(gt[mq % gt.length], false));
+    for (var eq = 0; eq < 3; eq++) w.eagles.push(makeEagle(false)); w.eagleNext = GEN;
   }
 
   /* ---- hunting (shared by the player's hawk and the invader) ---- */
@@ -461,7 +494,7 @@ function createWorld(rng) {
   w.unperch = function () {
     var hk = w.hawk, t = hk.perchOn;
     if (hk.state === 'perch' || hk.state === 'toperch') { hk.state = 'soar'; hk.hover = t && w.trees.indexOf(t) >= 0 ? { x: t.x, y: t.y } : null; }
-    hk.perchOn = null; hk.perchT = 0;
+    hk.perchOn = null; hk.perchT = 0; hk.mkT = 0;
   };
   /* Returns 'on', 'off', 'none' (no grown tree) or 'busy' */
   w.perch = function () {
@@ -470,6 +503,39 @@ function createWorld(rng) {
     if (!hk.alive || hk.state === 'dive' || hk.state === 'dead') return 'busy';
     var t = perchTree(); if (!t) return 'none';
     hk.state = 'toperch'; hk.perchOn = t; hk.perchT = 0; hk.hover = null; return 'on';
+  };
+  /* Player clicks a monkey: only one on the ground can be reached */
+  w.diveMonkey = function (m) {
+    var hk = w.hawk, perched = hk.state === 'perch' || hk.state === 'toperch';
+    if (!hk.alive || hk.wounded || (hk.state !== 'soar' && !perched) || !m || w.monkeys.indexOf(m) < 0) return 'busy';
+    if (m.state === 'tree') return 'tree';
+    hk.perchOn = null; hk.perchT = 0; hk.ambush = false; hk.mkT = 0;
+    hk.state = 'dive'; hk.tgt = m; hk.diveT = 0; return 'ok';
+  };
+  /* Player clicks a patrolling jungle eagle: it becomes the eagle you fight */
+  w.provoke = function (e) {
+    var i = w.eagles.indexOf(e); if (i < 0) return false;
+    if (w.inv && w.inv.state !== 'gone') return false;
+    w.eagles.splice(i, 1); e.state = 'soar'; e.tgt = null; w.inv = e;
+    return w.engage();
+  };
+  /* Monkey King Talisman: spin in the perch tree and knock everything out of it */
+  w.spinReady = function () { var hk = w.hawk; return !!hk.talisman && hk.state === 'perch' && w.t >= (hk.spinReady || 0); };
+  w.spin = function () {
+    var hk = w.hawk, t = hk.perchOn;
+    if (!w.spinReady() || !t) return null;
+    var nr = 0, nm = 0;
+    w.gophers.forEach(function (c) {
+      if (c.hide > 0 && c.tree === t) {
+        var out = Math.atan2(c.y - t.y, c.x - t.x) + (rng() - 0.5) * 0.8;
+        c.hide = 0; c.tree = null; c.a = out; c.flee = 1.4; c.x = t.x + Math.cos(out) * t.r * 0.9; c.y = t.y + Math.sin(out) * t.r * 0.9; bounce(c); nr++;
+      }
+    });
+    w.monkeys.forEach(function (m) { if (m.state === 'tree' && m.tree === t) { var out = Math.atan2(m.y - t.y, m.x - t.x) || rng() * 6.283; fallOut(m, out, t.r * 1.1); m.daze = 2.5; nm++; } });
+    hk.spinReady = w.t + JUNGLE.spinReload; hk.mkT = 0;
+    w.unperch(); hk.hover = { x: t.x, y: t.y };
+    ev('spin', null, t.x, t.y, { rodents: nr, monkeys: nm, r: t.r });
+    return { rodents: nr, monkeys: nm };
   };
   /* Player clicks the invader: fly at it to start a fight. */
   w.engage = function () {
@@ -485,13 +551,15 @@ function createWorld(rng) {
   }
   function moveDive(bird, speed, grip, dt, isPlayer) {
     var tg = bird.tgt;
-    if (!tg || tg.dead || tg.state === 'gone') { bird.state = 'soar'; bird.tgt = null; return; }
+    if (!tg || tg.dead || tg.state === 'gone' || (tg.monkey && w.monkeys.indexOf(tg) < 0)) { bird.state = 'soar'; bird.tgt = null; return; }
+    if (tg.monkey && tg.state === 'tree') { ev('mhid', null, tg.x, tg.y); bird.state = 'rest'; bird.rest = 0.5; bird.tgt = null; return; }   // it reached the treetop first
     if (tg.genes && w.hidden(tg)) { ev('hid', tg); bird.state = 'rest'; bird.rest = 0.5; bird.tgt = null; if (isPlayer) bird.misses++; return; }
     var dx = tg.x - bird.x, dy = tg.y - bird.y, d = Math.sqrt(dx * dx + dy * dy);
     bird.a = Math.atan2(dy, dx); bird.diveT += dt;
     var stepD = speed * dt;
     if (d <= Math.max(14, stepD)) {
       bird.x = tg.x; bird.y = tg.y;
+      if (tg.monkey) { w.fightMonkey = tg; ev('fight', null, bird.x, bird.y, 'monkey'); bird.state = 'rest'; bird.rest = 0.5; bird.tgt = null; return; }
       if (!tg.genes) { ev('fight', null, bird.x, bird.y); bird.state = 'rest'; bird.rest = 0.5; bird.tgt = null; return; }   // reached the other bird
       var ok = resolveCatch(bird, tg, grip);
       if (isPlayer) { if (ok) bird.caught++; else bird.misses++; }
@@ -530,8 +598,154 @@ function createWorld(rng) {
     hk.state = 'rest'; hk.rest = 1; hk.tgt = null; hk.perchOn = null; hk.perchT = 0;
     if (iv.state !== 'gone') { iv.state = 'rest'; iv.rest = 1; iv.tgt = null; iv.x = Math.max(40, Math.min(W - 40, iv.x + (iv.x < W / 2 ? 160 : -160))); }
   };
+  /* ---- monkeys ---- */
+  function makeMonkey(t, king) {
+    var m = { monkey: true, x: 0, y: 0, a: 0, state: 'ground', tree: null, goal: null, move: 15 + rng() * 25, daze: 0, king: !!king, stickT: 2, off: rng() * 6.283 };
+    if (t) { m.state = 'tree'; m.tree = t; m.x = t.x; m.y = t.y; }
+    else { m.x = rng() < 0.5 ? 12 : W - 12; m.y = 80 + rng() * (H - 160); }
+    return m;
+  }
+  function grownTrees() { return w.trees.filter(function (t) { return t.r >= TREE.hideMin; }); }
+  function nearestTree(o, avoid) {
+    var best = null, bd = Infinity;
+    grownTrees().forEach(function (t) { if (t === avoid) return; var dx = t.x - o.x, dy = t.y - o.y, d = dx * dx + dy * dy; if (d < bd) { bd = d; best = t; } });
+    return best;
+  }
+  function fallOut(m, out, dist) {
+    var t = m.tree; m.state = 'ground'; m.tree = null; m.goal = null; m.daze = 1.5; m.stickT = Math.max(m.stickT, 1.5);
+    if (t) { m.x = Math.max(WALL, Math.min(W - WALL, t.x + Math.cos(out) * dist)); m.y = Math.max(WALL, Math.min(H - WALL, t.y + Math.sin(out) * dist)); }
+    ev('mfall', null, m.x, m.y);
+  }
+  w.monkeysIn = function (t) { return w.monkeys.filter(function (m) { return m.state === 'tree' && m.tree === t; }); };
+  w.king = function () { return w.monkeys.filter(function (m) { return m.king; })[0] || null; };
+  /* Called when a monkey fight starts: after 3 wins, the Monkey King steps in */
+  w.prepMonkeyFight = function () {
+    var m = w.fightMonkey; if (!m) return null;
+    if (w.monkeysBeaten >= 3 && !w.kingBeaten && !m.king) {
+      var kg = w.king();
+      if (kg) { kg.x = m.x; kg.y = m.y; kg.state = m.state; kg.tree = m.tree; kg.goal = m.goal; w.fightMonkey = kg; m = kg; }   // the king swings in to defend the troop
+      else m.king = true;
+    }
+    return m;
+  };
+  w.monkeyOutcome = function (win, playerE) {
+    var hk = w.hawk, m = w.fightMonkey;
+    hk.energy = Math.max(0, playerE); w.fightMonkey = null;
+    hk.state = 'rest'; hk.rest = 1; hk.tgt = null; hk.perchOn = null; hk.perchT = 0; hk.mkT = 0;
+    if (hk.energy <= 0) { hk.alive = false; hk.state = 'dead'; return; }
+    if (m) { hk.x = Math.max(30, Math.min(W - 30, m.x + (m.x < W / 2 ? 70 : -70))); hk.y = Math.max(30, Math.min(H - 30, m.y - 40)); }
+    hk.hover = { x: hk.x, y: hk.y };
+    if (win) {
+      if (m) w.monkeys.splice(w.monkeys.indexOf(m), 1);
+      w.monkeysBeaten++; if (m && m.king) w.kingBeaten = true;
+      if (w.monkeysBeaten >= 3 && !w.kingBeaten && !w.king()) {   // the troop's leader shows himself
+        var cand = w.monkeys.filter(function (q) { return q.state === 'tree'; });
+        if (cand.length) cand[(rng() * cand.length) | 0].king = true;
+        else { var nt = nearestTree({ x: W / 2, y: H / 2 }); var kg = makeMonkey(null, true); kg.goal = nt; w.monkeys.push(kg); }
+        ev('king', null, W / 2, H / 2);
+      }
+    } else {
+      hk.wounded = true;
+      if (m && w.monkeys.indexOf(m) >= 0) { m.stickT = 4; if (m.state !== 'tree') { m.daze = 0; m.goal = nearestTree(m); } }
+    }
+  };
+  function stepMonkeys(dt) {
+    var hk = w.hawk, i, m;
+    // more monkeys arrive while the troop is small
+    var normal = w.monkeys.filter(function (q) { return !q.king; }).length;
+    if (normal < JUNGLE.monkeyMin && w.t >= w.monkeyNext && grownTrees().length) { var nm = makeMonkey(null, false); nm.goal = nearestTree(nm); w.monkeys.push(nm); w.monkeyNext = w.t + 25; }
+    for (i = 0; i < w.monkeys.length; i++) {
+      m = w.monkeys[i];
+      if (m.state === 'tree') {
+        if (!m.tree || w.trees.indexOf(m.tree) < 0) { fallOut(m, m.off, 0); continue; }   // the tree burned down
+        m.x = m.tree.x + Math.cos(m.off) * m.tree.r * 0.35; m.y = m.tree.y + Math.sin(m.off) * m.tree.r * 0.35;
+        m.move -= dt;
+        if (m.move <= 0 && !(hk.perchOn === m.tree && hk.state === 'perch')) {   // swing off to visit another tree
+          m.move = 20 + rng() * 25;
+          var opts = grownTrees().filter(function (t) { if (t === m.tree) return false; var dx = t.x - m.x, dy = t.y - m.y; return dx * dx + dy * dy < 330 * 330; });
+          if (opts.length) { m.goal = opts[(rng() * opts.length) | 0]; m.tree = null; m.state = 'ground'; }
+        }
+        continue;
+      }
+      if (m.daze > 0) { m.daze -= dt; continue; }
+      if (!m.goal || w.trees.indexOf(m.goal) < 0 || m.goal.r < TREE.hideMin) m.goal = nearestTree(m);
+      var sp = m.king ? 85 : 75;
+      if (m.goal) {
+        var dx = m.goal.x - m.x, dy = m.goal.y - m.y, d = Math.sqrt(dx * dx + dy * dy);
+        m.a = Math.atan2(dy, dx);
+        if (d < m.goal.r * 0.4) { m.state = 'tree'; m.tree = m.goal; m.goal = null; m.move = 20 + rng() * 25; ev('mclimb', null, m.x, m.y); continue; }
+        m.x += dx / d * sp * dt; m.y += dy / d * sp * dt;
+      } else { m.a += (rng() - 0.5) * 4 * dt; m.x += Math.cos(m.a) * sp * 0.5 * dt; m.y += Math.sin(m.a) * sp * 0.5 * dt; bounce(m); }
+      // a monkey on the ground swings its stick at a hawk that flies too close
+      m.stickT -= dt;
+      if (hk.alive && hk.state !== 'dive' && hk.state !== 'perch' && hk.state !== 'dead' && m.stickT <= 0) {
+        var hx = hk.x - m.x, hy = hk.y - m.y;
+        if (hx * hx + hy * hy < JUNGLE.stickR * JUNGLE.stickR) {
+          m.stickT = JUNGLE.stickCd; var dmg = JUNGLE.stickDmg * (m.king ? 1.5 : 1) * (1 - (hk.T.skull || 0));
+          hk.energy -= dmg; ev('stick', null, hk.x, hk.y, Math.round(dmg * 10) / 10);
+        }
+      }
+    }
+    // a perched hawk in a tree with monkeys
+    if (hk.alive && (hk.state === 'perch' || hk.state === 'toperch') && hk.perchOn) {
+      var inT = w.monkeysIn(hk.perchOn), near = inT.length > 0;
+      if (!near) w.monkeys.forEach(function (q) { if (q.state === 'ground' && q.goal === hk.perchOn) { var qx = q.x - hk.perchOn.x, qy = q.y - hk.perchOn.y; if (qx * qx + qy * qy < 110 * 110) near = true; } });
+      if (hk.senses && near) {   // heightened senses: launch before the monkeys can grab
+        var pt = hk.perchOn; w.unperch();
+        var aw = Math.atan2(hk.y - pt.y, hk.x - pt.x) || rng() * 6.283;
+        hk.hover = { x: Math.max(30, Math.min(W - 30, pt.x + Math.cos(aw) * 110)), y: Math.max(30, Math.min(H - 30, pt.y + Math.sin(aw) * 110)) };
+        ev('senses', null, hk.x, hk.y);
+      } else if (hk.state === 'perch' && inT.length) {
+        hk.mkT = (hk.mkT || 0) + dt;
+        if (hk.mkT >= JUNGLE.ambush) { hk.mkT = 0; w.fightMonkey = inT[0]; ev('fight', null, hk.x, hk.y, 'monkeyambush'); }
+      } else hk.mkT = 0;
+    }
+  }
+  /* ---- jungle eagles: patrol and hunt, and only slowly notice the player's hawk ---- */
+  function makeEagle(edge) {
+    return { x: edge ? (rng() < 0.5 ? 20 : W - 20) : 60 + rng() * (W - 120), y: 60 + rng() * (H - 120), a: rng() * 6.283, state: 'soar', tgt: null, energy: 90, rest: 0, diveT: 0,
+             wounded: false, level: 1, losses: 0, wins: 0, challenge: 0, huntT: 4 + rng() * 6, aware: 0, jungle: true,
+             T: { speed: 240, grip: 0.75, alert: 110, hunger: 1.3 } };
+  }
+  w.spotRange = function () { return JUNGLE.spot * (w.hawk.T.alert / 100); };
+  function stepEagles(dt) {
+    var hk = w.hawk, calm = w.t < (w.calm || 0), hidden = hk.state === 'perch', active = w.inv && w.inv.state !== 'gone';
+    var total = w.eagles.length + (active ? 1 : 0);
+    if (total < JUNGLE.eagles && w.t >= w.eagleNext) { w.eagles.push(makeEagle(true)); w.eagleNext = w.t + 25; }
+    var keep = [];
+    for (var i = 0; i < w.eagles.length; i++) {
+      var e = w.eagles[i];
+      if (e.state === 'leave') { e.x += (e.x < W / 2 ? -1 : 1) * 150 * dt; if (e.x > -40 && e.x < W + 40) keep.push(e); continue; }
+      if (e.wounded) { e.state = 'leave'; e.tgt = null; keep.push(e); continue; }   // hurt eagles leave the jungle
+      if (e.state === 'dive') { moveDive(e, e.T.speed, e.T.grip, dt, false); keep.push(e); continue; }
+      glide(e, dt, 55);
+      var dx = hk.x - e.x, dy = hk.y - e.y, d = Math.sqrt(dx * dx + dy * dy), spot = w.spotRange();
+      if (hk.alive && !hidden && !calm && !hk.wounded && hk.state !== 'dead' && d < spot && hk.energy >= INV_CHALLENGE_MIN_E && e.state === 'soar')
+        e.aware = Math.min(1, e.aware + JUNGLE.aware * dt * (1 - 0.5 * d / spot));
+      else e.aware = Math.max(0, e.aware - (hidden ? 1.5 : JUNGLE.forget) * dt);
+      if (e.aware >= 1 && !(w.inv && w.inv.state !== 'gone')) {   // spotted you: this eagle attacks
+        e.state = 'seek'; e.challenge = 0; e.aware = 0; w.inv = e; ev('spotted', null, e.x, e.y); continue;
+      }
+      e.huntT -= dt;
+      if (e.huntT <= 0 && e.state === 'soar' && w.gophers.length >= 20) {
+        e.huntT = 7 + rng() * 6;
+        var best = null, bv = 0;
+        w.gophers.forEach(function (c) { if (w.hidden(c)) return; var cx = c.x - e.x, cy = c.y - e.y; if (cx * cx + cy * cy > 260 * 260) return; var v = (1 - w.camo(c)) * (0.5 + rng()); if (v > bv) { bv = v; best = c; } });
+        if (best) startDive(e, best);
+      }
+      keep.push(e);
+    }
+    w.eagles = keep;
+  }
   function stepInvader(dt) {
     var iv = w.inv, hk = w.hawk; if (!iv) return;
+    if (w.jungle && iv.state !== 'gone') {
+      if (iv.state === 'seek' && hk.state === 'perch') { iv.state = 'soar'; iv.aware = 0; ev('lostyou', null, iv.x, iv.y); }   // perched in the leaves: hidden
+      if ((iv.state === 'soar' || iv.state === 'rest') && !(hk.state === 'dive' && hk.tgt === iv)) {   // not attacking any more: back to patrolling
+        iv.aware = 0; iv.challenge = 0; if (iv.state === 'rest') iv.rest = Math.max(iv.rest, 1.5);
+        w.eagles.push(iv); w.inv = null; return;
+      }
+    }
     var scarce = w.gophers.length < INV_MIN_FOOD, calm = w.t < (w.calm || 0);
     if (iv.state === 'gone') { iv.x += (iv.x < W / 2 ? -1 : 1) * 160 * dt; return; }
     if (scarce && iv.state !== 'dive') { iv.state = 'gone'; iv.tgt = null; ev('invleft', null, iv.x, iv.y, 'scarce'); return; }   // not enough food here: moves on
@@ -611,10 +825,10 @@ function createWorld(rng) {
       w.ash = g < ASH.hold ? 1 : Math.max(0, 1 - (g - ASH.hold) / ASH.fade);
       if (w.ash <= 0) { w.ash = 0; w.ashStart = null; ev('ashgone', null, W / 2, H / 2); }
     }
-    if (w.t >= w.nextTree && w.trees.length < TREE.max) { plantTree(); w.nextTree = w.t + TREE.every * GEN; }
+    if (w.t >= w.nextTree && w.trees.length < treeMax()) { plantTree(); w.nextTree = w.t + (w.jungle ? JUNGLE.treeEvery : TREE.every) * GEN; }
     w.trees.forEach(function (t) { t.r = Math.min(TREE.full, t.r + TREE.grow / GEN * dt); });
-    w.acc += SEED_RATE * dt;
-    while (w.acc >= 1) { w.acc -= 1; if (w.food.length < CAP_FOOD) spawnFood(); }
+    w.acc += (w.jungle ? JUNGLE.seedRate : SEED_RATE) * dt;   // the jungle is lusher: more seeds
+    while (w.acc >= 1) { w.acc -= 1; if (w.food.length < (w.jungle ? JUNGLE.foodCap : CAP_FOOD)) spawnFood(); }
     buildGrid();
     // player hawk
     var hk = w.hawk, T = hk.T;
@@ -646,6 +860,7 @@ function createWorld(rng) {
     } else if (hk.state === 'soar' && hk.hover) hoverAt(hk, hk.hover, dt);
     else if (hk.state === 'rest' || hk.state === 'soar') glide(hk, dt, 40);
     stepInvader(dt);
+    if (w.jungle) { stepEagles(dt); stepMonkeys(dt); }
     // rodents
     var threats = [];
     if (hk.state === 'dive' && hk.tgt && hk.tgt.genes) threats.push({ x: hk.x, y: hk.y, r: T.alert * (hk.ambush ? 0.5 : 1) });
@@ -654,6 +869,7 @@ function createWorld(rng) {
     var watchers = [];   // predators in plain sight (not diving): rodents may notice and head for cover
     if (hk.alive && hk.state !== 'dive' && hk.state !== 'dead' && !fooled) watchers.push({ x: hk.x, y: hk.y, r: T.alert * (hk.state === 'perch' ? 1.1 : WATCH) });
     if (w.inv && w.inv.state !== 'gone' && w.inv.state !== 'dive') watchers.push({ x: w.inv.x, y: w.inv.y, r: w.inv.T.alert * WATCH });
+    w.eagles.forEach(function (e) { if (e.state === 'dive') threats.push({ x: e.x, y: e.y, r: e.T.alert }); else if (e.state !== 'leave') watchers.push({ x: e.x, y: e.y, r: e.T.alert * WATCH }); });
     var start = n ? (rng() * n) | 0 : 0;
     for (var k = 0; k < n; k++) {
       var c = list[(start + k) % n]; if (c.dead) continue;
@@ -661,7 +877,7 @@ function createWorld(rng) {
       c.age += dt; c.e -= (1.6 + 0.0006 * L.speed * L.speed) * L.cost * dt;
       if (c.e <= 0) { c.dead = 'starved'; continue; }
       if (c.age > c.life) { c.dead = 'old'; continue; }
-      if (c.hide > 0) { c.hide -= dt; if (c.hide <= 0) c.tree = null; continue; }   // up in a tree, safe and still
+      if (c.hide > 0) { c.hide -= dt; if (c.hide <= 0) { c.tree = null; c.look = CALM_DOWN[0] + rng() * (CALM_DOWN[1] - CALM_DOWN[0]); } continue; }   // after climbing down, they need to eat before they look up again   // up in a tree, safe and still
       c.look = (c.look || 0) - dt;
       if (c.look <= 0 && c.flee <= 0 && watchers.length) {
         c.look = 0.5;
@@ -710,8 +926,13 @@ function createWorld(rng) {
           c.tgt = bestFood(c); c.search = 0.15 + rng() * 0.15;
           if (c.stay && c.tgt && !inZone(c.home, c.tgt.x, c.tgt.y)) c.tgt = null;   // too far from safety
         }
-        if (c.stay && !c.tgt && !inZone(c.home, c.x, c.y)) turnToward(c, Math.atan2(c.home.y - c.y, c.home.x - c.x), 6 * dt);
-        else if (c.stay && !c.tgt && !inZone(c.home, c.x + Math.cos(c.a) * 20, c.y + Math.sin(c.a) * 20)) c.a += Math.PI * 0.6;
+        if (c.stay && !c.tgt) {   // forage around the whole circle: drift outward from the trunk, and follow the edge instead of turning back to the middle
+          if (!c.side) c.side = rng() < 0.5 ? -1 : 1;
+          var hx = c.x - c.home.x, hy = c.y - c.home.y, hd = Math.sqrt(hx * hx + hy * hy), zR = c.home.r * SAFE_R, out = Math.atan2(hy, hx);
+          if (hd > zR) turnToward(c, out + c.side * Math.PI * 0.75, 6 * dt);   // outside: slant back in along the edge
+          else if (hd > zR * 0.92) turnToward(c, out + c.side * Math.PI * 0.6, 3 * dt);   // near the edge: walk around it
+          else if (hd < zR * 0.45) turnToward(c, out, 2 * dt);   // under the canopy: head out to forage
+        }
         if (c.tgt) {
           var dx2 = c.tgt.x - c.x, dy2 = c.tgt.y - c.y;
           if (dx2 * dx2 + dy2 * dy2 < EAT_R * EAT_R) { c.e = Math.min(MAX_E, c.e + SEED_E); c.tgt.dead = true; c.tgt = null; c.handle = HANDLE; }
@@ -767,7 +988,8 @@ function hawkCol() { return HAWK_COLORS[(hawkNum - 1) % HAWK_COLORS.length]; }
 /* What each hawk trait does in a fight with an eagle */
 function fightPowers(T) {
   return { strike: Math.max(2, 10 + 40 * (T.grip - 0.92)), dive: T.speed / 12, dodge: clamp((130 - T.alert) / 200, 0, 0.4) + 0.4 * (T.evade || 0), evade: T.evade || 0,
-           crit: clamp(0.05 + 0.12 * T.sight, 0, 0.35), acc: T.sight < 0 ? 0.8 : 1, recharge: clamp(1.6 / T.hunger, 0.6, 1.8), missiles: 0 };
+           crit: clamp(0.05 + 0.12 * T.sight, 0, 0.35), acc: T.sight < 0 ? 0.8 : 1, recharge: clamp(1.6 / T.hunger, 0.6, 1.8), missiles: 0,
+           slip: 0.1 + (T.oil || 0), skull: T.skull || 0 };
 }
 function fightText(k, P) {
   if (k === 'speed') return 'Power dive ' + Math.round(P.dive);
@@ -775,6 +997,8 @@ function fightText(k, P) {
   if (k === 'alert') return 'Dodge ' + Math.round(P.dodge * 100) + '%';
   if (k === 'hunger') return 'Recharge ' + Math.round(P.recharge * 100) + '%';
   if (k === 'evade') return P.evade > 0 ? 'Dodge +' + Math.round(P.evade * 40) + '%' : 'No extra dodge';
+  if (k === 'oil') return 'Slips a grab ' + Math.round(P.slip * 100) + '%';
+  if (k === 'skull') return 'Stick hits ' + Math.round((1 - P.skull) * 100) + '%';
   return 'Critical hits ' + Math.round(P.crit * 100) + '%' + (P.acc < 1 ? ', misses ' + Math.round((1 - P.acc) * 100) + '%' : '');
 }
 var TRAIT_KEYS = Object.keys(TRAITS);
@@ -816,7 +1040,7 @@ function spriteFor(g) {
 
 /* ---------- goals ---------- */
 var stats = { wins: 0, missileHit: false };
-var GOALS = [
+var HOME_GOALS = [
   { title: 'First catch', text: 'Click empty ground to hover there. Click a rodent to send your hawk diving. Catch 3 rodents.',
     check: function () { return game.hawk.caught >= 3; }, progress: function () { return 'Caught ' + Math.min(3, game.hawk.caught) + ' of 3'; } },
   { title: 'Don’t overhunt', text: 'Finish 3 generations in a row with at least 15 rodents alive and your hawk still alive.',
@@ -844,6 +1068,21 @@ var GOALS = [
     check: function () { var n = game.count(), m = game.freq('mind'); return n > 0 && genNow() > goalState.goalGen && (m.smart + m.wise) / n >= 0.4; },
     progress: function () { var n = Math.max(1, game.count()), m = game.freq('mind'); return 'Smart or very smart: ' + Math.round(100 * (m.smart + m.wise) / n) + '% (goal: 40%) \u00b7 open the Mind tab'; } }
 ];
+var JUNGLE_GOALS = [
+  { title: 'New territory', text: 'Your hawk has invaded a jungle. Eagles patrol it, but they haven\u2019t noticed you yet. A yellow \u201c?\u201d over an eagle means it is starting to notice you. Catch 5 rodents.',
+    check: function () { return game.hawk.caught - (goalState.caught0 || 0) >= 5; }, progress: function () { return 'Caught ' + Math.min(5, game.hawk.caught - (goalState.caught0 || 0)) + ' of 5'; } },
+  { title: 'Hide in the leaves', text: 'When an eagle spots you, press Ctrl to perch in a tree. A perched hawk is hidden from eagles, so the eagle gives up. Hide from an eagle that is coming for you.',
+    check: function () { return (goalState.hidFrom || 0) >= 1; }, progress: function () { return game.inv && game.inv.state === 'seek' ? 'An eagle is coming! Press Ctrl now' : 'Wait for an eagle to spot you (red dashed line), then press Ctrl'; } },
+  { title: 'Monkeys', text: 'Monkeys live in the treetops, where you can\u2019t reach them. Burn their tree with fire breath, or wait for one to climb down, then click it to fight. Careful: a monkey on the ground swings its stick at a hawk that flies too close, and monkeys attack a hawk that perches in their tree. Beat a monkey.',
+    check: function () { return game.monkeysBeaten >= 1; }, progress: function () { return 'Monkeys beaten: ' + Math.min(1, game.monkeysBeaten) + ' of 1'; } },
+  { title: 'The Monkey King', text: 'Beat 4 monkeys. The 4th monkey you fight is always the Monkey King, the strongest of the troop.',
+    check: function () { return game.kingBeaten; }, progress: function () { return 'Monkeys beaten: ' + Math.min(4, game.monkeysBeaten) + ' of 4' + (game.monkeysBeaten >= 3 && !game.kingBeaten ? ' \u00b7 your next monkey fight is the Monkey King' : ''); } },
+  { title: 'Talisman spin', text: 'The Monkey King\u2019s Talisman now shows up in your mutation choices until you pick it. Then perch in a tree (Ctrl) and press Ctrl again to spin: every rodent and monkey hiding in that tree falls out.',
+    check: function () { return (goalState.spun || 0) >= 1; }, progress: function () { return game.hawk.talisman ? 'Perch in a tree, then press Ctrl to spin' : 'Watch for the Talisman (next choice after generation ' + ((Math.floor(genNow() / MUT_EVERY) + 1) * MUT_EVERY) + ')'; } }
+];
+var GOALS = HOME_GOALS;
+function setZoneGoals() { GOALS = game.jungle ? JUNGLE_GOALS : HOME_GOALS; MAIN_GOALS = game.jungle ? JUNGLE_GOALS.length : 6; }
+function placeName() { return game.jungle ? 'jungle' : 'valley'; }
 function coatText() { var f = game.freq('coat'), n = Math.max(1, game.count()); return TRAITS.coat.variants.map(function (v) { return TRAITS.coat.names[v].split(' ')[0] + ' ' + Math.round(100 * f[v] / n) + '%'; }).join(' · '); }
 function invText() { var iv = game.inv; if (!iv || iv.state === 'gone') return ''; return iv.wounded ? ' · eagle is wounded' : ' · eagle is healthy'; }
 var goalIdx = 0, goalState = {}, goalsDone = false, msg = null;
@@ -858,7 +1097,7 @@ function renderGoals() {
       (i === goalIdx ? '<span class="gd">' + g.text + '</span><span class="gp">' + g.progress() + '</span>' : '') + '</span></li>';
   }
   if (mainDone) {
-    h += '<li class="done"><span class="mk">\u2605</span><span><span class="gt">Free hunt</span><span class="gd">All ' + MAIN_GOALS + ' goals are complete. New invaders will keep arriving. Keep hunting: the valley may still hold a few surprises.</span></span></li>';
+    h += '<li class="done"><span class="mk">\u2605</span><span><span class="gt">Free hunt</span><span class="gd">' + (game.jungle ? 'All ' + MAIN_GOALS + ' jungle goals are complete. Eagles keep patrolling and new monkeys keep arriving. Keep hunting.' : 'All ' + MAIN_GOALS + ' goals are complete. New invaders will keep arriving. Keep hunting: the valley may still hold a few surprises.') + '</span></span></li>';
     for (var k = MAIN_GOALS; k < goalIdx; k++) h += '<li class="done secret"><span class="mk">\u2605</span><span><span class="gt">Secret found: ' + GOALS[k].title + '</span></span></li>';
   }
   $('goals').innerHTML = h;
@@ -881,9 +1120,9 @@ function checkGoals() {
 /* ---------- state ---------- */
 var game, phase = 'intro', speed = 1, history = [], fx = [], pools = [], view = 'coat', lastRec = -1, lastGenDone = 0, lastChange = {}, deathCause = null;
 function newGame(quiet) {
-  game = createWorld(Math.random); hawkNum = 1; curId = null; mutPending = false; setSaveStat('');
+  game = createWorld(Math.random); setZoneGoals(); hawkNum = 1; curId = null; mutPending = false; setSaveStat('');
   phase = 'intro'; history = []; fx = []; pools = []; lastRec = -1; lastGenDone = 0; lastChange = {}; deathCause = null;
-  goalIdx = 0; goalState = { goalGen: 0, streak: 0, ashDone: false, spawnAt: null, nextInv: null, peaceUntil: 0 }; wipe = { count: 0, at: null }; skeletons = []; decoy = null; goalsDone = false; stats = { wins: 0, missileHit: false }; missiles = []; burning = []; scorches = [];
+  goalIdx = 0; goalState = { goalGen: 0, streak: 0, ashDone: false, spawnAt: null, nextInv: null, peaceUntil: 0 }; wipe = { count: 0, at: null }; skeletons = []; decoy = null; goalsDone = false; stats = { wins: 0, missileHit: false, shots: 0 }; missiles = []; burning = []; scorches = [];
   $('fight').hidden = true;
   record(); renderTabs(); renderTraits(); renderGoals(); updateUI(); drawChart();
   if (!quiet) showIntro();
@@ -907,7 +1146,7 @@ function saveGame(why) {
   var ix = readIndex(), ent = ix.games.filter(function (g) { return g.id === curId; })[0];
   if (!ent) { ent = { id: curId, name: 'Game ' + ix.next, created: Date.now() }; ix.next++; ix.games.push(ent); }
   ent.updated = Date.now(); ent.gen = genNow() + 1; ent.hawkNum = hawkNum; ent.color = hawkCol().body; ent.colorName = hawkCol().name; ent.look = hawkLook(game.hawk);
-  ent.goals = Math.min(goalIdx, MAIN_GOALS); ent.pop = game.count(); ent.wins = stats.wins;
+  ent.goals = Math.min(goalIdx, MAIN_GOALS); ent.goalsMax = MAIN_GOALS; ent.zone = game.zone; ent.pop = game.count(); ent.wins = stats.wins;
   var ok = lsSet(KEY_G + curId, JSON.stringify(payload)) && writeIndex(ix);
   saveOK = ok; setSaveStat(ok ? 'Saved \u00b7 Gen ' + ent.gen : 'Could not save (storage blocked or full)', !ok);
   return ok;
@@ -917,7 +1156,7 @@ function loadGame(id) {
   try { d = JSON.parse(raw); } catch (e) {}
   if (!d || d.v !== SAVE_V) { flashMsg('That save could not be read'); return false; }
   newGame(true);
-  game.restore(d.world);
+  game.restore(d.world); setZoneGoals();
   goalIdx = d.goalIdx; goalState = d.goalState; goalsDone = d.goalsDone; stats = d.stats; hawkNum = d.hawkNum; wipe = d.wipe || { count: 0, at: null };
   skeletons = d.skeletons || []; pools = d.pools || []; scorches = d.scorches || []; history = histUnpack(d.hist); lastGenDone = d.lastGenDone; lastRec = d.lastRec;
   lastChange = d.lastChange || {}; view = d.view || 'coat'; mutPending = !!d.mutPending; curId = id; decoy = null; missiles = []; burning = []; pendingFight = null;
@@ -926,7 +1165,7 @@ function loadGame(id) {
   phase = 'panel';
   var ent = readIndex().games.filter(function (g) { return g.id === id; })[0] || {};
   openPanel('<p class="eyebrow">' + (ent.name || 'Saved game') + ' loaded</p><h2 id="panelTitle">Welcome back</h2>' +
-    '<p>Generation ' + (genNow() + 1) + ' \u00b7 hawk #' + hawkNum + ' (' + hawkCol().name + ') \u00b7 ' + game.count() + ' rodents \u00b7 ' + Math.min(goalIdx, MAIN_GOALS) + ' of ' + MAIN_GOALS + ' goals complete.</p>' +
+    '<p>' + (game.jungle ? 'Jungle \u00b7 ' : '') + 'Generation ' + (genNow() + 1) + ' \u00b7 hawk #' + hawkNum + ' (' + hawkCol().name + ') \u00b7 ' + game.count() + ' rodents \u00b7 ' + Math.min(goalIdx, MAIN_GOALS) + ' of ' + MAIN_GOALS + ' goals complete.</p>' +
     '<div class="actions"><button type="button" class="btn primary big" data-act="resume" data-focus>Continue</button></div>');
   return true;
 }
@@ -944,7 +1183,7 @@ function showSaves(canClose) {
   h += '<div class="saves">';
   rows.forEach(function (g, i) {
     h += '<div class="saveRow' + (g.id === curId ? ' cur' : '') + '"><canvas class="hthumb" data-size="48" data-i="' + i + '" aria-hidden="true"></canvas><span class="si"><b>' + g.name + (g.id === curId ? ' (playing now)' : '') + '</b>' +
-      '<span>Gen ' + g.gen + ' \u00b7 hawk #' + g.hawkNum + ' \u00b7 ' + g.goals + '/' + MAIN_GOALS + ' goals \u00b7 ' + g.pop + ' rodents \u00b7 ' + g.wins + ' fights won</span>' +
+      '<span>' + (g.zone === 'jungle' ? 'Jungle \u00b7 ' : '') + 'Gen ' + g.gen + ' \u00b7 hawk #' + g.hawkNum + ' \u00b7 ' + g.goals + '/' + (g.goalsMax || 6) + ' goals \u00b7 ' + g.pop + ' rodents \u00b7 ' + g.wins + ' fights won</span>' +
       '<span class="dim">' + new Date(g.updated).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) + '</span></span>' +
       '<button type="button" class="btn primary" data-load="' + g.id + '"' + (i === 0 ? ' data-focus' : '') + '>Load</button>' +
       '<button type="button" class="btn" data-del="' + g.id + '">Delete</button></div>';
@@ -978,14 +1217,16 @@ function showIntro() {
 var hand = [];
 function showMutation() {
   phase = 'panel'; mutPending = true;
-  hand = dealHawkCards(Math.random, game.hawk);
+  hand = dealHawkCards(Math.random, game.hawk, game.zone);
   var hk0 = game.hawk, sp = [];
   if (stats.wins >= 2 && !hk0.missiles) sp.push(SPECIAL.missile);
-  if (genNow() >= 40 && !hk0.fire) sp.push(SPECIAL.fire);
+  if ((genNow() >= 40 || game.jungle) && !hk0.fire) sp.push(SPECIAL.fire);
   if (stats.wins >= 3 && !hk0.decoy) sp.push(SPECIAL.decoy);
   if (hk0.missiles && (hk0.ammoMax || 1) < MISSILE_MAX) sp.push(ammoCard());
   if (hk0.decoy && !hk0.counter) sp.push(SPECIAL.counter);
-  if (sp.length) hand.push(sp[0] === SPECIAL.missile ? sp[0] : sp[(Math.random() * sp.length) | 0]);   // one rare card per set
+  if (game.jungle && !hk0.senses) sp.push(SPECIAL.senses);
+  if (game.kingBeaten && !hk0.talisman) sp.unshift(SPECIAL.talisman);
+  if (sp.length) hand.push(sp[0] === SPECIAL.missile || sp[0] === SPECIAL.talisman ? sp[0] : sp[(Math.random() * sp.length) | 0]);   // one rare card per set (missiles and the Talisman first)
   var h = '<p class="eyebrow">Generation ' + genNow() + ' complete</p><h2 id="panelTitle" tabindex="-1" data-focus>Your hawk’s chicks have new mutations</h2>' +
     '<p>Choose the one that spreads to the next generation of hawks. One of them is harmful.' + (hand.length > 3 ? (hand[3].special === 'ammo' ? ' A missile upgrade is also on offer. You can build it instead of a mutation.' : ' A rare mutation is also on offer. It will keep showing up until you choose it.') : '') + '</p><div class="mut' + (hand.length > 3 ? ' four' : '') + '">';
   hand.forEach(function (c, i) { h += '<button type="button" class="mcard' + (c.special ? ' rare' : '') + (c.golden ? ' golden' : '') + '" data-pick="' + i + '">' + (c.special ? '<span class="rk">' + (c.upgrade ? 'Upgrade' : c.golden ? 'Golden bonus' : 'Rare') + '</span>' : '') + '<span class="nm">' + c.name + '</span><span class="tx">' + c.text + '</span></button>'; });
@@ -995,6 +1236,8 @@ var SPECIAL = {
   missile: { special: 'missile', name: 'Air-to-air missiles', text: 'Fire a missile at an invading eagle with the Space bar while it attacks you or while you dive at it. Reloads in 8 seconds.' },
   decoy: { special: 'decoy', golden: true, name: 'Golden decoy', text: 'A golden look-alike hawk follows you. When an eagle comes to attack, the decoy lures it away. Costs a little extra energy all the time.' },
   fire: { special: 'fire', name: 'Fire breath', text: 'Click a tree to burn it down. Rodents hiding in it fall out. Recharges in 12 seconds.' },
+  senses: { special: 'senses', golden: true, name: 'Heightened senses', text: 'Your hawk senses monkeys before they strike. It launches from its perch on its own when a monkey is in or coming to its tree, and in a fight it sometimes blocks a hit on its own.' },
+  talisman: { special: 'talisman', golden: true, name: 'Monkey King Talisman', text: 'Won from the Monkey King. While perched, press Ctrl to spin: every rodent and monkey hiding in that tree is knocked out of it. Recharges in 10 seconds.' },
   counter: { special: 'counter', golden: true, name: 'Decoy countermeasures', text: 'Upgrade your golden decoy: it comes back in 6 seconds instead of 15. Your hawk also drops flares that break off an eagle attack when the decoy is away, and block the first eagle hit in a fight.' }
 };
 function ammoCard() {
@@ -1013,6 +1256,12 @@ function pickSpecial(c) {
   } else if (c.special === 'counter') {
     hk.counter = true;
     how = 'Your golden decoy now comes back in ' + DECOY_RELOAD_FAST + ' seconds. While it is away, your hawk drops <b>flares</b> when an eagle attacks: the eagle breaks off (flares refill in ' + FLARE_RELOAD + ' seconds). In a fight, flares block the first eagle hit.';
+  } else if (c.special === 'senses') {
+    hk.senses = true;
+    how = 'If a monkey is in your perch tree, or is heading into it, your hawk now takes off on its own before it can be grabbed. In a fight, your hawk blocks about ' + Math.round(SENSE_BLOCK * 100) + '% of hits on its own.';
+  } else if (c.special === 'talisman') {
+    hk.talisman = true; hk.spinReady = 0;
+    how = 'Perch in a tree with <b>Ctrl</b>, then press <b>Ctrl</b> again to spin. Every rodent and monkey hiding in that tree falls out, and your hawk takes off. The spin recharges in ' + JUNGLE.spinReload + ' seconds.';
   } else if (c.special === 'decoy') {
     hk.decoy = true;
     how = 'A golden decoy hawk now follows yours. When an eagle comes to attack you, the decoy flies at it and lures it away, then needs ' + DECOY_RELOAD + ' seconds to come back. Keeping it costs ' + DECOY_DRAIN + ' extra energy per second. You can still click an eagle to fight it yourself.';
@@ -1032,7 +1281,7 @@ function pick(i) {
     var good = (b - a) * info.better > 0;
     var Tb = {}; for (var q in game.hawk.T) Tb[q] = game.hawk.T[q]; Tb[k] = a;
     return info.label + ' ' + info.fmt(a) + ' → <span class="' + (good ? 'up' : 'down') + '">' + info.fmt(b) + (good ? ' ▲' : ' ▼') + '</span>' +
-      '<br><span class="dim">In a fight with an eagle: ' + fightText(k, fightPowers(Tb)) + ' → <span class="' + (good ? 'up' : 'down') + '">' + fightText(k, fightPowers(game.hawk.T)) + '</span></span>';
+      '<br><span class="dim">In a fight: ' + fightText(k, fightPowers(Tb)) + ' → <span class="' + (good ? 'up' : 'down') + '">' + fightText(k, fightPowers(game.hawk.T)) + '</span></span>';
   });
   openPanel('<p class="eyebrow">Mutation passed on</p><h2 id="panelTitle">' + c.name + ' <span class="chipk ' + (harm ? 'bad' : 'good') + '">' + (harm ? 'Harmful' : 'Helpful') + '</span></h2>' +
     '<p>' + parts.join('; ') + '</p><div class="actions"><button type="button" class="btn primary big" data-act="resume" data-focus>Keep hunting</button></div>');
@@ -1044,14 +1293,14 @@ function showDeath() {
       : 'There were still ' + n + ' rodents, but your hawk did not catch them fast enough to keep its energy up.');
   openPanel('<p class="eyebrow">Generation ' + (genNow() + 1) + '</p><div class="verdict" id="panelTitle">Your hawk died</div><p>' + why + '</p>' +
     '<p>This hawk caught ' + game.hawk.caught + ' rodents. You have won ' + stats.wins + ' fight' + (stats.wins === 1 ? '' : 's') + ', and completed ' + Math.min(goalIdx, MAIN_GOALS) + ' of ' + MAIN_GOALS + ' goals' + (goalIdx > MAIN_GOALS ? ', and found ' + (goalIdx - MAIN_GOALS) + ' secret goal' + (goalIdx - MAIN_GOALS > 1 ? 's' : '') : '') + '.</p>' +
-    '<p>A new hawk can migrate into the valley. It arrives in a new color with <b>no mutations</b>: the base traits every hawk starts with. The rodents, trees and goals stay just as they are.' + (n < 6 ? (n === 0 ? ' A pair of rodents will migrate in with it.' : ' <b>Warning:</b> only ' + n + ' rodents are left, so food will be scarce.') : '') + '</p>' +
+    '<p>A new hawk can migrate into the ' + placeName() + '. It arrives in a new color with <b>no mutations</b>: the base traits every hawk starts with. The rodents, trees and goals stay just as they are.' + (n < 6 ? (n === 0 ? ' A pair of rodents will migrate in with it.' : ' <b>Warning:</b> only ' + n + ' rodents are left, so food will be scarce.') : '') + '</p>' +
     '<div class="actions"><button type="button" class="btn big" data-act="again">Start over</button><button type="button" class="btn primary big" data-act="migrate" data-focus>Migrate a new ' + HAWK_COLORS[hawkNum % HAWK_COLORS.length].name + ' hawk</button></div>');
 }
 function migrateHawk() {
   hawkNum++;
   var hk = game.hawk, T = {};
   for (var k in HAWK_BASE) T[k] = HAWK_BASE[k];
-  var fresh = { x: -30, y: H / 2, a: 0, state: 'soar', tgt: null, energy: 80, rest: 0, diveT: 0, caught: 0, misses: 0, alive: true, wounded: false, T: T, picks: [], missiles: false, fire: false, decoy: false, counter: false, ammo: 0, ammoMax: 1, mNext: 0, mCool: 0, flareReady: 0, fReady: 0, hover: null, perchOn: null, perchT: 0, ambush: false };
+  var fresh = { x: -30, y: H / 2, a: 0, state: 'soar', tgt: null, energy: 80, rest: 0, diveT: 0, caught: 0, misses: 0, alive: true, wounded: false, T: T, picks: [], missiles: false, fire: false, decoy: false, counter: false, ammo: 0, ammoMax: 1, mNext: 0, mCool: 0, flareReady: 0, fReady: 0, hover: null, perchOn: null, perchT: 0, ambush: false, senses: false, talisman: false, spinReady: 0, mkT: 0 };
   for (k in fresh) hk[k] = fresh[k];
   missiles = []; decoy = null; lastChange = {}; renderTraits();
   if (game.count() === 0) { game.immigrate(2); wipe = { count: 0, at: null }; }
@@ -1059,14 +1308,61 @@ function migrateHawk() {
   if (game.inv && game.inv.state !== 'gone') { game.inv.state = 'gone'; game.inv.tgt = null; }
   grantCalm(3);
   closePanel(); phase = 'running'; playBtn.textContent = 'Pause'; saveGame('migrate');
-  flashMsg('A new ' + hawkCol().name + ' hawk migrates in. The valley is calm for 3 generations'); renderGoals();
+  flashMsg('A new ' + hawkCol().name + ' hawk migrates in. The ' + placeName() + ' is calm for 3 generations'); renderGoals();
 }
 function showGoalsDone() {
   phase = 'panel';
+  if (game.jungle) {
+    openPanel('<p class="eyebrow">All jungle goals complete</p><div class="verdict" id="panelTitle">Ruler of the jungle</div>' +
+      '<p>Your hawk invaded a new territory, learned to hide from eagles in the leaves, and beat the Monkey King. Look at the graph: in this jungle, with dark ground and many trees, which rodent coats and minds are spreading? The same <b>natural selection</b> works here, but the environment is different, so different traits win.</p>' +
+      '<div class="actions"><button type="button" class="btn primary big" data-act="resume" data-focus>Keep hunting</button></div>');
+    return;
+  }
   openPanel('<p class="eyebrow">All goals complete</p><div class="verdict" id="panelTitle">Ruler of the valley</div>' +
     '<p>Your hawk survived ' + genNow() + ' generations, caught ' + game.hawk.caught + ' rodents, and won ' + stats.wins + ' fights. Look back at the graph: the rodents you could see best became rare, the ash favored darker coats for a while, climbing claws spread once there were trees to hide in, and smarter minds spread because rodents that stayed near trees survived more often. You were the <b>selection pressure</b>.</p>' +
     '<p>The hunt continues. New invaders will keep arriving.</p>' +
     '<div class="actions"><button type="button" class="btn primary big" data-act="resume" data-focus>Keep hunting</button></div>');
+}
+/* ---------- a new territory: the jungle ---------- */
+var INVADE_GEN = 175;
+function invadeReady() { return !game.jungle && game.hawk.alive && (genNow() >= INVADE_GEN || maxedAll(game.hawk.T)); }
+function checkUnlock() {
+  if (!invadeReady() || goalState.jungleOffered) return false;
+  goalState.jungleOffered = true;
+  setTimeout(showInvadeOffer, 0); return true;
+}
+function showInvadeOffer() {
+  if (phase === 'fight' || phase === 'dead') return;
+  if (phase === 'running' || phase === 'paused') phase = 'panel';
+  var why = maxedAll(game.hawk.T) ? 'Every one of your hawk\u2019s traits has reached its best possible value.' : 'Your hawk\u2019s line has ruled this valley for ' + INVADE_GEN + ' generations.';
+  openPanel('<p class="eyebrow">A new territory</p><h2 id="panelTitle" tabindex="-1" data-focus>Invade the jungle?</h2>' +
+    '<p>' + why + ' Over the ridge is a <b>jungle</b>: dark ground, many more trees, and <b>monkeys</b> in the treetops. Eagles patrol it, but they haven\u2019t noticed your hawk yet.</p>' +
+    '<ul class="rules"><li>Your hawk keeps every trait and upgrade. The rodents there are a new population.</li>' +
+    '<li><b>Ctrl</b> perches in a tree and also <b>hides you from eagles</b>.</li>' +
+    '<li>Burning a tree exposes its monkeys, but monkeys fight back. New mutations there help: oily feathers and a harder skull.</li>' +
+    '<li>Leaving is for good: this valley stays behind.</li></ul>' +
+    '<div class="actions"><button type="button" class="btn big" data-act="stay">Stay in the valley</button><button type="button" class="btn primary big" data-act="invade">Invade the jungle</button></div>');
+}
+function invadeTerritory() {
+  var hk = game.hawk, oldWins = stats.wins;
+  game = createWorld(Math.random, 'jungle');
+  var keep = { x: 30, y: H / 2, a: 0, state: 'soar', tgt: null, energy: 100, rest: 0, diveT: 0, alive: true, wounded: false, hover: { x: 160, y: H / 2 }, perchOn: null, perchT: 0, ambush: false, mkT: 0 };
+  for (var k in keep) hk[k] = keep[k];
+  if (hk.missiles) hk.ammo = hk.ammoMax || 1;
+  game.hawk = hk; game.calm = GEN;   // a quiet first generation to find your bearings
+  setZoneGoals(); goalIdx = 0; goalsDone = false;
+  goalState = { goalGen: 0, streak: 0, ashDone: false, spawnAt: null, nextInv: null, peaceUntil: 0, caught0: hk.caught, jungleOffered: true, hidFrom: 0, spun: 0 };
+  stats.wins = oldWins; wipe = { count: 0, at: null };
+  history = []; fx = []; pools = []; skeletons = []; scorches = []; missiles = []; burning = []; decoy = null; pendingFight = null;
+  lastRec = -1; lastGenDone = 0; lastChange = {};
+  record(); renderTabs(); renderTraits(); renderGoals(); updateUI(); drawChart();
+  phase = 'panel';
+  openPanel('<p class="eyebrow">New territory</p><h2 id="panelTitle" tabindex="-1" data-focus>Welcome to the jungle</h2>' +
+    '<ul class="rules"><li>Eagles patrol here. A yellow <b>?</b> over an eagle means it is starting to notice you. When it fills, the eagle attacks. <b>Press Ctrl to perch</b>: a perched hawk is hidden from eagles.</li>' +
+    '<li>Monkeys live in the treetops. Click a monkey on the ground to fight it, or burn its tree to knock it out. Monkeys swing sticks at a hawk that flies too close, and attack a hawk that perches in their tree.</li>' +
+    '<li>Watch the new goals on the right. The 4th monkey you beat is the Monkey King.</li></ul>' +
+    '<div class="actions"><button type="button" class="btn primary big" data-act="resume" data-focus>Start hunting</button></div>');
+  saveGame('invade');
 }
 panel.addEventListener('click', function (e) {
   var b = e.target.closest('button'); if (!b) return;
@@ -1085,7 +1381,10 @@ panel.addEventListener('click', function (e) {
   else if (act === 'start' || act === 'resume') { closePanel(); phase = 'running'; playBtn.textContent = 'Pause'; renderGoals(); }
   else if (act === 'again') newGame();
   else if (act === 'migrate') migrateHawk();
+  else if (act === 'invade') invadeTerritory();
+  else if (act === 'stay') { closePanel(); phase = 'running'; playBtn.textContent = 'Pause'; flashMsg('You can invade later: see the button under The valley'); renderGoals(); }
 });
+$('invadeBtn').addEventListener('click', function () { if (phase === 'running' || phase === 'paused') showInvadeOffer(); });
 playBtn.addEventListener('click', function () {
   if (phase === 'running') { phase = 'paused'; playBtn.textContent = 'Resume'; }
   else if (phase === 'paused') { phase = 'running'; playBtn.textContent = 'Pause'; }
@@ -1106,8 +1405,12 @@ $('speed').addEventListener('click', function (e) {
 
 /* ---------- clicking to hunt ---------- */
 var arenaCv = $('arena');
-$('fireBtn').addEventListener('click', function () { fireMissile(); });
-$('perchBtn').addEventListener('click', function () { togglePerch(); });
+$('keys').addEventListener('click', function (e) {
+  var b = e.target.closest('.keyRow'); if (!b) return;
+  if (b.dataset.key === 'space') fireMissile();
+  else if (b.dataset.key === 'ctrl') togglePerch();
+  else if (b.dataset.key === 'fire') flashMsg('Click a tree to burn it');
+});
 arenaCv.addEventListener('click', function (e) {
   if (phase !== 'running') return;
   var r = arenaCv.getBoundingClientRect(), gx = (e.clientX - r.left) / r.width * W, gy = (e.clientY - r.top) / r.height * H;
@@ -1118,6 +1421,27 @@ arenaCv.addEventListener('click', function (e) {
       if (game.hawk.wounded) flashMsg('Too wounded to fight. Eat to 75% energy.');
       else if (iv.wounded) flashMsg('The eagle is wounded. It can’t fight yet.');
       else if (!game.engage()) fx.push({ kind: 'busy', x: gx, y: gy, age: 0 });
+      return;
+    }
+  }
+  if (game.jungle) {
+    var em = null, ed = 34 * 34;
+    game.eagles.forEach(function (q) { if (q.state === 'leave') return; var dx = q.x - gx, dy = q.y - gy, d = dx * dx + dy * dy; if (d < ed) { ed = d; em = q; } });
+    if (em) {
+      if (game.hawk.wounded) flashMsg('Too wounded to fight. Eat to 75% energy.');
+      else if (game.inv && game.inv.state !== 'gone') flashMsg('Another eagle is already after you');
+      else if (!game.provoke(em)) fx.push({ kind: 'busy', x: gx, y: gy, age: 0 });
+      return;
+    }
+    var mk = null, md = 24 * 24;
+    game.monkeys.forEach(function (q) { var dx = q.x - gx, dy = q.y - gy, d = dx * dx + dy * dy; if (d < md) { md = d; mk = q; } });
+    if (mk) {
+      var mr = game.diveMonkey(mk);
+      if (mr === 'tree') {
+        if (game.hawk.fire && game.t >= game.hawk.fReady) { burnTree(mk.tree); return; }
+        fx.push({ kind: 'mhid', x: mk.x, y: mk.y, age: 0 });
+        flashMsg(game.hawk.fire ? 'Fire breath is recharging. The monkey is safe in the treetop' : 'That monkey is safe in the treetop. Wait for it to climb down');
+      } else if (mr === 'busy') { if (game.hawk.wounded) flashMsg('Too wounded to fight. Eat to 75% energy.'); else fx.push({ kind: 'busy', x: gx, y: gy, age: 0 }); }
       return;
     }
   }
@@ -1150,10 +1474,18 @@ function tickAmmo() {
 }
 function missileReady() { var hk = game.hawk; return !!hk.missiles && hk.ammo > 0 && game.t >= (hk.mCool || 0); }
 function ammoPips() { var hk = game.hawk, o = ''; for (var i = 0; i < hk.ammoMax; i++) o += i < hk.ammo ? '\u25AE' : '\u25AF'; return o; }
+var SENSE_BLOCK = 0.3;
+function doSpin() {
+  var r = game.spin(); if (!r) return false;
+  goalState.spun = (goalState.spun || 0) + 1;
+  flashMsg('Talisman spin! ' + (r.rodents + r.monkeys ? (r.rodents ? r.rodents + ' rodent' + (r.rodents > 1 ? 's' : '') : '') + (r.rodents && r.monkeys ? ' and ' : '') + (r.monkeys ? r.monkeys + ' monkey' + (r.monkeys > 1 ? 's' : '') : '') + ' knocked out' : 'The tree was empty'));
+  updateUI(); return true;
+}
 function togglePerch() {
   if (phase !== 'running' || !game.hawk.alive) return;
+  if (game.spinReady() && doSpin()) return;
   var r = game.perch();
-  if (r === 'on') flashMsg('Flying to the nearest tree to perch');
+  if (r === 'on') flashMsg(game.jungle ? 'Flying to a tree. Perched, you are hidden from eagles' : 'Flying to the nearest tree to perch');
   else if (r === 'off') flashMsg('Your hawk takes off');
   else if (r === 'none') flashMsg('No grown trees to perch in yet');
   updateUI();
@@ -1239,7 +1571,7 @@ function fireMissile() {
   var iv = missileTarget();
   if (!iv) { flashMsg(game.inv && game.inv.state !== 'gone' ? 'Wait until the eagle attacks, or dive at it' : 'No eagle to fire at'); return false; }
   missiles.push({ x: hk.x, y: hk.y, a: Math.atan2(iv.y - hk.y, iv.x - hk.x), t: 0, trail: [] });
-  hk.ammo--; hk.mCool = game.t + MISSILE_GAP; tickAmmo(); return true;
+  hk.ammo--; hk.mCool = game.t + MISSILE_GAP; tickAmmo(); stats.shots = (stats.shots || 0) + 1; return true;
 }
 function stepMissiles(dt) {
   var iv = game.inv, hk = game.hawk;
@@ -1302,7 +1634,7 @@ document.addEventListener('keydown', function (e) {
 /* ---------- sidebar ---------- */
 function renderTraits(flash) {
   curLook = hawkLook(game.hawk); drawHawkThumb($('hawkPic'), curLook, hawkCol());
-  $('htraits').innerHTML = HAWK_INFO.map(function (t) {
+  $('htraits').innerHTML = HAWK_INFO.filter(function (t) { return !t.zone || game.jungle || game.hawk.T[t.k] !== HAWK_BASE[t.k]; }).map(function (t) {
     var v = game.hawk.T[t.k], ch = lastChange[t.k], cell;
     if (ch !== undefined && Math.abs(ch - v) > 1e-9) { var good = (v - ch) * t.better > 0; cell = '<td class="num' + (flash ? ' flash' : '') + '"><span class="' + (good ? 'up' : 'down') + '">' + t.fmt(v) + (good ? ' ▲' : ' ▼') + '</span></td>'; }
     else cell = '<td class="num">' + t.fmt(v) + '</td>';
@@ -1311,7 +1643,46 @@ function renderTraits(flash) {
   }).join('') + (game.hawk.missiles ? '<tr><td>Air-to-air missiles</td><td class="num"><span class="up">' + (game.hawk.ammoMax || 1) + '</span></td><td class="fgt">Missile ' + MISSILE_DMG + ' each</td></tr>' : '') +
     (game.hawk.decoy ? '<tr><td>Golden decoy</td><td class="num"><span class="up">Yes</span></td><td class="fgt">+' + DECOY_DRAIN + '/s energy</td></tr>' : '') +
     (game.hawk.counter ? '<tr><td>Countermeasures</td><td class="num"><span class="up">Yes</span></td><td class="fgt">Flares block 1 hit</td></tr>' : '') +
-    (game.hawk.fire ? '<tr><td>Fire breath</td><td class="num"><span class="up">Yes</span></td><td class="fgt">Burns trees</td></tr>' : '');
+    (game.hawk.fire ? '<tr><td>Fire breath</td><td class="num"><span class="up">Yes</span></td><td class="fgt">Burns trees</td></tr>' : '') +
+    (game.hawk.senses ? '<tr><td>Heightened senses</td><td class="num"><span class="up">Yes</span></td><td class="fgt">Auto-block ' + Math.round(SENSE_BLOCK * 100) + '%</td></tr>' : '') +
+    (game.hawk.talisman ? '<tr><td>Monkey King Talisman</td><td class="num"><span class="up">Yes</span></td><td class="fgt">Spin from a perch</td></tr>' : '');
+}
+/* Controls live in the sidebar so nothing covers the hunting ground. Rows are built once and then only their text changes, so clicks always land. */
+var keysSig = '';
+function keyRows() {
+  var hk = game.hawk, rows = [];
+  if (hk.missiles) {
+    var tgt = missileTarget(), rdy = missileReady();
+    rows.push({ id: 'space', key: 'SPACE', cls: rdy && tgt ? 'hot' : rdy ? '' : 'wait',
+      html: rdy && tgt ? '<b>FIRE MISSILE NOW! ' + ammoPips() + '</b><small>An eagle is attacking</small>' : rdy ? '<b>Missiles ' + ammoPips() + '</b><small>Fire when an eagle attacks you, or you dive at it</small>' : '<b>Missiles reloading ' + ammoPips() + '</b><small>' + (hk.mNext ? 'Next in ' + Math.max(1, Math.ceil(hk.mNext - game.t)) + ' s' : '') + '</small>' });
+  }
+  var grown = game.trees.some(function (t) { return t.r >= TREE.hideMin; }), onP = hk.state === 'perch' || hk.state === 'toperch';
+  if (grown || onP) {
+    var ph;
+    if (hk.state === 'toperch') ph = '<b>Flying to a tree\u2026</b><small>Press Ctrl again to cancel</small>';
+    else if (hk.state === 'perch') {
+      var sub = game.spinReady() ? 'Ctrl again: <b>Talisman spin</b>' : (game.fooled() ? 'Rodents fooled! Click one to swoop' : 'Rodents forget you in ' + Math.max(1, Math.ceil(PERCH.fool - hk.perchT)) + ' s');
+      if (game.jungle && game.monkeysIn(hk.perchOn).length) sub = '<b>Monkeys in this tree!</b> Ctrl to take off' + (game.spinReady() ? ' or spin' : '');
+      ph = '<b>Perched' + (game.jungle ? ': hidden from eagles' : ': saving energy') + '</b><small>' + sub + '</small>';
+    } else ph = '<b>Perch in a tree</b><small>Uses ' + Math.round((1 - PERCH.drain) * 100) + '% less energy' + (game.jungle ? ' and hides you from eagles' : '') + (hk.talisman ? ' \u00b7 Talisman spin ' + (game.t >= (hk.spinReady || 0) ? 'ready' : 'in ' + Math.ceil(hk.spinReady - game.t) + ' s') : '') + '</small>';
+    rows.push({ id: 'ctrl', key: 'CTRL', cls: onP ? 'on' : '', html: ph });
+  }
+  if (hk.fire) { var fr = game.t >= hk.fReady; rows.push({ id: 'fire', key: 'CLICK', cls: fr ? '' : 'wait', html: fr ? '<b>Fire breath ready</b><small>Click a tree to burn it</small>' : '<b>Fire breath recharging</b><small>' + Math.max(1, Math.ceil(hk.fReady - game.t)) + ' s</small>' }); }
+  return rows;
+}
+function renderKeys() {
+  var box = $('keys'), rows = phase === 'fight' || !game.hawk.alive ? [] : keyRows(), sig = rows.map(function (r) { return r.id; }).join(',') + '|' + phase;
+  if (sig !== keysSig) {
+    keysSig = sig;
+    box.innerHTML = rows.length ? rows.map(function (r) { return '<button type="button" class="keyRow" data-key="' + r.id + '"><kbd>' + r.key + '</kbd><span></span></button>'; }).join('')
+      : '<p class="dim">' + (phase === 'fight' ? 'Fight! Use the buttons under the fight screen.' : 'Click the ground to hover. Click a rodent to dive. More controls appear here as your hawk gains them (Ctrl to perch once trees grow).') + '</p>';
+  }
+  rows.forEach(function (r) {
+    var b = box.querySelector('[data-key="' + r.id + '"]'); if (!b) return;
+    var cls = 'keyRow' + (r.cls ? ' ' + r.cls : ''); if (b.className !== cls) b.className = cls;
+    var sp = b.querySelector('span'); if (sp.innerHTML !== r.html) sp.innerHTML = r.html;
+    if (r.id === 'ctrl') b.setAttribute('aria-pressed', String(r.cls === 'on'));
+  });
 }
 function renderTabs() { $('tabs').innerHTML = TRAIT_KEYS.map(function (tr) { return '<button type="button" data-tr="' + tr + '" aria-pressed="' + (tr === view) + '">' + TRAITS[tr].label + '</button>'; }).join(''); }
 $('tabs').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; view = b.dataset.tr; renderTabs(); updateUI(); drawChart(); });
@@ -1320,26 +1691,9 @@ function updateUI() {
   bar.style.width = e + '%'; bar.className = e < 20 ? 'crit' : (e < 40 ? 'low' : '');
   $('hudE').textContent = e + '%'; $('hudGen').textContent = 'Gen ' + (genNow() + 1);
   $('hudW').hidden = !hk.wounded;
-  var hm = $('hudM'); hm.hidden = true;
-  if (hk.missiles) { var mr = hk.ammo > 0; hm.textContent = 'Missiles ' + ammoPips() + (mr && missileTarget() ? ' press Space!' : ''); hm.className = mr ? (missileTarget() ? 'hot' : 'ok') : 'wait'; }
-  var hf = $('hudF'); hf.hidden = !hk.fire;
-  if (hk.fire) { var fr = game.t >= hk.fReady; hf.textContent = fr ? 'Fire breath ready: click a tree' : 'Fire recharging'; hf.className = fr ? 'ok' : 'wait'; }
+  $('hudGen').textContent = (game.jungle ? 'Jungle \u00b7 ' : '') + 'Gen ' + (genNow() + 1);
+  renderKeys();
   var htTxt = 'Your hawk' + (hawkNum > 1 ? ' #' + hawkNum : ''); if ($('hawkTitleTxt').textContent !== htTxt) $('hawkTitleTxt').textContent = htTxt;
-  var fb = $('fireBtn'), tgt = hk.missiles ? missileTarget() : null, rdy = missileReady();
-  fb.hidden = !hk.missiles || phase === 'fight';
-  if (hk.missiles) {
-    fb.className = 'fireBtn' + (rdy && tgt ? ' hot' : rdy ? '' : ' wait');
-    fb.innerHTML = '<kbd>SPACE</kbd><span>' + (rdy && tgt ? '<b>FIRE MISSILE NOW!</b>' : rdy ? '<b>Missiles ready ' + ammoPips() + '</b><small>Fire when an eagle attacks you or you dive at it</small>' : '<b>Missiles reloading ' + ammoPips() + '</b><small>' + (hk.mNext ? 'Next in ' + Math.max(1, Math.ceil(hk.mNext - game.t)) + ' s' : '') + '</small>') + '</span>';
-  }
-  var pb = $('perchBtn'), grown = game.trees.some(function (t) { return t.r >= TREE.hideMin; }), onP = hk.state === 'perch' || hk.state === 'toperch';
-  pb.hidden = phase === 'fight' || !hk.alive || (!grown && !onP);
-  if (!pb.hidden) {
-    pb.className = 'perchBtn' + (onP ? ' on' : '');
-    pb.setAttribute('aria-pressed', String(onP));
-    pb.innerHTML = '<kbd>CTRL</kbd><span>' + (hk.state === 'toperch' ? '<b>Flying to a tree…</b><small>Press Ctrl again to cancel</small>'
-      : hk.state === 'perch' ? (game.fooled() ? '<b>Perched: rodents fooled!</b><small>They think you left. Click one to swoop.</small>' : '<b>Perched: saving energy</b><small>Rodents forget you in ' + Math.max(1, Math.ceil(PERCH.fool - hk.perchT)) + ' s</small>')
-      : '<b>Perch in a tree</b><small>Uses ' + Math.round((1 - PERCH.drain) * 100) + '% less energy</small>') + '</span>';
-  }
   var wb = $('warnBar'), nn = game.count();
   if (phase !== 'fight' && nn === 0) { wb.hidden = false; wb.className = 'warnBar bad'; wb.innerHTML = '<b>No food exists, be careful!</b> ' + (wipe.count > MAX_MIGRATIONS ? 'No more rodents will come. Your hawk will die.' : 'A pair of rodents is migrating in. Wipe-outs: ' + wipe.count + ' of ' + MAX_MIGRATIONS + ' allowed. Wipe them out again and none will come.'); }
   else if (phase !== 'fight' && nn <= 4) { wb.hidden = false; wb.className = 'warnBar'; wb.innerHTML = '<b>Only ' + nn + ' rodent' + (nn > 1 ? 's' : '') + ' left!</b> Let them breed before you hunt.' + (wipe.count ? ' Wipe-outs so far: ' + wipe.count + ' of ' + MAX_MIGRATIONS + '.' : ''); }
@@ -1349,7 +1703,17 @@ function updateUI() {
   if (!iv) invS = 'None';
   else if (iv.state === 'gone') invS = peaceful() ? 'Victory! No eagles for ' + Math.max(1, Math.ceil((goalState.peaceUntil - game.t) / GEN)) + ' more gen' + (Math.ceil((goalState.peaceUntil - game.t) / GEN) > 1 ? 's' : '') : 'Left the valley';
   else invS = (iv.level > 1 ? 'Golden eagle' : 'Eagle') + ': ' + (iv.wounded ? 'wounded, ' : '') + Math.round(iv.energy) + '% energy';
-  $('envGround').textContent = game.ash > 0.02 ? 'Volcanic ash, ' + Math.round(game.ash * 100) + '% covered' : 'Light sand';
+  if (game.jungle) {
+    var patrol = game.eagles.filter(function (q) { return q.state !== 'leave'; }).length, att = iv && iv.state === 'seek';
+    invS = patrol + ' patrolling' + (att ? ' \u00b7 one is attacking you!' : (iv && iv.state !== 'gone' ? ' \u00b7 one is fighting you' : ''));
+    var inT = game.monkeys.filter(function (q) { return q.state === 'tree'; }).length, kg = game.king();
+    $('envMk').textContent = game.monkeys.length + ' (' + inT + ' in trees) \u00b7 beaten ' + game.monkeysBeaten + (game.kingBeaten ? ', including the King' : kg ? ' \u00b7 the King is here' : '');
+  }
+  $('envMk').hidden = $('envMkL').hidden = !game.jungle;
+  $('envTitle').textContent = game.jungle ? 'The jungle' : 'The valley';
+  $('envInvL').textContent = game.jungle ? 'Eagles' : 'Invader';
+  $('invadeBtn').hidden = game.jungle || !goalState.jungleOffered || !hk.alive;
+  $('envGround').textContent = game.jungle ? 'Dark jungle floor' : game.ash > 0.02 ? 'Volcanic ash, ' + Math.round(game.ash * 100) + '% covered' : 'Light sand';
   $('envTrees').textContent = game.trees.length ? game.trees.length + (big < game.trees.length ? ' (' + (game.trees.length - big) + ' still growing)' : '') : 'None yet';
   $('envInv').textContent = invS;
   var n = game.count(), f = game.freq(view);
@@ -1435,14 +1799,18 @@ function drawBird(x, y, a, scale, alpha, eagle, wounded) {
 function drawArena() {
   var s = arenaCv.width / W, i, c, hk = game.hawk;
   actx.setTransform(s, 0, 0, s, 0, 0); actx.globalAlpha = 1;
-  var gc = groundCol(game.ash); if (gc !== lastBg) { lastBg = gc; dishBox.style.background = gc; }
+  var gc = game.jungle ? JUNGLE_GROUND : groundCol(game.ash); if (gc !== lastBg) { lastBg = gc; dishBox.style.background = gc; }
   actx.fillStyle = gc; actx.fillRect(0, 0, W, H);
-  actx.fillStyle = game.ash < 0.5 ? 'rgba(120,95,55,0.10)' : 'rgba(200,200,200,0.06)';
-  for (i = 0; i < 260; i++) actx.fillRect((i * 137.5) % W, (i * 89.3 + (i % 7) * 31) % H, 2, 2);
+  if (game.jungle) {   // leaf litter
+    for (i = 0; i < 320; i++) { actx.fillStyle = i % 3 === 0 ? 'rgba(120,150,70,0.22)' : i % 3 === 1 ? 'rgba(25,30,15,0.28)' : 'rgba(150,110,60,0.18)'; actx.save(); actx.translate((i * 137.5) % W, (i * 89.3 + (i % 7) * 31) % H); actx.rotate(i); actx.fillRect(-3, -1.2, 6, 2.4); actx.restore(); }
+  } else {
+    actx.fillStyle = game.ash < 0.5 ? 'rgba(120,95,55,0.10)' : 'rgba(200,200,200,0.06)';
+    for (i = 0; i < 260; i++) actx.fillRect((i * 137.5) % W, (i * 89.3 + (i % 7) * 31) % H, 2, 2);
+  }
   scorches.forEach(function (sc) { actx.globalAlpha = 0.45 * (1 - (game.t - sc.t) / (GEN * 2)); actx.fillStyle = '#1A1512'; actx.beginPath(); actx.arc(sc.x, sc.y, sc.r * 0.8, 0, 6.283); actx.fill(); });
   actx.globalAlpha = 1;
   // safe zone around each grown tree: climbers inside it can reach the tree in time
-  actx.save(); actx.setLineDash([6, 7]); actx.lineWidth = 1.3; actx.strokeStyle = game.ash < 0.5 ? 'rgba(47,107,58,0.45)' : 'rgba(170,220,170,0.4)';
+  actx.save(); actx.setLineDash([6, 7]); actx.lineWidth = 1.3; actx.strokeStyle = game.jungle ? 'rgba(200,235,170,0.35)' : game.ash < 0.5 ? 'rgba(47,107,58,0.45)' : 'rgba(170,220,170,0.4)';
   game.trees.forEach(function (t) { if (t.r < TREE.hideMin) return; var zr = game.safeR(t); actx.beginPath(); actx.arc(t.x, t.y, zr, 0, 6.283); actx.stroke(); });
   actx.restore();
   // tree trunks and shade
@@ -1477,10 +1845,11 @@ function drawArena() {
     actx.drawImage(spriteFor(c.genes), ox, oy, sw, sh);
   }
   actx.setTransform(s, 0, 0, s, 0, 0); actx.globalAlpha = 1;
+  game.monkeys.forEach(function (m) { if (m.state !== 'tree') drawMonkey(m, false); });
   // tree canopies, with hidden rodents peeking through
   game.trees.forEach(function (t) {
     var g = actx.createRadialGradient(t.x - t.r * 0.3, t.y - t.r * 0.3, t.r * 0.1, t.x, t.y, t.r);
-    g.addColorStop(0, '#5FA05A'); g.addColorStop(1, '#2F6B3A');
+    if (game.jungle) { g.addColorStop(0, '#4E9A4E'); g.addColorStop(1, '#1D4E2A'); } else { g.addColorStop(0, '#5FA05A'); g.addColorStop(1, '#2F6B3A'); }
     actx.fillStyle = g; actx.strokeStyle = 'rgba(20,50,25,0.6)'; actx.lineWidth = 1.5; actx.beginPath();
     for (var lb = 0; lb < 7; lb++) { var la = lb * 0.898 + t.x * 0.01, lx = t.x + Math.cos(la) * t.r * 0.42, ly = t.y + Math.sin(la) * t.r * 0.42; actx.moveTo(lx + t.r * 0.6, ly); actx.arc(lx, ly, t.r * 0.6, 0, 6.283); }
     actx.stroke(); actx.fill();
@@ -1506,6 +1875,7 @@ function drawArena() {
     actx.beginPath(); actx.arc(g2.x, g2.y, 4.5, 0, 6.283); actx.fill(); actx.stroke();
     actx.fillStyle = '#FFFFFF'; actx.beginPath(); actx.arc(g2.x - 1.6, g2.y - 0.8, 1.1, 0, 6.283); actx.arc(g2.x + 1.6, g2.y - 0.8, 1.1, 0, 6.283); actx.fill();
   });
+  game.monkeys.forEach(function (m) { if (m.state === 'tree') drawMonkey(m, true); });
   actx.globalAlpha = 1;
   if (sight > 0) {
     actx.strokeStyle = 'rgba(255,255,255,' + (sight > 1 ? 0.75 : 0.4) + ')'; actx.lineWidth = 1.2; actx.beginPath();
@@ -1526,6 +1896,15 @@ function drawArena() {
     drawBird(iv.x, iv.y, iv.a, iv.level > 1 ? 1.6 : 1.4, iv.wounded ? 0.65 : 1, true, iv.wounded);
     if (iv.level > 1 && iv.state !== 'gone') { actx.strokeStyle = '#FFD34D'; actx.lineWidth = 1.5; actx.beginPath(); actx.arc(iv.x, iv.y, 30, 0, 6.283); actx.stroke(); }
   }
+  game.eagles.forEach(function (q) {
+    if (q.x < -40 || q.x > W + 40) return;
+    drawBird(q.x, q.y, q.a, 1.3, q.wounded ? 0.6 : 0.95, true, q.wounded);
+    if (q.aware > 0.05 && q.state !== 'leave') {   // how close this eagle is to noticing you
+      actx.save(); actx.lineWidth = 3; actx.strokeStyle = 'rgba(12,16,22,0.55)'; actx.beginPath(); actx.arc(q.x, q.y - 34, 10, 0, 6.283); actx.stroke();
+      actx.strokeStyle = q.aware > 0.66 ? '#FF6B5E' : '#FFD34D'; actx.beginPath(); actx.arc(q.x, q.y - 34, 10, -Math.PI / 2, -Math.PI / 2 + q.aware * 6.283); actx.stroke();
+      actx.font = '800 13px "Bricolage Grotesque", sans-serif'; actx.textAlign = 'center'; actx.fillStyle = q.aware > 0.66 ? '#FF6B5E' : '#FFD34D'; actx.fillText('?', q.x, q.y - 29.5); actx.restore();
+    }
+  });
   missiles.forEach(function (m) {
     actx.fillStyle = 'rgba(230,230,230,0.6)';
     m.trail.forEach(function (p, k) { actx.globalAlpha = k / m.trail.length * 0.7; actx.beginPath(); actx.arc(p[0], p[1], 2 + k * 0.35, 0, 6.283); actx.fill(); });
@@ -1535,7 +1914,7 @@ function drawArena() {
   });
   var mt = missileReady() ? missileTarget() : null;
   if (mt) { actx.strokeStyle = '#FF5A50'; actx.lineWidth = 2; var rr2 = 26 + (reduceMotion ? 0 : Math.sin(game.t * 10) * 3); actx.beginPath(); actx.arc(mt.x, mt.y, rr2, 0, 6.283); actx.moveTo(mt.x - rr2 - 6, mt.y); actx.lineTo(mt.x - rr2 + 6, mt.y); actx.moveTo(mt.x + rr2 - 6, mt.y); actx.lineTo(mt.x + rr2 + 6, mt.y); actx.stroke();
-    actx.font = '800 16px "Bricolage Grotesque", sans-serif'; actx.textAlign = 'center'; var lbl = 'PRESS SPACE!', lw = actx.measureText(lbl).width;
+    actx.font = '800 16px "Bricolage Grotesque", sans-serif'; actx.textAlign = 'center'; var lbl = (stats.shots || 0) < 3 ? 'PRESS SPACE!' : 'SPACE', lw = actx.measureText(lbl).width;   // shorter once you know it
     actx.fillStyle = 'rgba(12,16,22,0.85)'; actx.fillRect(mt.x - lw / 2 - 8, mt.y - rr2 - 30, lw + 16, 22); actx.fillStyle = '#FFD34D'; actx.fillText(lbl, mt.x, mt.y - rr2 - 13); }
   if (decoy) {
     var dg = decoy.lure ? 1 : (game.t >= decoy.ready ? 0.95 : 0.5);
@@ -1548,6 +1927,11 @@ function drawArena() {
     actx.save(); actx.lineWidth = 3; actx.strokeStyle = 'rgba(12,16,22,0.5)'; actx.beginPath(); actx.arc(hk.x, hk.y, 24, 0, 6.283); actx.stroke();
     actx.strokeStyle = fo ? '#7CE0A0' : '#FFFFFF'; actx.beginPath(); actx.arc(hk.x, hk.y, 24, -Math.PI / 2, -Math.PI / 2 + pu * 6.283); actx.stroke();
     if (fo) { actx.font = '700 12px "IBM Plex Sans", sans-serif'; actx.textAlign = 'center'; var fl2 = 'rodents fooled', fw = actx.measureText(fl2).width; actx.fillStyle = 'rgba(12,16,22,0.8)'; actx.fillRect(hk.x - fw / 2 - 5, hk.y - 46, fw + 10, 17); actx.fillStyle = '#7CE0A0'; actx.fillText(fl2, hk.x, hk.y - 33); }
+    if (game.jungle) {
+      var mkIn = hk.perchOn && game.monkeysIn(hk.perchOn).length, fl3 = mkIn ? 'MONKEYS!' : 'hidden from eagles';
+      actx.font = '700 12px "IBM Plex Sans", sans-serif'; actx.textAlign = 'center'; var fw3 = actx.measureText(fl3).width;
+      actx.fillStyle = mkIn ? 'rgba(140,20,30,0.9)' : 'rgba(12,16,22,0.8)'; actx.fillRect(hk.x - fw3 / 2 - 5, hk.y + 30, fw3 + 10, 17); actx.fillStyle = mkIn ? '#FFFFFF' : '#9FE3B4'; actx.fillText(fl3, hk.x, hk.y + 43);
+    }
     actx.restore();
   }
   if (hk.state !== 'dead') drawBird(hk.x, hk.y, hk.a, hk.state === 'dive' ? 1.1 : hk.state === 'perch' ? 1.05 : 1.35, hk.state === 'rest' || hk.wounded ? 0.75 : 1, false, hk.wounded);
@@ -1561,6 +1945,10 @@ function drawArena() {
     else if (e.kind === 'evade') { actx.globalAlpha = Math.max(0, 1 - e.age / 1.2); actx.font = '800 16px "Bricolage Grotesque", sans-serif'; actx.textAlign = 'center'; actx.fillStyle = 'rgba(12,16,22,0.8)'; actx.fillRect(e.x - 42, e.y - 50 - e.age * 12, 84, 22); actx.fillStyle = '#9FE3FF'; actx.fillText('EVADED!', e.x, e.y - 33 - e.age * 12);
       actx.strokeStyle = '#9FE3FF'; actx.lineWidth = 2; actx.beginPath(); actx.arc(e.x, e.y, 18 + e.age * 20, 0, 6.283); actx.stroke(); }
     else if (e.kind === 'flare') { var fu = e.age / 1.2; for (var fq = 0; fq < 8; fq++) { var fa2 = e.a + Math.PI + (fq - 3.5) * 0.35, fd = 12 + fu * (60 + (fq % 3) * 18); actx.globalAlpha = 1 - fu; actx.fillStyle = fq % 2 ? '#FFB347' : '#FFF2B0'; actx.beginPath(); actx.arc(e.x + Math.cos(fa2) * fd, e.y + Math.sin(fa2) * fd + fu * 20, 4 - fu * 2, 0, 6.283); actx.fill(); } }
+    else if (e.kind === 'stick') { actx.globalAlpha = Math.max(0, 1 - e.age / 1); actx.font = '800 15px "Bricolage Grotesque", sans-serif'; actx.textAlign = 'center'; actx.lineWidth = 4; actx.strokeStyle = 'rgba(12,16,22,0.85)'; var st2 = 'THWACK -' + e.v; actx.strokeText(st2, e.x, e.y - 30 - e.age * 14); actx.fillStyle = '#FF8A5E'; actx.fillText(st2, e.x, e.y - 30 - e.age * 14); }
+    else if (e.kind === 'mhid' || e.kind === 'mfall') { actx.globalAlpha = Math.max(0, 1 - e.age / 1); actx.font = '700 13px "IBM Plex Sans", sans-serif'; actx.textAlign = 'center'; actx.fillStyle = '#FFFFFF'; actx.fillText(e.kind === 'mhid' ? 'safe in the treetop' : 'monkey knocked out!', e.x, e.y - 18 - e.age * 10); }
+    else if (e.kind === 'spin') { var su = e.age / 1.2; actx.globalAlpha = 1 - su; actx.strokeStyle = '#FFD34D'; actx.lineWidth = 4; for (var sq = 0; sq < 3; sq++) { actx.beginPath(); actx.arc(e.x, e.y, e.r * (0.5 + su * 1.2) + sq * 8, e.age * 12 + sq * 2, e.age * 12 + sq * 2 + 3.5); actx.stroke(); } }
+    else if (e.kind === 'senses') { actx.globalAlpha = Math.max(0, 1 - e.age / 1.2); actx.strokeStyle = '#B98CFF'; actx.lineWidth = 3; actx.beginPath(); actx.arc(e.x, e.y, 16 + e.age * 40, 0, 6.283); actx.stroke(); actx.font = '800 15px "Bricolage Grotesque", sans-serif'; actx.textAlign = 'center'; actx.fillStyle = '#E2CCFF'; actx.fillText('SENSED IT!', e.x, e.y - 34 - e.age * 10); }
     else if (e.kind === 'mutant') { actx.globalAlpha = Math.max(0, 1 - e.age / 2); actx.strokeStyle = '#FFD34D'; actx.lineWidth = 2; actx.beginPath(); actx.arc(e.x, e.y, 13, 0, 6.283); actx.stroke(); }
   }
   actx.globalAlpha = 1;
@@ -1570,14 +1958,51 @@ function drawArena() {
     actx.fillRect(W / 2 - tw / 2 - 16, 40, tw + 32, 44); actx.fillStyle = '#FFD34D'; actx.fillText(msg.t, W / 2, 70); actx.globalAlpha = 1;
   }
 }
-var pendingFight = null, lastBg = '';
+var pendingFight = null, lastBg = '', JUNGLE_GROUND = '#3E4A2A';
+/* Monkeys: on the ground they are easy to see; in a tree only a face and tail peek out */
+function drawMonkey(m, inTree) {
+  var x = m.x, y = m.y, body = m.king ? '#6A3A1E' : '#8A5A34', face = '#E2C29A';
+  actx.save(); actx.globalAlpha = 1; actx.lineCap = 'round';
+  if (inTree) {
+    actx.strokeStyle = body; actx.lineWidth = 3; actx.beginPath(); actx.moveTo(x + 3, y + 5); actx.quadraticCurveTo(x + 12, y + 18, x + 4, y + 22); actx.stroke();   // dangling tail
+    actx.fillStyle = body; actx.strokeStyle = 'rgba(20,30,15,0.85)'; actx.lineWidth = 1.2; actx.beginPath(); actx.arc(x, y, 7, 0, 6.283); actx.fill(); actx.stroke();
+    actx.fillStyle = face; actx.beginPath(); actx.ellipse(x, y + 1.2, 4.6, 3.8, 0, 0, 6.283); actx.fill();
+    actx.fillStyle = '#1A140F'; actx.beginPath(); actx.arc(x - 1.8, y, 0.9, 0, 6.283); actx.arc(x + 1.8, y, 0.9, 0, 6.283); actx.fill();
+  } else {
+    actx.translate(x, y); actx.rotate(m.a || 0); actx.scale(1.3, 1.3);   // bigger than a rodent
+    actx.strokeStyle = body; actx.lineWidth = 3; actx.beginPath(); actx.moveTo(-9, 0); actx.bezierCurveTo(-20, -2, -22, 10, -15, 12); actx.stroke();   // curled tail
+    actx.strokeStyle = '#5A3A1A'; actx.lineWidth = 2.5; actx.beginPath(); actx.moveTo(4, 6); actx.lineTo(16, 13); actx.stroke();   // stick
+    actx.fillStyle = body; actx.strokeStyle = 'rgba(20,16,12,0.7)'; actx.lineWidth = 1.2;
+    actx.beginPath(); actx.ellipse(-2, 0, 10, 7.5, 0, 0, 6.283); actx.fill(); actx.stroke();
+    actx.beginPath(); actx.arc(9, 0, 6.5, 0, 6.283); actx.fill(); actx.stroke();
+    [-1, 1].forEach(function (sd) { actx.beginPath(); actx.arc(7, sd * 6.5, 2.4, 0, 6.283); actx.fill(); actx.stroke(); });
+    actx.fillStyle = face; actx.beginPath(); actx.ellipse(11, 0, 3.6, 4.2, 0, 0, 6.283); actx.fill();
+    actx.fillStyle = '#1A140F'; actx.beginPath(); actx.arc(11.5, -1.6, 0.9, 0, 6.283); actx.arc(11.5, 1.6, 0.9, 0, 6.283); actx.fill();
+    if (m.daze > 0) { actx.rotate(-(m.a || 0)); actx.font = '700 11px "IBM Plex Sans", sans-serif'; actx.textAlign = 'center'; actx.fillStyle = '#FFF2B0'; actx.fillText('dazed', 0, -15); }
+  }
+  actx.restore();
+  if (m.king) {   // gold crown, drawn upright
+    var cy = inTree ? y - 8 : y - 12;
+    actx.save(); actx.fillStyle = '#F2C230'; actx.strokeStyle = '#6A4A00'; actx.lineWidth = 1;
+    actx.beginPath(); actx.moveTo(x - 7, cy); actx.lineTo(x - 7, cy - 6); actx.lineTo(x - 3.5, cy - 3); actx.lineTo(x, cy - 8); actx.lineTo(x + 3.5, cy - 3); actx.lineTo(x + 7, cy - 6); actx.lineTo(x + 7, cy); actx.closePath(); actx.fill(); actx.stroke();
+    actx.restore();
+  }
+}
+function fxLife(f) { return f.kind === 'mutant' ? 2 : (f.kind === 'evade' || f.kind === 'flare' || f.kind === 'spin' || f.kind === 'senses') ? 1.2 : (f.kind === 'stick' || f.kind === 'mhid' || f.kind === 'mfall') ? 1 : 0.9; }
 function stepFx(dtReal) {
   game.events.forEach(function (e) {
     if (e.kind === 'eaten') {
       var bl = []; for (var q = 0; q < 6; q++) { var an = Math.random() * 6.283, d = Math.random() * 7; bl.push([Math.cos(an) * d, Math.sin(an) * d, 4 + Math.random() * 6]); }
       pools.push({ x: e.x, y: e.y, col: VCOL.coat[e.genes.coat], t: game.t, b: bl });
       skeletons.push({ x: e.x, y: e.y, a: Math.random() * 6.283, t: game.t }); if (skeletons.length > 80) skeletons.shift();
-    } else if (e.kind === 'fight') pendingFight = e.extra === 'invader' ? 'invader' : 'player';
+    } else if (e.kind === 'fight') pendingFight = e.extra === 'invader' || e.extra === 'monkey' || e.extra === 'monkeyambush' ? e.extra : 'player';
+    else if (e.kind === 'spotted') flashMsg('An eagle spotted you! Press Ctrl to perch and hide');
+    else if (e.kind === 'lostyou') { goalState.hidFrom = (goalState.hidFrom || 0) + 1; flashMsg('Hidden in the leaves. The eagle lost sight of you'); }
+    else if (e.kind === 'stick') fx.push({ kind: 'stick', x: e.x, y: e.y, v: e.extra, age: 0 });
+    else if (e.kind === 'mfall' || e.kind === 'mhid') fx.push({ kind: e.kind, x: e.x, y: e.y, age: 0 });
+    else if (e.kind === 'king') flashMsg('The Monkey King has appeared! He fights you next');
+    else if (e.kind === 'senses') { fx.push({ kind: 'senses', x: e.x, y: e.y, age: 0 }); flashMsg('Heightened senses! Your hawk escaped the monkeys'); }
+    else if (e.kind === 'spin') fx.push({ kind: 'spin', x: e.x, y: e.y, r: e.extra.r, age: 0 });
     else if (e.kind === 'ashgone') goalState.ashDone = true;
     else if (e.kind === 'invleft') { flashMsg('The eagle leaves: too few rodents to hunt'); goalState.peaceUntil = Math.max(goalState.peaceUntil, game.t + 2 * GEN); }
     else if (e.kind === 'healed') flashMsg('Your hawk has recovered');
@@ -1592,7 +2017,7 @@ function stepFx(dtReal) {
   });
   game.events.length = 0;
   pools = pools.filter(function (p) { return game.t - p.t <= 14; }).slice(-120);
-  fx = fx.filter(function (f) { f.age += dtReal; return f.age < (f.kind === 'mutant' ? 2 : f.kind === 'evade' || f.kind === 'flare' ? 1.2 : 0.9); });
+  fx = fx.filter(function (f) { f.age += dtReal; return f.age < fxLife(f); });
   if (msg) msg.age += dtReal;
 }
 var MONO = '11px "IBM Plex Mono", ui-monospace, Menlo, monospace';
@@ -1639,21 +2064,25 @@ function fitFight() {
   fcv.width = Math.round(r.width * dpr); fcv.height = Math.round(r.height * dpr);
 }
 function fighter(name, hp, side, st) {
-  return { name: name, hp: hp, side: side, act: null, actT: 0, hitDone: false, cd: { strike: 0, dive: 0, guard: 0, missile: 0 }, flash: 0, shake: 0, used: {}, st: st };
+  return { name: name, hp: hp, side: side, act: null, actT: 0, hitDone: false, held: 0, cd: { strike: 0, dive: 0, guard: 0, missile: 0 }, flash: 0, shake: 0, used: {}, st: st };
 }
 function eagleStats(lvl) { return { strike: 8 + 3 * lvl, dive: 16 + 6 * lvl, dodge: 0.08 + 0.06 * lvl, crit: 0.08, acc: 1, recharge: 1, missiles: 0 }; }
+function monkeyStats(king) { return { strike: king ? 13 : 9, dive: king ? 17 : 12, dodge: king ? 0.18 : 0.12, crit: 0.08, acc: 1, recharge: 1, missiles: 0 }; }
 function startFight(who) {
-  var hk = game.hawk, iv = game.inv, lvl = iv.level, st = fightPowers(hk.T);
+  var hk = game.hawk, iv = game.inv, st = fightPowers(hk.T), mk = null, lvl, opp, kind = 'eagle';
   st.missiles = hk.missiles ? hk.ammo || 0 : 0;
+  if (who === 'monkey' || who === 'monkeyambush') {
+    mk = game.prepMonkeyFight(); if (!mk) return;
+    kind = 'monkey'; lvl = mk.king ? 2 : 1; opp = fighter(mk.king ? 'MONKEY KING' : 'MONKEY', mk.king ? 100 : 70, 1, monkeyStats(mk.king));
+  } else { if (!iv) return; lvl = iv.level; opp = fighter(lvl > 1 ? 'GOLDEN EAGLE' : (game.jungle ? 'JUNGLE EAGLE' : 'INVADING EAGLE'), iv.energy, 1, eagleStats(lvl)); }
   phase = 'fight';
-  F = { t: 0, over: null, overT: 0, floats: [], shots: [], who: who, lvl: lvl,
-    p: fighter('YOUR HAWK', hk.energy, -1, st),
-    e: fighter(lvl > 1 ? 'GOLDEN EAGLE' : 'INVADING EAGLE', iv.energy, 1, eagleStats(lvl)),
-    think: 2.6 };
-  F.p.flares = hk.counter ? 1 : 0;
+  F = { t: 0, over: null, overT: 0, floats: [], shots: [], who: who, lvl: lvl, kind: kind, king: !!(mk && mk.king),
+    p: fighter('YOUR HAWK', hk.energy, -1, st), e: opp, think: 2.6 };
+  F.p.flares = hk.counter ? 1 : 0; F.p.senses = !!hk.senses;
   fightEl.hidden = false; fitFight(); renderFightButtons();
-  $('fightMsg').innerHTML = (who === 'invader' ? 'The eagle attacked you!' : 'You attacked the eagle!') +
-    ' <span class="fhint">Your hawk’s traits set its powers (left). Evolve better traits to hit harder, dodge more and recharge faster.</span>';
+  var intro = who === 'invader' ? 'The eagle attacked you!' : who === 'monkeyambush' ? (F.king ? 'The Monkey King grabbed your perched hawk!' : 'A monkey grabbed your perched hawk!') : who === 'monkey' ? (F.king ? 'The Monkey King swings in to defend his troop!' : 'You swooped at the monkey!') : 'You attacked the eagle!';
+  $('fightMsg').innerHTML = intro + (kind === 'monkey' ? ' <span class="fhint">Monkeys swing sticks (a harder skull helps) and grab (oily feathers help you slip free). A grabbed hawk can\u2019t move for a moment.</span>'
+    : ' <span class="fhint">Your hawk’s traits set its powers (left). Evolve better traits to hit harder, dodge more and recharge faster.</span>');
   $('fightEnd').hidden = true;
 }
 function renderFightButtons() {
@@ -1663,7 +2092,7 @@ function renderFightButtons() {
     return '<button type="button" class="fbtn" data-move="' + k + '"><kbd>' + m.key + '</kbd><span class="ft"><b>' + m.label + '</b><span' + (k === 'missile' ? ' id="fMisTxt"' : '') + '>' + extra + '</span></span><i></i></button>';
   }).join('');
 }
-function canAct(f) { return !F.over && F.t > 2.2 && !f.act; }
+function canAct(f) { return !F.over && F.t > 2.2 && !f.act && !(f.held > 0); }
 function doMove(f, k) {
   if (!canAct(f) || f.cd[k] > 0) return false;
   if (k === 'missile' && f.st.missiles <= 0) return false;
@@ -1673,20 +2102,25 @@ function doMove(f, k) {
 }
 function floatTxt(f, txt, col) { F.floats.push({ x: f.side < 0 ? 0.28 : 0.72, y: 0.46, t: 0, txt: txt, col: col }); }
 function resolveHit(att, def, k) {
-  var st = att.st;
+  var st = att.st, monk = F.kind === 'monkey' && att === F.e;
   if (k !== 'missile' && Math.random() < def.st.dodge) { floatTxt(def, 'DODGE', '#9FE3FF'); return; }
   if (k !== 'missile' && Math.random() > st.acc) { floatTxt(def, 'MISS', '#CCCCCC'); return; }
   if (def.flares > 0 && k !== 'missile') { def.flares--; floatTxt(def, 'FLARES! BLOCKED', '#FFB347'); return; }
+  if (monk && k === 'dive' && Math.random() < def.st.slip) { floatTxt(def, 'SLIPPED FREE', '#9FE3FF'); return; }   // oily feathers
   var dmg = k === 'missile' ? MISSILE_DMG : st[k], crit = k !== 'missile' && Math.random() < st.crit;
   if (crit) dmg *= 1.75;
-  if (k !== 'missile' && def.act === 'guard') { dmg *= 0.25; floatTxt(def, 'BLOCK', '#FFE58A'); }
+  if (monk && k === 'strike') dmg *= 1 - def.st.skull;   // a harder skull takes the stick better
+  var sensed = def.senses && k !== 'missile' && def.act !== 'guard' && Math.random() < SENSE_BLOCK;
+  if (k !== 'missile' && (def.act === 'guard' || sensed)) { dmg *= 0.25; floatTxt(def, sensed ? 'SENSED IT! BLOCK' : 'BLOCK', sensed ? '#E2CCFF' : '#FFE58A'); }
+  if (monk && k === 'dive' && !sensed && def.act !== 'guard') { def.held = 1.1; def.act = null; }   // grabbed: can't move for a moment
   if (k === 'missile' && att === F.p && F.lvl > 1) stats.missileHit = true;
   dmg = Math.round(dmg); def.hp -= dmg; def.flash = 0.3; def.shake = 0.35;
-  floatTxt(def, (k === 'missile' ? 'MISSILE ' : crit ? 'CRITICAL ' : '') + '-' + dmg, crit || k === 'missile' ? '#FFD34D' : '#FF6B5E');
+  floatTxt(def, (k === 'missile' ? 'MISSILE ' : crit ? 'CRITICAL ' : monk ? (k === 'strike' ? 'STICK ' : 'GRAB ') : '') + '-' + dmg, crit || k === 'missile' ? '#FFD34D' : '#FF6B5E');
   if (def.hp <= 15 && !F.over) { F.over = att === F.p ? 'player' : 'invader'; F.overT = 0; F.killed = def.hp <= 0; }
 }
 function stepFighter(f, o, dt) {
   for (var k in f.cd) if (f.cd[k] > 0) f.cd[k] -= dt;
+  if (f.held > 0) f.held -= dt;
   if (f.flash > 0) f.flash -= dt; if (f.shake > 0) f.shake -= dt;
   if (!f.act) return;
   var m = MOVES[f.act]; f.actT += dt;
@@ -1725,13 +2159,24 @@ function stepFight(dt) {
 }
 function showFightEnd() {
   var win = F.over === 'player', killed = F.killed, txt;
-  if (win) txt = killed ? 'The eagle was badly hurt and fled the valley for good.' : 'You won! The eagle is wounded and can’t fight until it eats and recovers to 75% energy.';
+  if (F.kind === 'monkey') {
+    if (win) txt = F.king ? 'You beat the Monkey King! His Talisman will show up in your mutation choices.' : 'You won! The monkey drops its stick and flees the jungle. Monkeys beaten: ' + (game.monkeysBeaten + 1) + (game.monkeysBeaten + 1 === 3 ? '. The Monkey King is coming next!' : '.');
+    else txt = killed ? 'Your hawk had too little energy to survive the fight.' : 'The monkey won. Your hawk is wounded: eat rodents until your energy is back to 75% before you can fight again.';
+  } else if (win) txt = killed ? 'The eagle was badly hurt and fled the valley for good.' : 'You won! The eagle is wounded and can’t fight until it eats and recovers to 75% energy.';
   else txt = killed ? 'Your hawk had too little energy to survive the fight.' : 'You lost. Your hawk is wounded: eat rodents until your energy is back to 75% before you can fight again. Better traits from mutations will make your next fight easier.';
   $('fightEndTxt').textContent = txt;
   $('fightEnd').hidden = false; $('fightGo').focus({ preventScroll: true });
 }
 $('fightGo').addEventListener('click', function () {
   var win = F.over === 'player';
+  if (F.kind === 'monkey') {
+    var wasKing = F.king;
+    game.monkeyOutcome(win, Math.round(win ? Math.max(30, F.p.hp) : (!F.killed ? Math.max(20, F.p.hp) : F.p.hp)));
+    if (win) { stats.wins++; flashMsg(wasKing ? 'You beat the Monkey King!' : 'The monkey flees! Monkeys beaten: ' + game.monkeysBeaten); }
+    fightEl.hidden = true; F = null;
+    if (!game.hawk.alive) { deathCause = 'fight'; updateUI(); showDeath(); return; }
+    phase = 'running'; renderTraits(); updateUI(); checkGoals(); renderGoals(); return;
+  }
   game.fightOutcome(win ? 'player' : 'invader', Math.round(win ? Math.max(30, F.p.hp) : (!F.killed ? Math.max(20, F.p.hp) : F.p.hp)), Math.round(F.e.hp));
   if (win) stats.wins++;
   if (win && game.inv && game.inv.state === 'gone') declareVictory();
@@ -1770,24 +2215,56 @@ function drawFightBird(x, y, flip, eagle, f, scale) {
   }
   fctx.restore();
 }
+function drawFightMonkey(x, y, f, scale) {
+  fctx.save(); fctx.translate(x, y); fctx.scale(scale, scale);
+  var bob = reduceMotion ? 0 : Math.sin(F.t * 5) * 5; fctx.translate(0, bob);
+  if (f.shake > 0 && !reduceMotion) fctx.translate((Math.random() - 0.5) * 10, 0);
+  var body = f.flash > 0 ? '#FFFFFF' : (F.king ? '#6A3A1E' : '#8A5A34'), face = '#E2C29A', winding = f.act && f.actT < MOVES[f.act].wind;
+  fctx.strokeStyle = '#140C10'; fctx.lineWidth = 3; fctx.lineCap = 'round';
+  fctx.strokeStyle = body; fctx.lineWidth = 9; fctx.beginPath(); fctx.moveTo(30, 20); fctx.bezierCurveTo(80, 20, 80, -40, 50, -40); fctx.stroke();   // tail
+  fctx.strokeStyle = '#140C10'; fctx.lineWidth = 3;
+  fctx.fillStyle = body; fctx.beginPath(); fctx.ellipse(0, 10, 34, 40, 0, 0, 6.283); fctx.fill(); fctx.stroke();
+  fctx.beginPath(); fctx.arc(-6, -44, 28, 0, 6.283); fctx.fill(); fctx.stroke();
+  [-30, 18].forEach(function (ex) { fctx.beginPath(); fctx.arc(ex, -48, 10, 0, 6.283); fctx.fill(); fctx.stroke(); });
+  fctx.fillStyle = face; fctx.beginPath(); fctx.ellipse(-10, -40, 18, 16, 0, 0, 6.283); fctx.fill();
+  fctx.fillStyle = '#140C10'; fctx.beginPath(); fctx.arc(-17, -46, 3.5, 0, 6.283); fctx.arc(-3, -46, 3.5, 0, 6.283); fctx.fill();
+  fctx.beginPath(); fctx.arc(-10, -33, 6, 0.2, Math.PI - 0.2); fctx.stroke();
+  // arm with stick: raised while winding up a swing, reaching out for a grab
+  var swing = f.act === 'strike' ? (winding ? -1.9 : -0.2) : -1.1, reach = f.act === 'dive' && !winding;
+  fctx.save(); fctx.translate(-22, -4); fctx.rotate(reach ? -0.2 : swing);
+  fctx.strokeStyle = body; fctx.lineWidth = 11; fctx.beginPath(); fctx.moveTo(0, 0); fctx.lineTo(-38, 0); fctx.stroke();
+  if (!reach) { fctx.strokeStyle = '#5A3A1A'; fctx.lineWidth = 8; fctx.beginPath(); fctx.moveTo(-36, 18); fctx.lineTo(-36, -60); fctx.stroke(); }
+  fctx.restore();
+  if (F.king) {
+    fctx.fillStyle = '#F2C230'; fctx.strokeStyle = '#6A4A00'; fctx.lineWidth = 3;
+    fctx.beginPath(); fctx.moveTo(-30, -64); fctx.lineTo(-30, -86); fctx.lineTo(-18, -74); fctx.lineTo(-6, -92); fctx.lineTo(6, -74); fctx.lineTo(18, -86); fctx.lineTo(18, -64); fctx.closePath(); fctx.fill(); fctx.stroke();
+  }
+  if (f.act === 'guard') { fctx.strokeStyle = 'rgba(255,229,138,0.9)'; fctx.lineWidth = 5; fctx.beginPath(); fctx.arc(-20, -10, 70, Math.PI - 1.2, Math.PI + 1.2); fctx.stroke(); }
+  if (winding && f.act !== 'guard') { fctx.font = '800 20px "Bricolage Grotesque", sans-serif'; fctx.textAlign = 'center'; fctx.fillStyle = '#FFE58A'; fctx.fillText(f.act === 'dive' ? 'GRAB!' : 'SWING!', -6, -104); }
+  fctx.restore();
+}
 function powerLines(f, base) {
-  var st = f.st, rows = [
-    ['Talon strike', Math.round(st.strike) + ' dmg', base && st.strike - base.strike],
-    ['Power dive', Math.round(st.dive) + ' dmg', base && st.dive - base.dive],
+  var st = f.st, mo = F.kind === 'monkey' && f === F.e, rows = [
+    [mo ? 'Stick swing' : 'Talon strike', Math.round(st.strike) + ' dmg', base && st.strike - base.strike],
+    [mo ? 'Grab' : 'Power dive', Math.round(st.dive) + ' dmg', base && st.dive - base.dive],
     ['Dodge', Math.round(st.dodge * 100) + '%', base && st.dodge - base.dodge],
     ['Critical hits', Math.round(st.crit * 100) + '%' + (st.acc < 1 ? ', misses ' + Math.round((1 - st.acc) * 100) + '%' : ''), base && (st.crit - base.crit) - (1 - st.acc)],
     ['Recharge', Math.round(st.recharge * 100) + '%', base && st.recharge - base.recharge]
   ];
+  if (F.kind === 'monkey' && f === F.p) rows.push(['Slip a grab', Math.round(st.slip * 100) + '%', base && st.slip - base.slip], ['Stick hits', Math.round((1 - st.skull) * 100) + '%', base && st.skull - base.skull]);
   return rows;
 }
 function drawFight() {
   if (!F) return;
   var s = fcv.width / FW; fctx.setTransform(s, 0, 0, fcv.height / FH, 0, 0);
   var sky = fctx.createLinearGradient(0, 0, 0, FH);
-  sky.addColorStop(0, '#1B1035'); sky.addColorStop(0.55, '#7A2E4F'); sky.addColorStop(1, '#F08A3C');
+  var jg = F.kind === 'monkey' || game.jungle;
+  if (jg) { sky.addColorStop(0, '#0E2416'); sky.addColorStop(0.55, '#2E5A2A'); sky.addColorStop(1, '#C8A040'); }
+  else { sky.addColorStop(0, '#1B1035'); sky.addColorStop(0.55, '#7A2E4F'); sky.addColorStop(1, '#F08A3C'); }
   fctx.fillStyle = sky; fctx.fillRect(0, 0, FW, FH);
-  fctx.fillStyle = '#FFD27A'; fctx.beginPath(); fctx.arc(FW / 2, FH * 0.72, 70, 0, 6.283); fctx.fill();
-  fctx.fillStyle = '#2A1530'; fctx.beginPath(); fctx.moveTo(0, FH * 0.78);
+  fctx.fillStyle = jg ? '#F5E39A' : '#FFD27A'; fctx.beginPath(); fctx.arc(FW / 2, FH * 0.72, 70, 0, 6.283); fctx.fill();
+  if (jg) { fctx.fillStyle = '#123018'; [[60, 0.5, 90], [230, 0.42, 110], [450, 0.48, 95], [690, 0.4, 115], [860, 0.5, 90]].forEach(function (q) { fctx.beginPath(); fctx.arc(q[0], FH * q[1], q[2], 0, 6.283); fctx.fill(); }); }
+  fctx.fillStyle = jg ? '#16301A' : '#2A1530'; fctx.beginPath(); fctx.moveTo(0, FH * 0.78);
   [[120, 0.6], [240, 0.72], [380, 0.55], [520, 0.7], [660, 0.58], [800, 0.7], [900, 0.62]].forEach(function (p) { fctx.lineTo(p[0], FH * p[1]); });
   fctx.lineTo(FW, FH); fctx.lineTo(0, FH); fctx.closePath(); fctx.fill();
   fctx.fillStyle = '#150A18'; fctx.fillRect(0, FH * 0.88, FW, FH * 0.12);
@@ -1800,7 +2277,9 @@ function drawFight() {
   }
   var po = offs(F.p), eo = offs(F.e);
   drawFightBird(FW * 0.28 + po.x, FH * 0.66 + po.y, 1, false, F.p, 1.1);
-  drawFightBird(FW * 0.72 - eo.x, FH * 0.66 + eo.y, -1, true, F.e, F.lvl > 1 ? 1.25 : 1.15);
+  if (F.kind === 'monkey') drawFightMonkey(FW * 0.72 - eo.x * 0.6, FH * 0.66 + eo.y * 0.3, F.e, F.king ? 1.3 : 1.1);
+  else drawFightBird(FW * 0.72 - eo.x, FH * 0.66 + eo.y, -1, true, F.e, F.lvl > 1 ? 1.25 : 1.15);
+  if (F.p.held > 0) { fctx.font = '800 26px "Bricolage Grotesque", sans-serif'; fctx.textAlign = 'center'; fctx.lineWidth = 6; fctx.strokeStyle = '#140C10'; fctx.strokeText('GRABBED!', FW * 0.28, FH * 0.4); fctx.fillStyle = '#FF8A5E'; fctx.fillText('GRABBED!', FW * 0.28, FH * 0.4); }
   F.shots.forEach(function (sh) {
     var u = sh.t / 0.8, fromP = sh.from === F.p, x0 = FW * (fromP ? 0.32 : 0.68), x1 = FW * (fromP ? 0.68 : 0.32), x = x0 + (x1 - x0) * u, y = FH * 0.55 - Math.sin(u * Math.PI) * 60;
     fctx.fillStyle = 'rgba(220,220,220,0.5)'; for (var k = 1; k < 6; k++) { fctx.beginPath(); fctx.arc(x - k * 14, y + k * 2, 6 + k, 0, 6.283); fctx.fill(); }
@@ -1850,7 +2329,8 @@ function frame(ts) {
       if (!game.hawk.alive) { stepFx(0); updateUI(); showDeath(); break; }
       stepFx(0);
       if (pendingFight) { var who = pendingFight; pendingFight = null; startFight(who); break; }
-      // scheduled invaders
+      // scheduled invaders (home valley only: the jungle has its own patrolling eagles)
+      if (!game.jungle) {
       if (goalState.wantInv && canInvade() && (!game.inv || game.inv.state === 'gone')) { game.spawnInvader(goalState.wantInv); goalState.wantInv = 0; flashMsg('An eagle invades!'); }
       if (goalState.spawnAt !== null && game.t >= goalState.spawnAt && canInvade() && (!game.inv || game.inv.state === 'gone')) { game.spawnInvader(2); goalState.spawnAt = null; flashMsg('A golden eagle invades!'); }
       if (game.inv && game.inv.state === 'gone' && game.inv.x < -60 || game.inv && game.inv.state === 'gone' && game.inv.x > W + 60) {
@@ -1860,12 +2340,14 @@ function frame(ts) {
         else if (goalIdx >= MAIN_GOALS && goalState.spawnAt === null && goalState.nextInv === null) goalState.nextInv = game.t + GEN * 4;
       }
       if (goalIdx >= MAIN_GOALS && goalState.nextInv !== null && game.t >= goalState.nextInv && canInvade()) { game.spawnInvader(Math.min(3, 2 + Math.floor(stats.wins / 4))); goalState.nextInv = null; flashMsg('Another invader!'); }
+      }
       var g = genNow();
       if (g > lastGenDone) {
         lastGenDone = g;
         if (goalIdx === 1) goalState.streak = game.count() >= 15 ? goalState.streak + 1 : 0;
         checkGoals();
         if (phase === 'running' && g % MUT_EVERY === 0) { showMutation(); saveGame('gen'); break; }
+        if (phase === 'running' && checkUnlock()) { saveGame('gen'); break; }   // a new territory opens up (between mutation choices)
         saveGame('gen');
       }
     }
@@ -1873,7 +2355,7 @@ function frame(ts) {
     if (phase === 'running') { uiAcc += dtReal; if (uiAcc > 0.4) { uiAcc = 0; checkGoals(); } }
   }
   if (msg) msg.age += dtReal;
-  fx = fx.filter(function (f) { f.age += dtReal; return f.age < (f.kind === 'mutant' ? 2 : f.kind === 'evade' || f.kind === 'flare' ? 1.2 : 0.9); });
+  fx = fx.filter(function (f) { f.age += dtReal; return f.age < fxLife(f); });
   drawArena();
   chAcc += dtReal; if (chAcc > 0.25) { chAcc = 0; drawChart(); updateUI(); if (phase === 'running') renderGoals(); }
   requestAnimationFrame(frame);
@@ -1894,6 +2376,11 @@ window.__hhLook = function (ids) { ids.forEach(function (id) { var m = HAWK_MUTA
 window.__hhThumb = function (cv, look) { drawHawkThumb(cv, look, HAWK_COLORS[0]); };
 window.__hhSave = function () { saveGame("test"); };
 window.__hhGame = function () { return game; };
+window.__hhJungle = function () { invadeTerritory(); };
+window.__hhOffer = function () { goalState.jungleOffered = false; return checkUnlock(); };
+window.__hhSpecial = function (k) { pickSpecial(SPECIAL[k]); };
+window.__hhMonkeyFight = function (ambush) { var m = game.monkeys[0]; if (!m) return false; game.fightMonkey = m; startFight(ambush ? 'monkeyambush' : 'monkey'); return true; };
+window.__hhKeys = function () { return keysSig; };
 window.__hhAmmo = function () { var h = game.hawk; return { ammo: h.ammo, max: h.ammoMax, next: h.mNext, t: game.t }; };
 window.__hhInv = function (l) { game.spawnInvader(l || 1); game.inv.challenge = (arguments[1] === undefined ? 1 : arguments[1]); };
 window.__hhKill = function () { game.hawk.energy = 0.01; };
