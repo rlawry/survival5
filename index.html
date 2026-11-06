@@ -2420,7 +2420,7 @@ function showMenu(screen) {
       '<button type="button" class="mbtn" data-m="quit">Quit Game</button>';
   } else if (screen === 'new') {
     h = '<h2 class="menuH" id="menuTitle">New game</h2><p class="menuP">Choose a difficulty.</p>' +
-      [['beginner', 'Your hawk burns energy slowly, and eagles and monkeys hit softer.'], ['normal', 'The game as designed.'], ['hard', 'Your hawk burns energy fast, and eagles and monkeys hit harder.']].map(function (d, i) {
+      [['beginner', 'Your hawk burns energy slowly, and eagles hit softer.'], ['normal', 'The game as designed.'], ['hard', 'Your hawk burns energy fast, and eagles hit harder.']].map(function (d, i) {
         return '<button type="button" class="mbtn' + (d[0] === 'normal' ? ' primary' : '') + '" data-diff="' + d[0] + '"' + (d[0] === 'normal' ? ' data-focus' : '') + '>' + DIFFS[d[0]].label + '<small>' + d[1] + '</small></button>';
       }).join('') + '<button type="button" class="mbtn back" data-m="main">Back</button>';
   } else if (screen === 'load') {
