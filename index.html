@@ -184,6 +184,10 @@ td.fgt.chg { color: var(--ink); font-weight: 600; }
 .saves { display: flex; flex-direction: column; gap: 8px; max-height: 46vh; overflow-y: auto; }
 .saveRow { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--line); background: var(--surface); }
 .saveRow.cur { border-color: var(--accent); }
+.hthumb { display: block; flex: 0 0 auto; border: 1px solid var(--line); }
+.saveRow .hthumb { width: 48px; height: 48px; }
+#hawkTitle { display: flex; align-items: center; gap: 8px; }
+#hawkPic { width: 40px; height: 40px; }
 .saveRow .sw { width: 16px; height: 16px; margin: 0; flex: 0 0 auto; }
 .saveRow .si { display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; font-size: 12.5px; line-height: 1.3; }
 .saveRow .si b { font-size: 14px; }
@@ -261,7 +265,7 @@ td.fgt.chg { color: var(--ink); font-weight: 600; }
 
     <aside class="side" aria-label="Hawk, goals and environment">
       <section>
-        <h3 class="secT" id="hawkTitle">Your hawk</h3>
+        <h3 class="secT" id="hawkTitle"><span id="hawkTitleTxt">Your hawk</span><canvas id="hawkPic" class="hthumb" data-size="40" aria-hidden="true"></canvas></h3>
         <div class="hawkStat">
           <div class="stat"><b id="stCaught">0</b><span>Caught</span></div>
           <div class="stat"><b id="stWins">0</b><span>Fights won</span></div>
@@ -302,6 +306,7 @@ var TRAITS = {
   mind:   { label: 'Mind',         variants: ['simple', 'smart', 'wise'], names: { simple: 'Simple mind', smart: 'Smart', wise: 'Very smart' } }
 };
 /* Mind: the chance a climber decides to stay near a tree on each food trip. Hungry rodents take more risks. */
+var NOTICE = { simple: 0.03, smart: 0.3, wise: 0.7 }, WATCH = 1.8;   // chance per look (every 0.5 s) to notice a predator overhead; WATCH x alert = how far they look
 var MIND = { simple: 0, smart: 0.5, wise: 0.8 }, MIND_UP = 0.035, MIND_DOWN = 0.015, SAFE_R = 2, TRIP = [4, 8];
 var TONE = { sandy: 0, medium: 0.5, dark: 1 };
 var LEGS = { short: { speed: 42, cost: 0.9, escape: 0.2 }, long: { speed: 52, cost: 1.05, escape: 0.5 } };
@@ -593,8 +598,8 @@ function createWorld(rng) {
     var p = MIND[c.genes.mind] * (c.e < 35 ? 0.5 : 1);
     c.stay = !!c.home && rng() < p;
   }
-  function nearTree(c) {
-    var best = null, bd = 150 * 150;
+  function nearTree(c, maxD) {
+    var best = null, bd = (maxD || 150) * (maxD || 150);
     w.trees.forEach(function (t) { if (t.r < TREE.hideMin) return; var dx = t.x - c.x, dy = t.y - c.y, d = dx * dx + dy * dy; if (d < bd) { bd = d; best = t; } });
     return best;
   }
@@ -646,6 +651,9 @@ function createWorld(rng) {
     if (hk.state === 'dive' && hk.tgt && hk.tgt.genes) threats.push({ x: hk.x, y: hk.y, r: T.alert * (hk.ambush ? 0.5 : 1) });
     if (w.inv && w.inv.state === 'dive') threats.push({ x: w.inv.x, y: w.inv.y, r: w.inv.T.alert });
     var list = w.gophers, n = list.length, born = [], fooled = w.fooled();
+    var watchers = [];   // predators in plain sight (not diving): rodents may notice and head for cover
+    if (hk.alive && hk.state !== 'dive' && hk.state !== 'dead' && !fooled) watchers.push({ x: hk.x, y: hk.y, r: T.alert * (hk.state === 'perch' ? 1.1 : WATCH) });
+    if (w.inv && w.inv.state !== 'gone' && w.inv.state !== 'dive') watchers.push({ x: w.inv.x, y: w.inv.y, r: w.inv.T.alert * WATCH });
     var start = n ? (rng() * n) | 0 : 0;
     for (var k = 0; k < n; k++) {
       var c = list[(start + k) % n]; if (c.dead) continue;
@@ -654,6 +662,20 @@ function createWorld(rng) {
       if (c.e <= 0) { c.dead = 'starved'; continue; }
       if (c.age > c.life) { c.dead = 'old'; continue; }
       if (c.hide > 0) { c.hide -= dt; if (c.hide <= 0) c.tree = null; continue; }   // up in a tree, safe and still
+      c.look = (c.look || 0) - dt;
+      if (c.look <= 0 && c.flee <= 0 && watchers.length) {
+        c.look = 0.5;
+        for (var wq = 0; wq < watchers.length; wq++) {
+          var wa = watchers[wq], wx = c.x - wa.x, wy = c.y - wa.y;
+          if (wx * wx + wy * wy < wa.r * wa.r && rng() < NOTICE[c.genes.mind]) {
+            var ct = nearTree(c, 260); if (!ct) break;
+            ev('wary', c);
+            if (c.genes.climb === 'climber') { c.tree = ct; c.flee = 0.6; c.tgt = null; }   // scurry up the tree
+            else { c.home = ct; c.stay = true; c.trip = 3 + rng() * 2; c.tgt = null; }   // can't climb: stay close to it
+            break;
+          }
+        }
+      }
       for (var q = 0; q < threats.length; q++) {
         var th = threats[q], px = c.x - th.x, py = c.y - th.y;
         if (px * px + py * py < th.r * th.r) {
@@ -740,6 +762,7 @@ var SEED_COL = '#4E9F3D', EAGLE_COL = '#4B3A78';
 var HAWK_COLORS = [{ name: 'red', body: '#C8372D', wing: '#8E241D' }, { name: 'blue', body: '#2F6FD0', wing: '#1D4A92' }, { name: 'green', body: '#2E9A5A', wing: '#1E6A3D' },
                    { name: 'orange', body: '#E07B1E', wing: '#9C5212' }, { name: 'teal', body: '#1E9AA6', wing: '#136A73' }, { name: 'pink', body: '#D64C8E', wing: '#962E61' }];
 var hawkNum = 1;
+var curLook = null;   // cached look of the player's hawk (rebuilt when traits change)
 function hawkCol() { return HAWK_COLORS[(hawkNum - 1) % HAWK_COLORS.length]; }
 /* What each hawk trait does in a fight with an eagle */
 function fightPowers(T) {
@@ -883,7 +906,7 @@ function saveGame(why) {
     skeletons: skeletons, pools: pools, scorches: scorches, hist: histPack(), lastGenDone: lastGenDone, lastRec: lastRec, lastChange: lastChange, mutPending: mutPending, view: view };
   var ix = readIndex(), ent = ix.games.filter(function (g) { return g.id === curId; })[0];
   if (!ent) { ent = { id: curId, name: 'Game ' + ix.next, created: Date.now() }; ix.next++; ix.games.push(ent); }
-  ent.updated = Date.now(); ent.gen = genNow() + 1; ent.hawkNum = hawkNum; ent.color = hawkCol().body; ent.colorName = hawkCol().name;
+  ent.updated = Date.now(); ent.gen = genNow() + 1; ent.hawkNum = hawkNum; ent.color = hawkCol().body; ent.colorName = hawkCol().name; ent.look = hawkLook(game.hawk);
   ent.goals = Math.min(goalIdx, MAIN_GOALS); ent.pop = game.count(); ent.wins = stats.wins;
   var ok = lsSet(KEY_G + curId, JSON.stringify(payload)) && writeIndex(ix);
   saveOK = ok; setSaveStat(ok ? 'Saved \u00b7 Gen ' + ent.gen : 'Could not save (storage blocked or full)', !ok);
@@ -908,13 +931,19 @@ function loadGame(id) {
   return true;
 }
 var savesBack = null;
+function drawHawkThumb(cv, look, col) {
+  if (!cv || !cv.getContext) return;
+  var dpr = 2, sz = cv.width = cv.height = (parseInt(cv.dataset.size, 10) || 44) * dpr, c = cv.getContext('2d');
+  c.clearRect(0, 0, sz, sz); c.fillStyle = '#C9B48A'; c.fillRect(0, 0, sz, sz);
+  c.save(); c.translate(sz / 2, sz / 2); c.rotate(-Math.PI / 2); var k = sz / 62; c.scale(k, k);   /* fixed scale so longer wings look longer */ drawHawkShape(c, look, col); c.restore();
+}
 function showSaves(canClose) {
   var ix = readIndex(), rows = ix.games.slice().sort(function (a, b) { return b.updated - a.updated; });
   var h = '<p class="eyebrow">Saved games</p><h2 id="panelTitle">' + (rows.length ? 'Choose a game' : 'No saved games yet') + '</h2>';
   if (!rows.length) h += '<p>Your progress saves automatically at the end of every generation, in this browser only.</p>';
   h += '<div class="saves">';
   rows.forEach(function (g, i) {
-    h += '<div class="saveRow' + (g.id === curId ? ' cur' : '') + '"><i class="sw" style="background:' + (g.color || '#C8372D') + '"></i><span class="si"><b>' + g.name + (g.id === curId ? ' (playing now)' : '') + '</b>' +
+    h += '<div class="saveRow' + (g.id === curId ? ' cur' : '') + '"><canvas class="hthumb" data-size="48" data-i="' + i + '" aria-hidden="true"></canvas><span class="si"><b>' + g.name + (g.id === curId ? ' (playing now)' : '') + '</b>' +
       '<span>Gen ' + g.gen + ' \u00b7 hawk #' + g.hawkNum + ' \u00b7 ' + g.goals + '/' + MAIN_GOALS + ' goals \u00b7 ' + g.pop + ' rodents \u00b7 ' + g.wins + ' fights won</span>' +
       '<span class="dim">' + new Date(g.updated).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) + '</span></span>' +
       '<button type="button" class="btn primary" data-load="' + g.id + '"' + (i === 0 ? ' data-focus' : '') + '>Load</button>' +
@@ -924,6 +953,10 @@ function showSaves(canClose) {
   if (!saveOK || !lsSet('hawkhunter.v1.probe', '1')) h += '<p class="dim">Saving isn\u2019t available in this browser right now (private window or blocked storage), so progress will be lost when the tab closes.</p>';
   h += '<div class="actions">' + (canClose ? '<button type="button" class="btn" data-act="closesaves">Back to game</button>' : '') + '<button type="button" class="btn' + (rows.length ? '' : ' primary') + ' big" data-act="newsave"' + (rows.length ? '' : ' data-focus') + '>New game</button></div>';
   openPanel(h);
+  [].forEach.call(panel.querySelectorAll('canvas.hthumb'), function (cv) {
+    var g = rows[+cv.dataset.i], col = HAWK_COLORS.filter(function (c) { return c.body === g.color; })[0] || HAWK_COLORS[((g.hawkNum || 1) - 1) % HAWK_COLORS.length];
+    drawHawkThumb(cv, g.look || { n: {}, missiles: 0 }, col);
+  });
 }
 function record() { var f = {}; TRAIT_KEYS.forEach(function (tr) { f[tr] = game.freq(tr); }); history.push({ gen: game.t / GEN, n: game.count(), f: f }); }
 
@@ -1268,6 +1301,7 @@ document.addEventListener('keydown', function (e) {
 
 /* ---------- sidebar ---------- */
 function renderTraits(flash) {
+  curLook = hawkLook(game.hawk); drawHawkThumb($('hawkPic'), curLook, hawkCol());
   $('htraits').innerHTML = HAWK_INFO.map(function (t) {
     var v = game.hawk.T[t.k], ch = lastChange[t.k], cell;
     if (ch !== undefined && Math.abs(ch - v) > 1e-9) { var good = (v - ch) * t.better > 0; cell = '<td class="num' + (flash ? ' flash' : '') + '"><span class="' + (good ? 'up' : 'down') + '">' + t.fmt(v) + (good ? ' ▲' : ' ▼') + '</span></td>'; }
@@ -1290,7 +1324,7 @@ function updateUI() {
   if (hk.missiles) { var mr = hk.ammo > 0; hm.textContent = 'Missiles ' + ammoPips() + (mr && missileTarget() ? ' press Space!' : ''); hm.className = mr ? (missileTarget() ? 'hot' : 'ok') : 'wait'; }
   var hf = $('hudF'); hf.hidden = !hk.fire;
   if (hk.fire) { var fr = game.t >= hk.fReady; hf.textContent = fr ? 'Fire breath ready: click a tree' : 'Fire recharging'; hf.className = fr ? 'ok' : 'wait'; }
-  $('hawkTitle').innerHTML = 'Your hawk' + (hawkNum > 1 ? ' #' + hawkNum : '') + ' <i class="sw" style="background:' + hawkCol().body + '"></i>';
+  var htTxt = 'Your hawk' + (hawkNum > 1 ? ' #' + hawkNum : ''); if ($('hawkTitleTxt').textContent !== htTxt) $('hawkTitleTxt').textContent = htTxt;
   var fb = $('fireBtn'), tgt = hk.missiles ? missileTarget() : null, rdy = missileReady();
   fb.hidden = !hk.missiles || phase === 'fight';
   if (hk.missiles) {
@@ -1342,11 +1376,59 @@ function birdPath(ctx, eagle) {
   else { ctx.moveTo(16, 0); ctx.lineTo(5, -4); ctx.lineTo(-4, -22); ctx.lineTo(-8, -4); ctx.lineTo(-16, -7); ctx.lineTo(-12, 0); ctx.lineTo(-16, 7); ctx.lineTo(-8, 4); ctx.lineTo(-4, 22); ctx.lineTo(5, 4); }
   ctx.closePath();
 }
+/* The hawk's look: the starting hawk is the template, and each mutation adds one simple change */
+function hawkLook(hk) {
+  var n = {}; (hk.picks || []).forEach(function (m) { n[m.id] = Math.min(2, (n[m.id] || 0) + 1); });
+  return { n: n, missiles: hk.missiles ? (hk.ammoMax || 1) : 0, fire: !!hk.fire, counter: !!hk.counter };
+}
+function drawHawkShape(ctx, look, col) {
+  var n = look.n || {}, wg = n.wings || 0, hv = n.heavy || 0, tl = n.tail || 0;
+  var span = 22 + 4 * wg - 2 * hv, tipX = -4 - 2 * wg, sh = 4 + 1.6 * hv, tailX = -16 - 2 * tl, notch = -12 + 2 * tl, tailW = 7 + 1.5 * tl;
+  ctx.beginPath();
+  ctx.moveTo(16, 0); ctx.lineTo(5, -sh); ctx.lineTo(tipX, -span); ctx.lineTo(-8, -sh); ctx.lineTo(tailX, -tailW); ctx.lineTo(notch, 0);
+  ctx.lineTo(tailX, tailW); ctx.lineTo(-8, sh); ctx.lineTo(tipX, span); ctx.lineTo(5, sh); ctx.closePath();
+  ctx.fillStyle = col.body; ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 1.6; ctx.fill(); ctx.stroke();
+  // wing color band
+  ctx.fillStyle = col.wing; ctx.beginPath();
+  ctx.moveTo(1, -sh); ctx.lineTo(tipX, -span + 3); ctx.lineTo(-6, -sh); ctx.closePath(); ctx.moveTo(1, sh); ctx.lineTo(tipX, span - 3); ctx.lineTo(-6, sh); ctx.closePath(); ctx.fill();
+  // feather edges: soft = rounded fringe, stiff = spikes
+  var soft = n.feathers || 0, stiff = n.noisy || 0;
+  if (soft || stiff) {
+    ctx.fillStyle = soft ? 'rgba(255,255,255,0.85)' : col.wing; ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 1;
+    [-1, 1].forEach(function (sd) {
+      for (var k = 1; k <= 3; k++) {
+        var u = k / 4, ex = tipX + (-8 - tipX) * u, ey = sd * (span + (sh - span) * u);
+        ctx.beginPath();
+        if (soft) ctx.arc(ex - 1, ey, 1 + 0.4 * soft, 0, 6.283);
+        else { ctx.moveTo(ex + 1.5, ey); ctx.lineTo(ex - 3 - 1.5 * stiff, ey + sd * 1); ctx.lineTo(ex - 0.5, ey - sd * 2); ctx.closePath(); ctx.stroke(); }
+        ctx.fill();
+      }
+    });
+  }
+  // missile pods under the wings
+  ctx.fillStyle = '#D8DDE3'; ctx.strokeStyle = '#3A4048'; ctx.lineWidth = 0.8;
+  for (var m = 0; m < look.missiles; m++) { var my = 9 + 4 * (m >> 1), sd2 = m % 2 ? 1 : -1; ctx.fillRect(-3, sd2 * my - 1, 6, 2); ctx.strokeRect(-3, sd2 * my - 1, 6, 2); }
+  if (look.counter) { ctx.fillStyle = '#FFB347'; ctx.beginPath(); ctx.arc(-9, -2.5, 1.4, 0, 6.283); ctx.arc(-9, 2.5, 1.4, 0, 6.283); ctx.fill(); }
+  // crop (throat pouch)
+  if (n.crop) { ctx.fillStyle = 'rgba(255,240,215,0.9)'; ctx.beginPath(); ctx.arc(7, 0, 2 + n.crop, 0, 6.283); ctx.fill(); }
+  // racing heart
+  if (n.metab) { ctx.fillStyle = '#FF4A5A'; ctx.beginPath(); ctx.arc(0, 0, 1.4 + 0.8 * n.metab, 0, 6.283); ctx.fill(); }
+  // talons: little hooks forward of the body
+  if (n.talons) { ctx.strokeStyle = '#1A1A1A'; ctx.lineWidth = 1.1; ctx.beginPath(); [-1, 1].forEach(function (sd) { ctx.moveTo(3, sd * 2.5); ctx.lineTo(6 + 1.5 * n.talons, sd * (3.5 + 0.8 * n.talons)); }); ctx.stroke(); }
+  // beak tip for fire breath
+  if (look.fire) { ctx.fillStyle = '#FF7A1A'; ctx.beginPath(); ctx.moveTo(16, 0); ctx.lineTo(19, -1.4); ctx.lineTo(19, 1.4); ctx.closePath(); ctx.fill(); }
+  // eyes: larger or cloudy
+  var er = 1.6 + 0.8 * (n.eyes || 0);
+  ctx.fillStyle = n.blur ? '#C8D0D6' : '#FFD34D'; ctx.beginPath(); ctx.arc(11, 0, er, 0, 6.283); ctx.fill();
+  if (n.eyes && !n.blur) { ctx.fillStyle = '#1A1A1A'; ctx.beginPath(); ctx.arc(11.6, 0, er * 0.45, 0, 6.283); ctx.fill(); }
+}
 function drawBird(x, y, a, scale, alpha, eagle, wounded) {
   actx.save(); actx.translate(x, y); actx.rotate(a); actx.scale(scale, scale); actx.globalAlpha = alpha;
-  actx.fillStyle = eagle ? EAGLE_COL : hawkCol().body; actx.strokeStyle = eagle ? '#E8D8FF' : 'rgba(255,255,255,0.9)'; actx.lineWidth = 1.6;
-  birdPath(actx, eagle); actx.fill(); actx.stroke();
-  actx.fillStyle = eagle ? '#F2F2F2' : '#FFD34D'; actx.beginPath(); actx.arc(eagle ? 13 : 11, 0, eagle ? 3 : 1.6, 0, 6.283); actx.fill();
+  if (eagle) {
+    actx.fillStyle = EAGLE_COL; actx.strokeStyle = '#E8D8FF'; actx.lineWidth = 1.6;
+    birdPath(actx, eagle); actx.fill(); actx.stroke();
+    actx.fillStyle = '#F2F2F2'; actx.beginPath(); actx.arc(13, 0, 3, 0, 6.283); actx.fill();
+  } else drawHawkShape(actx, curLook || hawkLook(game.hawk), hawkCol());
   if (wounded) { actx.fillStyle = '#FFFFFF'; actx.fillRect(-6, -2, 12, 4); actx.fillRect(-2, -6, 4, 12); actx.fillStyle = '#E0483A'; actx.fillRect(-4, -1, 8, 2); actx.fillRect(-1, -4, 2, 8); }
   actx.restore();
 }
@@ -1475,6 +1557,7 @@ function drawArena() {
     else if (e.kind === 'click' || e.kind === 'busy') { actx.globalAlpha = 1 - e.age / 0.6; actx.strokeStyle = e.kind === 'busy' ? '#F0905A' : 'rgba(255,255,255,0.8)'; actx.lineWidth = 1.5; actx.beginPath(); actx.arc(e.x, e.y, 8, 0, 6.283); actx.stroke(); }
     else if (e.kind === 'hid' || e.kind === 'climb') { actx.globalAlpha = 1 - e.age / 0.9; actx.fillStyle = '#FFFFFF'; actx.font = '700 13px "IBM Plex Sans", sans-serif'; actx.textAlign = 'center'; actx.fillText('hid in tree', e.x, e.y - 16 - e.age * 10); }
     else if (e.kind === 'boom') { var bu = e.age / 0.9, br = (e.small ? 10 : 22) + bu * (e.small ? 14 : 34); actx.globalAlpha = 1 - bu; actx.fillStyle = '#FFB347'; actx.beginPath(); actx.arc(e.x, e.y, br, 0, 6.283); actx.fill(); actx.fillStyle = '#FFF2B0'; actx.beginPath(); actx.arc(e.x, e.y, br * 0.5, 0, 6.283); actx.fill(); }
+    else if (e.kind === 'wary') { actx.globalAlpha = Math.max(0, 1 - e.age / 0.7); actx.font = '800 14px "Bricolage Grotesque", sans-serif'; actx.textAlign = 'center'; actx.fillStyle = '#FFFFFF'; actx.strokeStyle = 'rgba(12,16,22,0.8)'; actx.lineWidth = 3; actx.strokeText('!', e.x, e.y - 12 - e.age * 8); actx.fillText('!', e.x, e.y - 12 - e.age * 8); }
     else if (e.kind === 'evade') { actx.globalAlpha = Math.max(0, 1 - e.age / 1.2); actx.font = '800 16px "Bricolage Grotesque", sans-serif'; actx.textAlign = 'center'; actx.fillStyle = 'rgba(12,16,22,0.8)'; actx.fillRect(e.x - 42, e.y - 50 - e.age * 12, 84, 22); actx.fillStyle = '#9FE3FF'; actx.fillText('EVADED!', e.x, e.y - 33 - e.age * 12);
       actx.strokeStyle = '#9FE3FF'; actx.lineWidth = 2; actx.beginPath(); actx.arc(e.x, e.y, 18 + e.age * 20, 0, 6.283); actx.stroke(); }
     else if (e.kind === 'flare') { var fu = e.age / 1.2; for (var fq = 0; fq < 8; fq++) { var fa2 = e.a + Math.PI + (fq - 3.5) * 0.35, fd = 12 + fu * (60 + (fq % 3) * 18); actx.globalAlpha = 1 - fu; actx.fillStyle = fq % 2 ? '#FFB347' : '#FFF2B0'; actx.beginPath(); actx.arc(e.x + Math.cos(fa2) * fd, e.y + Math.sin(fa2) * fd + fu * 20, 4 - fu * 2, 0, 6.283); actx.fill(); } }
@@ -1503,6 +1586,8 @@ function stepFx(dtReal) {
     else if (e.kind === 'perched') flashMsg('Perched. Stay still and the rodents will forget you');
     else if (e.kind === 'fooled') flashMsg('The rodents think your hawk has gone!');
     else if (e.kind === 'perchlost') flashMsg('Your tree is gone! Your hawk takes off');
+    else if (e.kind === 'wary') fx.push({ kind: 'wary', x: e.x, y: e.y, age: 0 });
+    else if (e.kind === 'climb' && fx.some(function (f) { return f.kind === 'climb' && f.age < 0.6 && Math.abs(f.x - e.x) < 60 && Math.abs(f.y - e.y) < 60; })) { /* one label per tree at a time */ }
     else if (e.kind === 'escape' || e.kind === 'mutant' || e.kind === 'hid' || e.kind === 'climb') fx.push({ kind: e.kind, x: e.x, y: e.y, age: 0 });
   });
   game.events.length = 0;
@@ -1805,6 +1890,9 @@ window.__hhTreePt = function () { var t = game.trees.filter(function (q) { retur
 window.__hhGive = function (k) { if (k === 'fire') { game.hawk.fire = true; game.hawk.fReady = 0; } else if (k === 'ammo') { pickSpecial(ammoCard()); } else if (k === 'counter') { game.hawk.counter = true; } else if (k === 'evade') { game.hawk.T.evade = 0.5; } else { game.hawk.missiles = true; game.hawk.ammoMax = 1; game.hawk.ammo = 1; game.hawk.mNext = 0; } renderTraits(); };
 window.__hhPerch = function () { var h = game.hawk; return { state: h.state, perchT: h.perchT, fooled: game.fooled(), e: h.energy, stay: game.gophers.filter(function (c) { return c.stay; }).length, n: game.count() }; };
 window.__hhShowMut = function () { showMutation(); };
+window.__hhLook = function (ids) { ids.forEach(function (id) { var m = HAWK_MUTATIONS.filter(function (q) { return q.id === id; })[0]; game.hawk.picks.push(m); applyHawkMutation(game.hawk.T, m); }); renderTraits(); };
+window.__hhThumb = function (cv, look) { drawHawkThumb(cv, look, HAWK_COLORS[0]); };
+window.__hhSave = function () { saveGame("test"); };
 window.__hhGame = function () { return game; };
 window.__hhAmmo = function () { var h = game.hawk; return { ammo: h.ammo, max: h.ammoMax, next: h.mNext, t: game.t }; };
 window.__hhInv = function (l) { game.spawnInvader(l || 1); game.inv.challenge = (arguments[1] === undefined ? 1 : arguments[1]); };
